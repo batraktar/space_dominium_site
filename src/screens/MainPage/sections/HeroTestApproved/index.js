@@ -1,0 +1,1 @@
+export { HeroTestApproved } from "./HeroTestApproved";

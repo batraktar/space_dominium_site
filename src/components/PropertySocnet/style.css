@@ -1,0 +1,8 @@
+.property-socnet {
+  height: 864px;
+  width: 1920px;
+}
+
+.property-socnet .frame-instance {
+  width: unset !important;
+}

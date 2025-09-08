@@ -1,0 +1,1 @@
+export { PropertySocnetWrapper } from "./PropertySocnetWrapper";

@@ -1,0 +1,60 @@
+.hero-test-approved {
+    height: 780px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 1920px;
+  }
+  
+  .hero-test-approved .overlap-group {
+    height: 576px;
+    position: relative;
+  }
+  
+  .hero-test-approved .image {
+    aspect-ratio: 1.78;
+    height: 390px;
+    left: 897px;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    width: 609px;
+  }
+  
+  .hero-test-approved .text-wrapper-2 {
+    color: #ffffff;
+    font-family: "Inter", Helvetica;
+    font-size: 400px;
+    font-weight: 400;
+    left: 0;
+    letter-spacing: 160.00px;
+    line-height: normal;
+    position: absolute;
+    top: 59px;
+    width: 1920px;
+  }
+  
+  .hero-test-approved .text-wrapper-3 {
+    color: #ffffff;
+    font-family: "Inter", Helvetica;
+    font-size: 48px;
+    font-weight: 400;
+    left: 34px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 518px;
+  }
+  
+  .hero-test-approved .text-wrapper-4 {
+    color: #ffffff;
+    font-family: "Inter", Helvetica;
+    font-size: 48px;
+    font-weight: 400;
+    left: 1718px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 518px;
+  }
+  

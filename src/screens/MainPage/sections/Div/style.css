@@ -1,0 +1,243 @@
+.div {
+    height: 802px;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 4748px;
+    width: 1920px;
+}
+
+.div .ready-to-push-beyond-wrapper {
+    align-items: flex-start;
+    display: inline-flex;
+    gap: 10px;
+    left: 160px;
+    position: absolute;
+    top: 65px;
+}
+
+.div .ready-to-push-beyond {
+    color: #ffffff;
+    font-family: "Inter", Helvetica;
+    font-size: 64px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: normal;
+    margin-top: -1.00px;
+    position: relative;
+    width: fit-content;
+}
+
+.div .frame-26 {
+    align-items: center;
+    display: inline-flex;
+    gap: 18px;
+    left: 161px;
+    position: absolute;
+    top: 276px;
+}
+
+.div .frame-27 {
+    align-items: flex-start;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-color: #ffffff;
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 10px;
+    height: 65px;
+    justify-content: center;
+    position: relative;
+}
+
+.div .text-wrapper-11 {
+    color: #ffffff;
+    font-family: "Inter", Helvetica;
+    font-size: 48px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: normal;
+    margin-top: -2.00px;
+    position: relative;
+    width: fit-content;
+}
+
+.div .ei-arrow-up {
+    aspect-ratio: 1;
+    height: 65px;
+    position: relative;
+    width: 65px;
+}
+
+.div .services {
+    align-items: flex-start;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 20px;
+    left: 160px;
+    position: absolute;
+    top: 432px;
+}
+
+.div .frame-28 {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 10px;
+    justify-content: center;
+    position: relative;
+}
+
+.div .text-wrapper-12 {
+    color: #ffffff;
+    font-family: "Montserrat", Helvetica;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.80px;
+    line-height: normal;
+    margin-top: -1.00px;
+    position: relative;
+    width: fit-content;
+}
+
+.div .frame-29 {
+    align-items: flex-start;
+    align-self: stretch;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    width: 100%;
+}
+
+.div .text-wrapper-13 {
+    color: #ffffff;
+    font-family: "Montserrat", Helvetica;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.70px;
+    line-height: normal;
+    margin-top: -1.00px;
+    position: relative;
+    width: fit-content;
+}
+
+.div .text-wrapper-14 {
+    color: #ffffff;
+    font-family: "Montserrat", Helvetica;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: normal;
+    margin-top: -1.00px;
+    position: relative;
+    width: fit-content;
+}
+
+.div .sectors {
+    align-items: flex-start;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 20px;
+    left: 408px;
+    position: absolute;
+    top: 432px;
+}
+
+.div .frame-30 {
+    align-items: flex-start;
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 10px;
+    position: relative;
+}
+
+.div .company {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    left: 678px;
+    position: absolute;
+    top: 432px;
+    width: 182px;
+}
+
+.div .frame-31 {
+    align-items: center;
+    display: inline-flex;
+    gap: 10px;
+    justify-content: center;
+    left: 160px;
+    position: absolute;
+    top: 720px;
+}
+
+.div .text-wrapper-15 {
+    color: #ffffff;
+    font-family: "Inter", Helvetica;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.70px;
+    line-height: normal;
+    margin-top: -1.00px;
+    position: relative;
+    width: fit-content;
+}
+
+.div .efbcbf-bff-e {
+    height: 512px;
+    left: -15527px;
+    position: absolute;
+    top: 1098px;
+    width: 512px;
+}
+
+/* Дві колонки як на референсі */
+.div .hero {
+    display: grid;
+    grid-template-columns: 1fr min(42vw, 720px); /* права колонка для моделі */
+    align-items: center;
+    gap: clamp(24px, 4vw, 56px);
+    padding: clamp(16px, 3vw, 32px) 0;
+    position: relative;
+}
+
+/* Ліва частина */
+.div .hero__content {
+    min-width: 0;
+}
+
+/* Права частина з моделлю */
+.div .hero__visual {
+    justify-self: end;              /* прижати вправо */
+    width: min(42vw, 720px);
+    max-width: 100%;
+}
+
+/* Якщо кнопка "Take Screenshot" заважає — сховай або змісти */
+.div .hero__visual button {
+    top: 12px;
+    right: 12px;
+    opacity: 0.85;
+}
+
+/* Відступи нижніх блоків від hero */
+.div .services,
+.div .sectors,
+.div .company {
+    margin-top: clamp(24px, 6vh, 64px);
+}
+
+/* Адаптив: на планшеті/мобілці кладемо модель нижче і по центру */
+@media (max-width: 1024px) {
+    .div .hero {
+    grid-template-columns: 1fr;
+    }
+    .div .hero__visual {
+    justify-self: center;
+    width: min(90vw, 640px);
+    }
+}
+
