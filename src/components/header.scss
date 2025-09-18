@@ -55,10 +55,38 @@
   }
   .nav__list {
     display: flex;
-    padding: 20px;
-    gap: 60px;
+    padding: 20px 40px;
+    gap: 50px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 20px;
     font-size: 1rem;
+  }
+
+  .nav__item {
+    position: relative;
+    cursor: pointer;
+    padding-left: 3px;
+
+    a {
+      text-decoration: none;
+      color: #000;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2px;
+      height: 0px;
+      background-color: #f05512;
+      transform: rotate(20deg);
+      transform-origin: top left;
+      transition: height 0.2s ease;
+    }
+
+    &.active::before {
+      height: 100%;
+    }
   }
 }

@@ -1,0 +1,48 @@
+@use "../styles/variables.scss" as *;
+
+.talk-container {
+  padding-top: 160px;
+}
+
+.talk-body {
+  display: flex;
+  flex-direction: column;
+  font-family: $font-inter;
+  font-size: 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  min-height: 350px;
+  padding: 160px 10px 45px 10px;
+  background: radial-gradient(circle at 50% 110%, #000000 0%, #1a1a1a 15%, #b3b3b3 45%, #6e6e6e 100%);
+  border-radius: 20px;
+}
+
+.talk-text {
+  text-align: center;
+  color: #fff;
+  font-weight: 400;
+  font-size: 24px;
+  text-align: center;
+  color: #fff;
+  max-width: 571px;
+}
+
+.talk-btn {
+  font-size: 24px;
+  border: 1px solid $deep-anthracite;
+  border-radius: 10px;
+  min-width: 170px;
+  min-height: 60px;
+  background-color: $indigo;
+  padding: 15px 38px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #866ebe;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}

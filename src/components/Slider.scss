@@ -1,0 +1,64 @@
+@use "../styles/variables.scss" as *;
+
+.slider {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 150px;
+  gap: 190px;
+
+  .slide {
+    width: 600px;
+    height: 700px;
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 90px;
+    justify-content: center;
+
+    .menu-item {
+      font-family: $font-inter;
+      text-align: left;
+      font-size: 36px;
+      cursor: pointer;
+      transition:
+        color 0.5s,
+        filter 0.2s;
+
+      &.active {
+        color: #333;
+      }
+
+      &:not(.active) {
+        filter: blur(2px);
+      }
+
+      &:hover {
+        color: #666;
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 125px;
+    min-width: 40px;
+
+    .dot {
+      display: flex;
+      flex-direction: column;
+      width: 24px;
+      height: 2px;
+      background: #ccc;
+      transition: all 0.3s;
+
+      &.active {
+        background: #000000;
+        width: 40px;
+      }
+    }
+  }
+}
