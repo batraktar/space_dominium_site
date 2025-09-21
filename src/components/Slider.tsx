@@ -1,7 +1,14 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import './Slider.scss'
 
-const slides = [
+interface Slide {
+  id: number
+  title: string
+  src: string
+  innerText: string
+}
+
+const slides: Slide[] = [
   {
     id: 1,
     title: 'UI/UX Design',
@@ -31,34 +38,66 @@ const slides = [
 export default function Slider() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null)
+  const rafRef = useRef<number | null>(null)
+  const prevIndexRef = useRef<number>(0)
 
   const goTo = (index: number) => {
-    if (index === activeIndex) return
+    if (index === activeIndex || rafRef.current) return
 
-    // поставити incoming — елемент отримає клас .incoming (з translateY(-220px))
+    const prevIndex = activeIndex
+    prevIndexRef.current = prevIndex
     setIncomingIndex(index)
 
-    // через короткий тік робимо його активним — це викличе перехід incoming -> slide--active
-    // timeout 20ms дає браузеру час "намалювати" початковий стан incoming
-    window.setTimeout(() => {
-      setActiveIndex(index)
-      setIncomingIndex(null)
-    }, 20)
+    const duration = 500 // ms
+    const start = performance.now()
+
+    const animate = (time: number) => {
+      const t = Math.min((time - start) / duration, 1)
+      const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t // easeInOutQuad
+
+      // оновлюємо CSS-перемінні для плавного стеку
+      document.documentElement.style.setProperty(
+        '--prev-stack',
+        `${prevIndex * 6 + ease * 20}px`
+      )
+      document.documentElement.style.setProperty(
+        '--next-stack',
+        `${index * 6 - ease * 20}px`
+      )
+
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(animate)
+      } else {
+        setActiveIndex(index)
+        setIncomingIndex(null)
+        rafRef.current = null
+        document.documentElement.style.removeProperty('--prev-stack')
+        document.documentElement.style.removeProperty('--next-stack')
+      }
+    }
+
+    rafRef.current = requestAnimationFrame(animate)
   }
 
   return (
     <div className="slider">
       <div className="slides" aria-hidden={false}>
         {slides.map((slide, i) => {
-          const stackOffset = i * 6 // px — відстань шарів у стеку (регулюй)
+          const stackOffset = i * 6
+          const isActive = i === activeIndex
+          const isIncoming = i === incomingIndex
+          const zIndex = isActive ? 2000 : isIncoming ? 1500 : 100
+
           const style: React.CSSProperties = {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ['--stack-y' as any]: `${stackOffset}px`,
+            zIndex,
           }
 
           const classes = [
             'slide',
-            i === activeIndex ? 'slide--active' : '',
-            i === incomingIndex ? 'incoming' : '',
+            isActive ? 'slide--active' : '',
+            isIncoming ? 'incoming' : '',
           ]
             .filter(Boolean)
             .join(' ')
@@ -68,7 +107,7 @@ export default function Slider() {
               key={slide.id}
               className={classes}
               style={style}
-              aria-hidden={i === activeIndex ? false : true}
+              aria-hidden={!isActive}
             >
               <div className="slide__body">
                 <h3 className="slide__title">{slide.title}</h3>
