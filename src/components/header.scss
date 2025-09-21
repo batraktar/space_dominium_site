@@ -5,6 +5,7 @@
   font-weight: 400;
   padding-top: 30px;
   color: $text-color;
+  margin-bottom: 110px;
 
   &__container--header {
     display: flex;
@@ -49,51 +50,7 @@
   &__logo-bottom {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
-    font-size: 48px;
-  }
-
-  &__nav {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .nav__list {
-    display: flex;
-    min-height: 60px;
-    align-content: flex-start;
-    padding: 20px 40px;
-    gap: 50px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 20px;
-    font-size: 1rem;
-  }
-
-  .nav__item {
-    position: relative;
-    cursor: pointer;
-    padding-left: 3px;
-
-    a {
-      text-decoration: none;
-      color: #000;
-    }
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 2px;
-      height: 0px;
-      background-color: #f05512;
-      transform: rotate(20deg);
-      transform-origin: top left;
-      transition: height 0.2s ease;
-    }
-
-    &.active::before {
-      height: 100%;
-    }
+    gap: 100px;
+    font-size: clamp(1rem, 1rem + 2vw, 3rem);
   }
 }
