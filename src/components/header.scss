@@ -15,12 +15,17 @@
     margin: 0 auto;
   }
 
+  &__btn-spacer {
+    min-height: $button-height;
+  }
+
   &__btn {
+    position: fixed;
     align-self: flex-end;
     font-size: 24px;
     border: 1px solid $deep-anthracite;
     border-radius: 10px;
-    min-width: 170px;
+    min-width: $button-height;
     min-height: 60px;
     background-color: $indigo;
     padding: 0 25px;
@@ -55,6 +60,8 @@
   }
   .nav__list {
     display: flex;
+    min-height: 60px;
+    align-content: flex-start;
     padding: 20px 40px;
     gap: 50px;
     background: rgba(0, 0, 0, 0.3);

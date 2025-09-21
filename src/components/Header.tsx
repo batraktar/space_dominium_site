@@ -22,6 +22,7 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header__container header__container--header">
+        <div className="header__btn-spacer  "></div>
         <button className="header__btn">Lets talk</button>
         <div className="header__body">
           <img src={SpaceLogo} className="header__logo" alt="Logo" />
