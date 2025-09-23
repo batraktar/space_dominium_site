@@ -2,6 +2,7 @@ import './main-section.scss'
 import Slider from './Slider'
 import Talk from './Talk'
 import Menu from './Menu'
+import ContactUs from './ContactUs'
 
 function Main() {
   return (
@@ -10,6 +11,7 @@ function Main() {
         <Menu />
         <Slider />
         <Talk />
+        <ContactUs />
       </div>
     </main>
   )
