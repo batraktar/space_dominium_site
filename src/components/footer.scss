@@ -1,1 +1,80 @@
 @use "../styles/variables.scss" as *;
+
+.footer_wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 90px;
+  padding-top: 65px;
+}
+
+.footer_left {
+  .footer_title {
+    h1 {
+      padding: 0;
+      font-size: 64px;
+      font-weight: 500;
+      font-family: $font-gilroy;
+      line-height: 100%;
+      padding-bottom: 55px;
+    }
+  }
+
+  .footer_button {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 48px;
+    font-weight: 400;
+    padding-bottom: 91px;
+    cursor: pointer;
+
+    button {
+      background: none;
+      border: none;
+      border-bottom: 2px solid #000;
+      font-family: $font-gilroy;
+      font-size: 48px;
+      font-weight: 400;
+      padding: 0;
+    }
+
+    img {
+      display: block;
+    }
+  }
+
+  .footer_menu {
+    display: flex;
+    justify-content: space-between;
+    font-family: $font-gilroy;
+
+    .footer_menu_content {
+      h2 {
+        font-size: 16px;
+        font-weight: 700;
+        padding: 0 0 20px 0;
+      }
+
+      p {
+        font-size: 14px;
+        font-weight: 400;
+        padding-bottom: 14px;
+
+        &:last-child {
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+
+.Antoshka {
+  p {
+    font-family: $font-gilroy;
+    padding-top: 107px;
+    padding-bottom: 65px;
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
