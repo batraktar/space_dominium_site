@@ -3,6 +3,7 @@ import Slider from './Slider'
 import Talk from './Talk'
 import Menu from './Menu'
 import ContactUs from './ContactUs'
+import FAQ from './Faq'
 
 function Main() {
   return (
@@ -11,6 +12,7 @@ function Main() {
         <Menu />
         <Slider />
         <Talk />
+        <FAQ />
         <ContactUs />
       </div>
     </main>
