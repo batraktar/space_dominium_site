@@ -1,5 +1,6 @@
 import './header.scss'
 import SpaceLogo from '../assets/SPACE.png'
+import HeaderDomMove from './HeaderDomMove'
 
 const Header: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const Header: React.FC = () => {
           </div>
         </div>
       </div>
+      <HeaderDomMove />
     </header>
   )
 }

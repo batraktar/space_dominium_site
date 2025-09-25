@@ -3,13 +3,13 @@
 .slider {
   display: flex;
   justify-content: space-evenly;
-  padding-top: 150px;
-  gap: 190px;
+  padding-top: clamp(80px, 10vw, 150px); // динамічний відступ
+  gap: clamp(50px, 10vw, 190px);
   position: relative;
 
   .slides {
-    width: 430px;
-    height: calc(430px / (430 / 640));
+    width: clamp(200px, 25vw, 430px);
+    aspect-ratio: 430 / 640;
     position: relative;
     overflow: visible;
   }
@@ -18,60 +18,60 @@
     position: absolute;
     left: 50%;
     top: 0;
-    width: 430px;
+    width: clamp(180px, 23vw, 400px);
     aspect-ratio: 430 / 640;
-    border-radius: 40px;
-    padding: 30px;
+    border-radius: clamp(20px, 2vw, 40px);
+    padding: clamp(16px, 2vw, 30px);
     color: #fff;
 
     background: rgb(244, 96, 73);
     background: radial-gradient(circle, rgb(237, 55, 112) 65%, rgb(229, 118, 153) 100%);
 
     transform-origin: center top;
-
     transform: translateX(-20%) rotate(20deg);
-    transition-property: transform, opacity, box-shadow, filter;
-    transition-duration: 500ms;
-    transition-timing-function: cubic-bezier(0.22, 0.9, 0.28, 1);
+    transition:
+      transform 0.5s cubic-bezier(0.22, 0.9, 0.28, 1),
+      opacity 0.5s cubic-bezier(0.22, 0.9, 0.28, 1),
+      box-shadow 0.5s cubic-bezier(0.22, 0.9, 0.28, 1),
+      filter 0.5s cubic-bezier(0.22, 0.9, 0.28, 1);
     will-change: transform, opacity;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 clamp(15px, 3vw, 30px) clamp(30px, 6vw, 60px) rgba(0, 0, 0, 0.18);
     display: flex;
 
     &__body {
       height: 100%;
       background-color: #000;
-      border-radius: 20px;
+      border-radius: clamp(10px, 1.5vw, 20px);
       width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 24px;
+      padding: clamp(12px, 1.5vw, 24px);
     }
 
     .slide__title {
       margin: 0;
-      font-size: 24px;
+      font-size: clamp(18px, 2vw, 24px);
       font-weight: 700;
       color: #fff;
     }
 
     .slide__innerText {
-      margin-top: 12px;
+      margin-top: clamp(8px, 1vw, 12px);
       color: rgba(255, 255, 255, 0.9);
-      font-size: 14px;
+      font-size: clamp(12px, 1vw, 14px);
     }
   }
 
   .slide.incoming {
     z-index: 1500;
-    transform: translateX(-50%) translateY(-200px) rotate(-2deg);
-    box-shadow: 0 50px 110px rgba(0, 0, 0, 0.32);
+    transform: translateX(-50%) translateY(-20%) rotate(-2deg);
+    box-shadow: 0 clamp(25px, 4vw, 50px) clamp(50px, 8vw, 110px) rgba(0, 0, 0, 0.32);
   }
 
   .slide--active {
-    background: #4968f4;
     background: radial-gradient(circle, rgba(73, 104, 244, 1) 65%, rgba(73, 235, 244, 1) 100%);
-    transform: translateX(-50%) translateY(0px) rotate(-2deg);
+    transform: translateX(-50%) translateY(0) rotate(-2deg);
     z-index: 2000 !important;
   }
 
@@ -83,7 +83,7 @@
   .menu {
     display: flex;
     flex-direction: column;
-    gap: 90px;
+    gap: clamp(40px, 10vw, 90px);
     justify-content: center;
     align-items: flex-start;
 
@@ -91,7 +91,7 @@
       font-family: $font-inter;
       flex-shrink: 1;
       text-align: left;
-      font-size: clamp(1rem, 1rem + 1vw, 36px);
+      font-size: clamp(16px, 2vw, 36px);
       cursor: pointer;
       transition:
         color 0.35s,
@@ -103,7 +103,7 @@
 
       &.active {
         color: #333;
-        transform: translateX(6px);
+        transform: translateX(clamp(2px, 0.5vw, 6px));
       }
 
       &:not(.active) {
@@ -120,18 +120,18 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 125px;
-    min-width: 40px;
+    gap: clamp(60px, 10vw, 125px);
+    min-width: clamp(20px, 5vw, 40px);
 
     .dot {
-      width: 24px;
-      height: 2px;
+      width: clamp(12px, 2vw, 24px);
+      height: clamp(1px, 0.2vw, 2px);
       background: #cccccc;
       transition: all 0.3s;
 
       &.active {
         background: #000000;
-        width: 40px;
+        width: clamp(20px, 4vw, 40px);
       }
     }
   }

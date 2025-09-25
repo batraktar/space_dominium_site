@@ -20,14 +20,14 @@
     min-height: $button-height;
   }
 
-  &__btn {
+  &__btn,
+  .nav__btn {
     position: fixed;
     align-self: flex-end;
     font-size: 24px;
     border: 1px solid $deep-anthracite;
     border-radius: 10px;
-    min-width: $button-height;
-    min-height: 60px;
+    min-height: $button-height;
     background-color: $indigo;
     padding: 0 25px;
     transition: all 0.3s ease;
@@ -52,5 +52,15 @@
     justify-content: space-between;
     gap: 100px;
     font-size: clamp(1rem, 1rem + 2vw, 3rem);
+  }
+}
+
+.header__btn-spacer {
+  display: block; /* на десктопі показуємо */
+}
+
+@media (max-width: 991.98px) {
+  .header__btn-spacer {
+    display: none; /* на мобільних ховаємо */
   }
 }

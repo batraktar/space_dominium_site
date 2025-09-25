@@ -1,3 +1,5 @@
+@use "../styles/variables.scss" as *;
+
 //global
 [class*="__container"] {
   max-width: 1660px;
@@ -14,22 +16,126 @@
   [class*="__container"] {
     max-width: 970px;
   }
+
+  .header {
+    margin-bottom: 90px;
+  }
+
+  .header__container--header {
+    gap: 35px;
+  }
+
+  .header__body {
+    gap: 40px;
+  }
+
+  .nav__list {
+    padding: 15px 35px;
+    gap: 20px 40px;
+  }
+
+  .slider {
+    padding-top: 120px;
+  }
+
+  .talk-container {
+    padding-top: 130px;
+  }
+
+  .talk-body {
+    padding: 140px 8px 40px 8px;
+  }
+
+  .talk-btn {
+    padding: 12px 35px;
+  }
 } //tablet
 @media (max-width: 991.98px) {
   [class*="__container"] {
     max-width: 750px;
   }
+
+  .header {
+    margin-bottom: 70px;
+  }
+
+  .nav__btn {
+    font-size: 18px;
+    padding: 0 25px;
+  }
+
+  .talk-container {
+    padding-top: 90px;
+  }
 }
 //mobile
 @media (max-width: 767.98px) {
   [class*="__container"] {
-    max-width: 450px;
+    max-width: 650px;
     /* max-width: none; */
+  }
+
+  .header {
+    margin-bottom: 60px;
+  }
+  .header__btn-spacer {
+    min-height: calc(#{$button-height} - 10px);
+  }
+
+  .header__btn {
+    font-size: 20px;
+    padding: 0 20px;
+    min-height: calc(#{$button-height} - 10px);
+  }
+
+  .slider {
+    padding-top: 100px;
+  }
+
+  .nav {
+    top: 20px;
+    gap: 15px;
+    justify-content: space-between;
+  }
+  .nav__list {
+    padding: 10px 30px;
+    gap: 15px 20px;
+  }
+
+  .nav__btn {
+    padding: 0 20px;
+    font-size: 16px;
+  }
+
+  .talk-container {
+    padding-top: 80px;
+  }
+
+  .talk-body {
+    padding: 100px 8px 10px 8px;
+  }
+
+  .talk-text {
+    font-size: 20px;
+  }
+
+  .talk-btn {
+    font-size: 20px;
+    padding: 10px 25px;
   }
 }
 //mobile small
 @media (max-width: 480px) {
   [class*="__container"] {
     max-width: none;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .nav__list {
+    padding: 15px 25px;
+    gap: 20px 40px;
   }
 }

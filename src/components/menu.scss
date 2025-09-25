@@ -9,14 +9,28 @@
   flex-wrap: wrap;
   justify-content: center;
   z-index: 50000;
+  gap: 20px;
 }
+
+.nav__btn {
+  font-size: 24px;
+  border: 1px solid $deep-anthracite;
+  border-radius: 10px;
+  min-height: $button-height;
+  background-color: $indigo;
+  padding: 0 25px;
+  transition: all 0.3s ease;
+}
+
 .nav__list {
   display: flex;
   min-height: 60px;
-  align-content: flex-start;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   padding: 20px 40px;
-  gap: 50px;
-  background: rgba(0, 0, 0, 0.3);
+  gap: 25px 50px;
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 20px;
   font-size: 1rem;
 }
