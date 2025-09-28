@@ -12,7 +12,7 @@ const [open, setOpen] = useState<number | null>(0);
   return (
     <div className="question">
       <div className="ques_wrapper">
-        <div className="content">
+        <div className="contents">
           <div className={`faq_item ${open === 0 ? "active" : ""}`}>
             <button
               className="faq_question"
@@ -60,7 +60,7 @@ const [open, setOpen] = useState<number | null>(0);
         </div>
 
         {/* Права колонка */}
-        <div className="content">
+        <div className="contents">
           <div className={`faq_item ${open === 3 ? "active" : ""}`}>
             <button
               className="faq_question"
