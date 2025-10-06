@@ -1,2 +1,0 @@
-export { PropertyDefaultWrapper } from "./PropertyDefaultWrapper";
- 

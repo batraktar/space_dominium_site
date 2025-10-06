@@ -1,0 +1,16 @@
+@use "../styles/variables.scss" as *;
+
+.faq_page {
+  margin-top: 89px;
+  font-family: $font-gilroy;
+  margin-bottom: 90px;
+}
+
+.faq_title {
+  h1 {
+    font-size: 64px;
+    font-weight: 400;
+    font-family: $font-gilroy;
+    margin: 40px 20px;
+  }
+}

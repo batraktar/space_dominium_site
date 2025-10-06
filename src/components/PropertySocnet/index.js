@@ -1,1 +1,0 @@
-export { PropertySocnet } from "./PropertySocnet";

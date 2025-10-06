@@ -1,0 +1,88 @@
+.line_wrapper {
+    margin-top: 14px;
+}
+
+.line-svg {
+    display: flex;
+    justify-content: center;
+}
+
+.line_icon_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 47px;
+    margin-top: 22.99px;
+}
+
+.box_line_icon {
+    background-color: #0F0F0F;
+    border: 1.19px solid #2D2D2D;
+    border-radius: 23.88px;
+    padding: 51px;
+}
+
+.solid {
+    fill: none;
+    stroke-width: 2;
+    opacity: 0;
+    transition: opacity .35s ease;
+    pointer-events: none;
+}
+
+.solid.enter {
+    opacity: 1;
+}
+
+.draw {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: dash .5s ease forwards;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.content-inner-fade {
+    display: flex;
+    align-items: center;
+    animation: fadeIn .26s ease both;
+    gap: 35px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(.98)
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+
+.box_line_icon {
+    background: #111;
+    border: 0;
+    border-radius: 20px;
+    padding: 48px;
+    cursor: pointer;
+    transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.line_icon.is-active .box_line_icon {
+    box-shadow: 0 0 0 3px #A88AED inset;
+    background: #1b1b1b;
+}
+
+.box_line_icon:hover {
+    transform: translateY(-15px);
+}
+
+.box_line_icon:focus-visible {
+    box-shadow: 0 0 0 3px #0A0A60;
+}

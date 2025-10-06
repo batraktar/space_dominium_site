@@ -1,0 +1,56 @@
+@use "../styles/variables.scss" as *;
+
+.header {
+  font-family: $font-inter;
+  font-weight: 400;
+  padding-top: 30px;
+  color: $text-color;
+  margin-bottom: 110px;
+
+  &__container--header {
+    display: flex;
+    gap: 70px;
+    flex-direction: column;
+    max-width: 1660px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  &__btn-spacer {
+    min-height: $button-height;
+  }
+
+  &__btn {
+    position: fixed;
+    align-self: flex-end;
+    font-size: 24px;
+    border: 1px solid $deep-anthracite;
+    border-radius: 10px;
+    min-width: $button-height;
+    min-height: 60px;
+    background-color: $indigo;
+    padding: 0 25px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #866ebe;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &__body {
+    display: flex;
+    gap: 80px;
+    flex-direction: column;
+  }
+
+  &__logo-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 100px;
+    font-size: clamp(1rem, 1rem + 2vw, 3rem);
+  }
+}

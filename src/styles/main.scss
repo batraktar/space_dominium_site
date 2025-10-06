@@ -1,0 +1,23 @@
+@use "./scss-reset" as *;
+@use "./variables" as *;
+@use "./mixins" as *;
+@use "./adaptive" as *;
+
+body {
+  background-color: $background-color;
+}
+
+.wrapper {
+  min-height: 100vh;
+  overflow: clip;
+  display: flex;
+  flex-direction: column;
+}
+
+.page {
+  flex-grow: 1;
+}
+
+.footer {
+  min-height: 800px;
+}

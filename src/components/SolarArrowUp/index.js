@@ -1,1 +1,0 @@
-export { SolarArrowUp } from "./SolarArrowUp";
