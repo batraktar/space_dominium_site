@@ -1,6 +1,12 @@
 @use "../styles/variables.scss" as *;
 
 .footer_wrapper {
+  --footer-title-color: #000;
+  --footer-button-text-color: #f3c7e9;
+  --footer-underline-color: #f3c7e9;
+  --footer-arrow-color: #f3c7e9;
+  --footer-arrow-circle-color: #f3c7e9;
+
   display: flex;
   justify-content: space-between;
   margin-top: 90px;
@@ -10,12 +16,12 @@
 .footer_left {
   .footer_title {
     h1 {
-      padding: 0;
+      padding: 0 0 55px 0;
       font-size: 64px;
       font-weight: 500;
       font-family: $font-gilroy;
       line-height: 100%;
-      padding-bottom: 55px;
+      color: var(--footer-title-color);
     }
   }
 
@@ -31,15 +37,19 @@
     button {
       background: none;
       border: none;
-      border-bottom: 2px solid #000;
+      padding: 0;
       font-family: $font-gilroy;
       font-size: 48px;
       font-weight: 400;
-      padding: 0;
+      color: var(--footer-button-text-color);
+      border-bottom: 3px solid var(--footer-underline-color);
+      line-height: 1;
     }
 
-    img {
+    .footer_arrow {
       display: block;
+      flex: 0 0 auto;
+      color: var(--footer-arrow-color);
     }
   }
 
@@ -67,7 +77,6 @@
     }
   }
 }
-
 
 .Antoshka {
   p {

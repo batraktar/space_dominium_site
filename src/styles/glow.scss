@@ -1,0 +1,21 @@
+@use "./variables.scss" as *;
+
+@mixin soft-glow {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(55% 65% at 30% 20%, rgba(248, 224, 255, 0.55), rgba(248, 224, 255, 0) 60%),
+      radial-gradient(70% 80% at 70% 50%, rgba(174, 196, 255, 0.45), rgba(174, 196, 255, 0) 65%),
+      radial-gradient(50% 50% at 50% 100%, rgba(255, 230, 194, 0.45), rgba(255, 230, 194, 0) 70%);
+    filter: blur(45px);
+    opacity: 0.9;
+  }
+}

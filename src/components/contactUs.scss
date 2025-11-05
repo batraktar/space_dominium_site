@@ -5,6 +5,10 @@
 }
 
 .contact-wrapper {
+  --contact-form-bg: rgba(168, 138, 237, 0.15);
+  --contact-input-border: #A88AED;
+  --contact-button-bg: #A88AED;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
@@ -32,9 +36,8 @@
 
 .contact_block-second {
   .contact_form {
-    background-color: #1C212133;
+    background: var(--contact-form-bg); 
     padding: 40px 30px;
-    border: 1px solid #2D3233;
     border-radius: 10px;
     width: 100%;
     margin-bottom: 30px;
@@ -63,7 +66,7 @@ input,
 textarea {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #2D3233;
+  border: 1px solid var(--contact-input-border);
   font-family: $font-gilroy;
   border-radius: 10px;
   font-size: 24px;
@@ -73,7 +76,6 @@ textarea {
 }
 
 .des_button {
-    
   textarea {
     min-height: 120px;
     resize: vertical;
@@ -84,7 +86,7 @@ textarea {
     border: none;
     font-size: 24px;
     font-weight: 400 !important;
-    background: #A88AED;
+    background: var(--contact-button-bg);
     color: #000;
     margin-top: 50px;
     padding: 15px 28px;
@@ -93,22 +95,3 @@ textarea {
     cursor: pointer;
   }
 }
-
-// @media (max-width: 768px) {
-//   .contact-wrapper {
-//     grid-template-columns: 1fr;
-//     gap: 32px;
-//   }
-
-//   .form_content {
-//     grid-template-columns: 1fr;
-//   }
-
-//   .des_button {
-//     grid-template-columns: 1fr;
-
-//     button {
-//       justify-self: end;
-//     }
-//   }
-// }

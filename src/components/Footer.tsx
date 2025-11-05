@@ -2,45 +2,110 @@ import React from "react";
 import "./Footer.scss";
 import ModelViewer from "../Animation/ModelViewer";
 
-const Footer: React.FC = () => {
+type FooterProps = {
+  title?: React.ReactNode;
+  buttonLabel?: string;
+  titleColor?: string;
+  btnTextColor?: string;
+  underlineColor?: string;
+  arrowColor?: string;
+  arrowCircleColor?: string;
+};
+
+const Footer: React.FC<FooterProps> = ({
+  title = <>Створимо візуал<br/>який запамʼятовується</>,
+  buttonLabel = "почати співпрацю",
+  titleColor,
+  btnTextColor,
+  underlineColor,
+  arrowColor,
+  arrowCircleColor,
+}) => {
+  const cssVars: React.CSSProperties = {
+    ...(titleColor && { ["--footer-title-color" as any]: titleColor }),
+    ...(btnTextColor && { ["--footer-button-text-color" as any]: btnTextColor }),
+    ...(underlineColor && { ["--footer-underline-color" as any]: underlineColor }),
+    ...(arrowColor && { ["--footer-arrow-color" as any]: arrowColor }),
+    ...(arrowCircleColor && { ["--footer-arrow-circle-color" as any]: arrowCircleColor }),
+  };
+
   return (
     <footer>
       <div className="footer__container">
-        <div className="footer_wrapper">
+        <div className="footer_wrapper" style={cssVars}>
           <div className="footer_left">
             <div className="footer_title">
-              <h1>Ready to<br/>push beyond limits?</h1>
+              <h1>{title}</h1>
             </div>
 
             <div className="footer_button">
-              <button type="button" aria-label="Contact us">Contact us</button>
-              <img src="src/assets/ei_arrow-up.svg" alt="Arrow up" />
+              <button type="button" aria-label="Contact us">
+                {buttonLabel}
+              </button>
+
+              <svg
+                className="footer_arrow"
+                width="44"
+                height="44"
+                viewBox="0 0 44 44"
+                fill="none"
+                aria-hidden="true"
+              >
+                <circle
+                  cx="22"
+                  cy="22"
+                  r="20.5"
+                  stroke="var(--footer-arrow-circle-color, currentColor)"
+                  strokeWidth="3"
+                />
+                <path
+                  d="M20 14L28 22L20 30"
+                  stroke="var(--footer-arrow-color, currentColor)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
 
             <div className="footer_menu">
               <div className="footer_menu_content">
-                <h2>Services</h2>
-                <p>AI and Data Annotation</p>
-                <p>Digital Production</p>
-                <p>Custom IT solution</p>
+                <h2>Послуги</h2>
+                <p>IT-рішення / Веб-розробка</p>
+                <p>Графічний Дизайн</p>
+                <p>SMM</p>
               </div>
 
               <div className="footer_menu_content">
-                <h2>Sectors</h2>
-                <p>Fintech</p>
-                <p>E-grocery</p>
-                <p>Manufacturing</p>
-                <p>Logistics</p>
-                <p>eCommerce</p>
+                <h2>Компанія</h2>
+                <p>Про нас</p>
+                <p>Наша місія</p>
+                <p>Команда</p>
+                <p>Досягнення</p>
+                <p>Вакансії</p>
               </div>
 
               <div className="footer_menu_content">
-                <h2>Company</h2>
-                <p>About us</p>
-                <p>Our missions</p>
-                <p>Team</p>
-                <p>Achievements</p>
-                <p>Careers</p>
+                <h2>Контакти</h2>
+                <p>
+                  <a href="mailto:hello@space.dominium">
+                    Email: hello@space.dominium.com.ua
+                  </a>
+                </p>
+                <p>
+                  <a href="tel:+380XXXXXXXXX">
+                    Телефон: +380XXXXXXXXX
+                  </a>
+                </p>
+                <p>
+                  <a
+                    href="https://maps.google.com/?q=м.+Хуст,+Україна"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Адреса: м. Хуст, Україна
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -53,8 +118,9 @@ const Footer: React.FC = () => {
             />
           </div>
         </div>
+
         <div className="Antoshka">
-          <p>Website made by Antoshka</p>
+          <p>Website made by Pylypiuk</p>
         </div>
       </div>
     </footer>

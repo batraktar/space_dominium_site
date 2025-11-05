@@ -6,43 +6,45 @@
 
 .talk-body {
   display: flex;
+  padding: 79px 506px 46px 507px;
   flex-direction: column;
-  font-family: $font-inter;
-  font-size: 24px;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  gap: 60px;
-  min-height: 350px;
-  padding: 160px 10px 45px 10px;
-  background: radial-gradient(circle at 50% 110%, #000000 0%, #1a1a1a 15%, #b3b3b3 45%, #6e6e6e 100%);
+  gap: 86px;
   border-radius: 20px;
+  overflow: hidden;
+
+  background: var(--talk-bg, conic-gradient(
+    from -9deg at 48.46% 74%,
+    #B5CAFF 39.6deg,
+    #A88AED 122.9047deg,
+    #0A0A60 219.8342deg,
+    #B5CAFF 360deg,
+  ));
 }
 
 .talk-text {
+  color: var(--talk-text-color, #000);
   text-align: center;
-  color: #fff;
+  font-family: $font-gilroy;
+  font-size: 30px;
+  font-style: normal;
   font-weight: 400;
-  font-size: 24px;
-  text-align: center;
-  color: #fff;
-  max-width: 571px;
+  line-height: normal;
 }
 
 .talk-btn {
-  font-size: 24px;
-  border: 1px solid $deep-anthracite;
+  font-family: $font-gilroy;
+  font-size: var(--talk-btn-size, 24px);
+  color: var(--talk-btn-color, #000);
   border-radius: 10px;
+  font-style: normal;
+  font-weight: 400;
   min-width: 170px;
-  min-height: 60px;
-  background-color: $indigo;
-  padding: 15px 38px;
-  transition: all 0.3s ease;
+  min-height: 67px;
+  background-color: var(--talk-btn-bg, $sky-blue);
+  padding: 19px 36px 19px 37px;
+  transition: all .3s ease;
 
-  &:hover {
-    background-color: #866ebe;
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
+  &:active { transform: scale(.98); }
 }

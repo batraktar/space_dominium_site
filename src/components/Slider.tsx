@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import './Slider.scss'
-import cardWeb from '../assets/img/cards-main/Design_Cards_Space Dominium_Монтажна область 1.svg'
-import cardBrand from '../assets/img/cards-main/Design_Cards_Space Dominium-02.png'
-import cardContent from '../assets/img/cards-main/Design_Cards_Space Dominium-03.png'
+import cardWeb from '../assets/img/cards-main/WD.svg'
+import cardBrand from '../assets/img/cards-main/BD_pearl.svg'
+import cardContent from '../assets/img/cards-main/CS.svg'
 
 interface Slide {
   id: number
