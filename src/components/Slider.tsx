@@ -1,5 +1,9 @@
 import { useState, useRef } from 'react'
+import type { CSSProperties } from 'react'
 import './Slider.scss'
+import cardWeb from '../assets/img/cards-main/Design_Cards_Space Dominium_Монтажна область 1.svg'
+import cardBrand from '../assets/img/cards-main/Design_Cards_Space Dominium-02.png'
+import cardContent from '../assets/img/cards-main/Design_Cards_Space Dominium-03.png'
 
 interface Slide {
   id: number
@@ -11,27 +15,24 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    title: 'UI/UX Design',
-    src: 'public/card-template.png',
-    innerText: '',
+    title: 'Веб-розробка',
+    src: cardWeb,
+    innerText:
+      'Створюємо адаптивні сайти та веб-застосунки, що працюють швидко й виглядають сучасно.',
   },
   {
     id: 2,
-    title: 'App and Web Development',
-    src: 'public/card-template.png',
-    innerText: '',
+    title: 'Бренд-дизайн',
+    src: cardBrand,
+    innerText:
+      'Айдентика, що запам’ятовується: від логотипу до презентацій та упаковки.',
   },
   {
     id: 3,
-    title: 'Brand Design',
-    src: 'public/card-template.png',
-    innerText: '',
-  },
-  {
-    id: 4,
-    title: 'Content Strategy',
-    src: 'public/card-template.png',
-    innerText: '',
+    title: 'Контент-стратегія',
+    src: cardContent,
+    innerText:
+      'Контент-плани, копірайт та продакшн, які підживлюють ваші продажі й ком’юніті.',
   },
 ]
 
@@ -77,13 +78,14 @@ export default function Slider() {
   }
 
   return (
-    <div className="slider">
-      <div className="slides">
+    <section className="slider-wrapper">
+      <div className="slider">
+        <div className="slides">
         {slides.map((slide, i) => {
           const isActive = i === activeIndex
           const isIncoming = i === incomingIndex
 
-          const style: React.CSSProperties = {
+          const style: CSSProperties = {
             ['--stack-y' as string]: `${i * 6}px`,
             zIndex: isActive ? 2000 : isIncoming ? 1500 : 100,
           }
@@ -98,6 +100,9 @@ export default function Slider() {
 
           return (
             <div key={slide.id} className={classes} style={style}>
+              <div className="slide__picture">
+                <img src={slide.src} alt={slide.title} />
+              </div>
               <div className="slide__body">
                 <h3 className="slide__title">{slide.title}</h3>
                 <p className="slide__innerText">{slide.innerText}</p>
@@ -107,7 +112,7 @@ export default function Slider() {
         })}
       </div>
 
-      <div className="pagination">
+        <div className="pagination">
         {slides.map((_, i) => (
           <span
             key={i}
@@ -117,7 +122,7 @@ export default function Slider() {
         ))}
       </div>
 
-      <div className="menu">
+        <div className="menu">
         {slides.map((slide, i) => (
           <button
             key={slide.id}
@@ -127,7 +132,8 @@ export default function Slider() {
             {slide.title}
           </button>
         ))}
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
