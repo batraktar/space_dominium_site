@@ -1,0 +1,147 @@
+@use "../styles/variables" as *;
+
+.process {
+  position: relative;
+  padding: 100px 0;
+  background-color: #fff; // Or transparent if on white bg
+  overflow: hidden;
+
+  &__blur {
+    position: absolute;
+    bottom: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(209, 218, 118, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+    filter: blur(60px);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  &__container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__left {
+    flex: 0 0 300px;
+    position: sticky;
+    top: 100px;
+  }
+
+  &__btn {
+    padding: 12px 32px;
+    border: 1px solid #FFCDC3; // Pinkish border from SMM theme
+    border-radius: 50px;
+    background: #fff;
+    color: #000;
+    font-family: $font-inter;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: default;
+  }
+
+  &__timeline {
+    flex: 1;
+    position: relative;
+    padding-left: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+
+  &__line {
+    position: absolute;
+    left: 29px; // Center of the node (node width 20px + border? No, let's align carefully)
+    // Node is 20px. Center is 10px.
+    // If padding-left is 60px, let's place line relative to that.
+    // Actually, let's make the line absolute to the timeline container.
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    border-left: 2px dashed #FFCDC3; // Dashed line
+    z-index: 0;
+  }
+
+  &__step {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+  }
+
+  &__node {
+    flex: 0 0 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #FFCDC3;
+    background-color: #fff;
+    position: relative;
+    z-index: 1;
+    margin-top: 6px; // Align with text top
+    margin-left: 20px; // Adjust to align with dashed line
+    // If line is at left: 29px.
+    // Node center should be at 29px + 1px (border width).
+    // Let's adjust layout:
+    // We can put the node inside the padding area.
+  }
+  
+  // Re-adjusting alignment
+  &__timeline {
+    padding-left: 0;
+  }
+  
+  &__line {
+    left: 9px; // Center of 20px node is 10px. Border 2px.
+  }
+  
+  &__step {
+    padding-left: 40px; // Space for line
+  }
+  
+  &__node {
+    position: absolute;
+    left: 0;
+    margin-left: 0;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__title {
+    font-family: $font-gilroy;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+  }
+
+  &__desc {
+    font-family: $font-inter;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0;
+    max-width: 500px;
+  }
+
+  @media (max-width: 768px) {
+    &__container {
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    &__left {
+      position: static;
+      flex: auto;
+    }
+  }
+}

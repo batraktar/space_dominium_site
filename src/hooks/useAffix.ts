@@ -21,15 +21,11 @@ export function useAffix({ triggerEl, barEl, top = 0, bottomGap = 20 }: Options)
     ro.observe(triggerEl);
     ro.observe(barEl);
 
-    function getAbsTop(el: HTMLElement) {
-      const r = el.getBoundingClientRect();
-      return r.top + window.scrollY;
-    }
-
     function onScroll() {
-      const headerTop = triggerEl.offsetTop;
-      const headerBottom = headerTop + triggerEl.offsetHeight;
-      const threshold = headerBottom - (barEl.offsetHeight + bottomGap + top);
+      const triggerRect = triggerEl!.getBoundingClientRect();
+      const triggerTop = triggerRect.top + window.scrollY;
+      const triggerBottom = triggerTop + triggerRect.height;
+      const threshold = triggerBottom - (barEl!.offsetHeight + bottomGap + top);
       setAffixed(window.scrollY >= threshold);
     }
 

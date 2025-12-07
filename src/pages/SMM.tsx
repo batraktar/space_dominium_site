@@ -6,9 +6,14 @@ import Talk from '../components/Talk'
 
 
 
+import SmmTools from '../components/SmmTools'
+import SmmChoosePlan from '../components/SmmChoosePlan'
+
+import styles from './smm.module.scss'
+
 function SMM() {
   return (
-    <div className="wrapper">
+    <div className={styles.smm}>
       <LogoMenu />
       <Talk
         text="Ваш бренд заслуговує на більше, ніж 10 лайків від друзів! Поговоримо про те, як зробити ваші соцмережі живими."
@@ -25,6 +30,8 @@ function SMM() {
             #D3DB76 358.3087491989136deg
         )`}
         />
+        <SmmTools />
+        <SmmChoosePlan />
         <Question
           sheetUrl="https://docs.google.com/spreadsheets/d/e/2PACX-1vQe_2b7SqCf4At0pw-SvLPavigCx3XqY2Ht1ikJjFvlxni3jV0PynxifiiABhhjK-t3Nn205SQMXXzM/pub?gid=1942219183&single=true&output=csv"
           plusColor="#FFCDC3"
@@ -35,7 +42,6 @@ function SMM() {
           inputBorder="#FFCDC3"
           buttonBg="#FFCDC3"
         />
-
         <Footer
           title={<>Давай створимо контент, <br/>
           який не соромно показати</>}

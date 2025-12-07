@@ -1,0 +1,83 @@
+@use "../styles/variables" as *;
+
+.quote {
+  position: relative;
+  background-color: $indigo;
+  // padding moved to dots_wrapper
+  
+  &__dots_wrapper {
+    padding-bottom: 100px;
+  }
+  
+  &__separator_top {
+    position: absolute;
+    top: -99px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    z-index: 5;
+    
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  }
+
+  &__container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+  }
+
+  &__content {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  &__text {
+    font-family: $font-inter;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    color: #fff;
+  }
+
+  &__author {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #fff;
+  }
+
+  &__name {
+    font-family: $font-gilroy;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__role {
+    font-family: $font-inter;
+    font-size: 12px;
+    opacity: 0.7;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    padding-bottom: 60px;
+
+    &__separator_top {
+      height: 50px;
+      top: -49px;
+    }
+
+    &__text {
+      font-size: 16px;
+    }
+  }
+}

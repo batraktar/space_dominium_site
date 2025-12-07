@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./header.scss";
+import styles from "./header.module.scss";
 import videoMp4 from "../assets/video/laptop_people_1920x780.mp4";
 import videoWebm from "../assets/video/output_1920x780.webm";
 import ContactButton from "./ui/ContactButton/ContactButton";
@@ -23,9 +23,9 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="header" ref={setHeaderEl}>
+      <header className={styles.header} ref={setHeaderEl}>
         <video
-          className="header__video"
+          className={styles.header__video}
           autoPlay
           muted
           loop
@@ -38,13 +38,13 @@ const Header: React.FC = () => {
 
         <div
           ref={setBarEl}
-          className={`header__bar ${affixed ? "header__bar--fixed" : ""}`}
+          className={`${styles.header__bar} ${affixed ? styles['header__bar--fixed'] : ""}`}
         >
           <div className="header__center">
             <LogoMenu />
           </div>
 
-          <div className="header__right">
+          <div className={styles.header__right}>
             <ContactButton
               show={true}
               text="Зв’язатись ♡"

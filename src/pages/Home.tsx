@@ -2,7 +2,7 @@ import Header from '../components/Header'
 
 import Slider from '../components/Slider'
 import Talk from '../components/Talk'
-import Animation from '../components/animation/Animation.jsx'
+import Animation from '../components/animation/Animation'
 import Question from '../components/Question'
 import ContactUs from '../components/ContactUs'
 import Footer from '../components/Footer'

@@ -1,4 +1,5 @@
 import { useEffect, useState, type FC, type CSSProperties } from "react";
+import Papa from "papaparse";
 import "./question.scss";
 
 type FaqItem = { question: string; answer: string };
@@ -7,40 +8,6 @@ type Props = {
   sheetUrl: string;
   plusColor?: string;
   titleColor?: string;
-};
-
-const parseCsv = (csv: string): FaqItem[] => {
-  const rows: string[][] = [];
-  let curRow: string[] = [];
-  let cur = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < csv.length; i++) {
-    const ch = csv[i];
-    if (ch === '"') {
-      if (inQuotes && csv[i + 1] === '"') { cur += '"'; i++; }
-      else { inQuotes = !inQuotes; }
-    } else if (ch === "," && !inQuotes) {
-      curRow.push(cur.trim()); cur = "";
-    } else if ((ch === "\n" || ch === "\r") && !inQuotes) {
-      if (ch === "\r" && csv[i + 1] === "\n") i++;
-      curRow.push(cur.trim());
-      rows.push(curRow);
-      curRow = [];
-      cur = "";
-    } else {
-      cur += ch;
-    }
-  }
-  if (cur.length > 0 || curRow.length > 0) {
-    curRow.push(cur.trim());
-    rows.push(curRow);
-  }
-  if (!rows.length) return [];
-  const [, ...data] = rows;
-  return data
-    .map(r => ({ question: r[0] ?? "", answer: r[1] ?? "" }))
-    .filter(x => x.question && x.answer);
 };
 
 const Question: FC<Props> = ({ sheetUrl, plusColor = "#0A0A60", titleColor = "#0A0A60" }) => {
@@ -57,7 +24,25 @@ const Question: FC<Props> = ({ sheetUrl, plusColor = "#0A0A60", titleColor = "#0
         const res = await fetch(sheetUrl, { signal: controller.signal });
         if (!res.ok) throw new Error(`Failed to load FAQ (${res.status})`);
         const text = await res.text();
-        setItems(parseCsv(text));
+        
+        const result = Papa.parse<string[]>(text, { 
+          header: false, 
+          skipEmptyLines: true 
+        });
+        
+        const rows = result.data;
+        if (rows.length > 1) {
+          // Skip header row
+          const [, ...data] = rows;
+          setItems(
+            data
+              .map(r => ({ question: r[0] ?? "", answer: r[1] ?? "" }))
+              .filter(x => x.question && x.answer)
+          );
+        } else {
+          setItems([]);
+        }
+
       } catch (e: any) {
         if (e?.name !== "AbortError") setErr(e?.message ?? "Unknown error");
       } finally {
