@@ -1,0 +1,95 @@
+.dots-bg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  // спільні змінні
+  --bg: #0b0b0b; // підміняється з пропса, якщо треба
+  --dot: rgba(255, 255, 255, 0.5);
+
+  // === БАЗА: макет 1920 (оригінал) ===
+  // Фігма: діаметр 18; точки: (24,22), (-4,80), (52,80), (24,138)
+  --dot-size: 18px;
+  --r: calc(var(--dot-size) / 2);
+  --step-x: 56px; // 24 - (-4) = 28  => stepX = 28*2
+  --step-y: 116px; // 80 - 22 = 58   => stepY = 58*2
+  --off-x: calc(24px - var(--r)); // щоб перша була рівно в (24,22)
+  --off-y: calc(22px - var(--r));
+
+  .dots-bg__layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .dots-bg__content {
+    position: relative;
+    z-index: 1;
+    flex-grow: 1;
+    display: flex; // To allow children to fill if needed, or just block
+    flex-direction: column;
+  }
+}
+
+/* === ≤1440 і ≥1025 ===
+   Фігма (14px): (18,17), (-3,61), (39,61), (18,104)
+   Δx між сусідами = 21 => stepX=42
+   Δy = ~44          => stepY=88
+*/
+@media (max-width: 1440px) and (min-width: 1025px) {
+  .dots-bg {
+    --dot-size: 14px;
+    --r: calc(var(--dot-size) / 2);
+    --step-x: 42px;
+    --step-y: 88px;
+    --off-x: calc(18px - var(--r));
+    --off-y: calc(17px - var(--r));
+  }
+}
+
+/* === ≤1024 і ≥769 ===
+   Фігма (10px): (13,12), (-2,43), (28,43), (13,74)
+   Δx = 15 => stepX=30
+   Δy = 31 => stepY=62
+*/
+@media (max-width: 1024px) and (min-width: 769px) {
+  .dots-bg {
+    --dot-size: 10px;
+    --r: calc(var(--dot-size) / 2);
+    --step-x: 30px;
+    --step-y: 62px;
+    --off-x: calc(13px - var(--r));
+    --off-y: calc(12px - var(--r));
+  }
+}
+
+/* === ≤768 і ≥376 ===
+   Фігма (7px): (9,9), (-2,32), (20,32), (9,55)
+   Δx = 11 => stepX=22
+   Δy = 23 => stepY=46
+*/
+@media (max-width: 768px) and (min-width: 376px) {
+  .dots-bg {
+    --dot-size: 7px;
+    --r: calc(var(--dot-size) / 2);
+    --step-x: 22px;
+    --step-y: 46px;
+    --off-x: calc(9px - var(--r));
+    --off-y: calc(9px - var(--r));
+  }
+}
+
+/* === ≤375 ===
+   Фігма (3px): (4,4), (-1,15), (10,15), (4,27)
+   Δx = 5  => stepX=10
+   Δy ≈ 11 => stepY=22
+*/
+@media (max-width: 375px) {
+  .dots-bg {
+    --dot-size: 3px;
+    --r: calc(var(--dot-size) / 2);
+    --step-x: 10px;
+    --step-y: 22px;
+    --off-x: calc(4px - var(--r));
+    --off-y: calc(4px - var(--r));
+  }
+}

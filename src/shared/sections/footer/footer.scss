@@ -1,0 +1,89 @@
+@use '../../../styles/variables.scss' as *;
+
+.footer_wrapper {
+  --footer-title-color: #000;
+  --footer-button-text-color: #f3c7e9;
+  --footer-underline-color: #f3c7e9;
+  --footer-arrow-color: #f3c7e9;
+  --footer-arrow-circle-color: #f3c7e9;
+
+  display: flex;
+  justify-content: space-between;
+  margin-top: 90px;
+  padding-top: 65px;
+}
+
+.footer_left {
+  .footer_title {
+    h1 {
+      padding: 0 0 55px 0;
+      font-size: 64px;
+      font-weight: 500;
+      font-family: $font-gilroy;
+      line-height: 100%;
+      color: var(--footer-title-color);
+    }
+  }
+
+  .footer_button {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 48px;
+    font-weight: 400;
+    padding-bottom: 91px;
+    cursor: pointer;
+
+    button {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: $font-gilroy;
+      font-size: 48px;
+      font-weight: 400;
+      color: var(--footer-button-text-color);
+      border-bottom: 3px solid var(--footer-underline-color);
+      line-height: 1;
+    }
+
+    .footer_arrow {
+      display: block;
+      flex: 0 0 auto;
+      color: var(--footer-arrow-color);
+    }
+  }
+
+  .footer_menu {
+    display: flex;
+    justify-content: space-between;
+    font-family: $font-gilroy;
+
+    .footer_menu_content {
+      h2 {
+        font-size: 16px;
+        font-weight: 700;
+        padding: 0 0 20px 0;
+      }
+
+      p {
+        font-size: 14px;
+        font-weight: 400;
+        padding-bottom: 14px;
+
+        &:last-child {
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+.Antoshka {
+  p {
+    font-family: $font-gilroy;
+    padding-top: 107px;
+    padding-bottom: 65px;
+    font-size: 14px;
+    font-weight: 400;
+  }
+}

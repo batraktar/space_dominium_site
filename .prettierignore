@@ -1,0 +1,8 @@
+node_modules
+dist
+storybook-static
+src/assets
+public
+.DS_Store
+package-lock.json
+

@@ -1,0 +1,155 @@
+@use '../../styles/variables' as *;
+
+.hero {
+  position: relative;
+  min-height: max(100vh, calc(var(--hero-top-height) + var(--hero-dots-height)));
+  display: flex;
+  flex-direction: column;
+  background-color: $indigo;
+  overflow: visible;
+  z-index: 2;
+  --hero-top-height: 320px;
+  --hero-dots-height: 1200px;
+  --v-sep-height: 300px;
+}
+
+.heroTop {
+  display: flex;
+  align-items: center;
+  min-height: var(--hero-top-height);
+}
+
+.heroTopInner {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 72px) clamp(24px, 8vw, 140px) clamp(24px, 6vw, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(24px, 6vw, 80px);
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.heroTitle {
+  font-family: $font-gilroy;
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.heroCta {
+  font-family: $font-gilroy;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 500;
+  color: $pearl;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.heroCtaIcon {
+  width: auto;
+  height: clamp(14px, 2vw, 18px);
+  display: block;
+}
+
+.heroMark {
+  position: relative;
+  width: clamp(260px, 34vw, 560px);
+  height: clamp(140px, 22vw, 300px);
+  flex-shrink: 0;
+}
+
+.heroTriangle {
+  position: absolute;
+  width: 58%;
+  left: 0;
+  top: 0;
+}
+
+.heroLogo {
+  position: absolute;
+  width: 72%;
+  right: 0;
+  bottom: 0;
+}
+
+.heroDots {
+  position: relative;
+  width: 100%;
+  min-height: var(--hero-dots-height);
+  flex: 1 0 auto;
+}
+
+.heroSeparator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * var(--v-sep-height));
+  height: var(--v-sep-height);
+  color: $indigo;
+  z-index: 1;
+  pointer-events: none;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  path {
+    fill: currentColor;
+  }
+}
+
+@media (max-width: 1440px) {
+  .hero {
+    --hero-dots-height: 940px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .heroTopInner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .heroMark {
+    align-self: flex-end;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .hero {
+    --v-sep-height: 170px;
+    --hero-top-height: 260px;
+    --hero-dots-height: 520px;
+  }
+
+  .heroTopInner {
+    padding: 32px 24px 24px;
+  }
+
+  .heroTitle {
+    font-size: clamp(40px, 12vw, 64px);
+  }
+
+  .heroMark {
+    width: clamp(220px, 70vw, 320px);
+    height: clamp(120px, 38vw, 200px);
+  }
+}
+
+@media (max-width: 375px) {
+  .hero {
+    --hero-dots-height: 280px;
+  }
+}

@@ -1,0 +1,206 @@
+@use '../../../styles/variables.scss' as *;
+@use '../../../styles/glow.scss' as glow;
+
+.slider-wrapper {
+  @include glow.soft-glow;
+  background-color: rgba($hero-badge, 0.8);
+  border-radius: 40px;
+  margin: clamp(2rem, 6vw, 6rem);
+  padding: clamp(3rem, 5vw, 5rem) clamp(2rem, 5vw, 4.5rem);
+}
+
+.slider {
+  display: flex;
+  justify-content: space-evenly;
+  padding-top: clamp(2rem, 4vw, 5rem);
+  gap: 190px;
+  position: relative;
+
+  .slides {
+    width: clamp(220px, 24vw, 360px);
+    aspect-ratio: 3 / 4;
+    position: relative;
+    overflow: visible;
+  }
+
+  .slide {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 28px;
+    color: #fff;
+    overflow: hidden;
+    transform-origin: center top;
+
+    transform: translateX(-20%) rotate(20deg);
+    transition-property: transform, opacity, box-shadow, filter;
+    transition-duration: 500ms;
+    transition-timing-function: cubic-bezier(0.22, 0.9, 0.28, 1);
+    will-change: transform, opacity;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
+    background: rgba(13, 21, 32, 0.85);
+
+    &__picture {
+      position: relative;
+      width: 100%;
+      flex: 1 1 auto;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+
+    &__body {
+      padding: 24px 28px 32px;
+      background: linear-gradient(
+        180deg,
+        rgba(18, 18, 34, 0.2) 0%,
+        rgba(18, 18, 34, 0.85) 60%,
+        rgba(10, 10, 15, 0.95) 100%
+      );
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .slide__title {
+      margin: 0 0 6px;
+      font-size: clamp(1.1rem, 1rem + 0.5vw, 1.55rem);
+      font-weight: 600;
+      color: #f9f9f9;
+    }
+
+    .slide__innerText {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: clamp(0.85rem, 0.75rem + 0.3vw, 1rem);
+      line-height: 1.4;
+    }
+  }
+
+  .slide.incoming {
+    z-index: 1500;
+    transform: translateX(-50%) translateY(-200px) rotate(-2deg);
+    box-shadow: 0 50px 110px rgba(0, 0, 0, 0.32);
+  }
+
+  .slide--active {
+    transform: translateX(-50%) translateY(0px) rotate(-2deg);
+    z-index: 2000 !important;
+    box-shadow: 0 60px 120px rgba(18, 20, 40, 0.35);
+  }
+
+  .slide:not(.slide--active):not(.incoming) {
+    z-index: 100;
+    filter: blur(5px);
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 90px;
+    justify-content: center;
+    align-items: flex-start;
+
+    .menu-item {
+      font-family: $font-gilroy;
+      flex-shrink: 1;
+      text-align: left;
+      font-size: clamp(1rem, 1rem + 1vw, 36px);
+      cursor: pointer;
+      transition:
+        color 0.35s,
+        filter 0.2s,
+        transform 0.2s;
+      background: none;
+      border: none;
+      padding: 0;
+
+      &.active {
+        color: #333;
+        transform: translateX(6px);
+      }
+
+      &:not(.active) {
+        filter: blur(2px);
+      }
+
+      &:hover {
+        color: #666;
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 125px;
+    min-width: 40px;
+
+    .dot {
+      padding: 0;
+      border: none;
+      width: 24px;
+      height: 2px;
+      background: #cccccc;
+      transition: all 0.3s;
+      cursor: pointer;
+
+      &.active {
+        background: #000000;
+        width: 40px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .slider {
+    gap: 100px;
+
+    .slides {
+      width: clamp(220px, 32vw, 320px);
+    }
+
+    .pagination {
+      gap: 70px;
+    }
+
+    .menu {
+      gap: 48px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .slider {
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+
+    .slides {
+      width: min(75vw, 280px);
+    }
+
+    .pagination {
+      flex-direction: row;
+      gap: 16px;
+    }
+
+    .menu {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+    }
+  }
+}

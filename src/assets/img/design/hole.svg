@@ -1,0 +1,27 @@
+<svg
+  width="200"
+  height="200"
+  viewBox="0 0 200 200"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <!-- Радіальний градієнт з мʼяким краєм -->
+    <radialGradient id="softBall" cx="50%" cy="50%" r="50%">
+      <!-- центр -->
+      <stop offset="0%" stop-color="#000000" stop-opacity="1"/>
+      <!-- основне тіло -->
+      <stop offset="70%" stop-color="#000000" stop-opacity="1"/>
+      <!-- розтушовка -->
+      <stop offset="85%" stop-color="#000000" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- сама кулька -->
+  <circle
+    cx="100"
+    cy="100"
+    r="90"
+    fill="url(#softBall)"
+  />
+</svg>

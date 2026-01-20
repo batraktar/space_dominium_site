@@ -1,0 +1,123 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.services {
+  position: relative;
+  background-color: $ivory;
+  z-index: 1;
+  --v-sep-height: 30px;
+  --text-offset: 260px;
+  --bottom-pad: 520px;
+  padding: var(--v-sep-height) 0 var(--bottom-pad);
+
+  &__decor {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &__line {
+    position: absolute;
+    display: block;
+    height: auto;
+    transform-origin: left center;
+    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.08));
+  }
+
+  &__container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 5;
+    margin-top: var(--text-offset);
+  }
+
+  &__title {
+    font-family: $font-gilroy;
+    font-size: 64px;
+    line-height: 1.2;
+    text-align: right;
+    margin-bottom: 120px;
+    color: #000;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 120px;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__card {
+    max-width: 500px;
+
+    h3 {
+      font-family: $font-gilroy;
+      font-size: 36px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    p {
+      font-family: $font-inter;
+      font-size: 25px;
+      margin-bottom: 24px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    ul {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+
+      li {
+        position: relative;
+        padding-left: 18px;
+        font-family: $font-inter;
+        font-size: 14px;
+
+        &::before {
+          content: '•';
+          position: absolute;
+          left: 0;
+          color: $indigo;
+        }
+      }
+    }
+
+    &_right {
+      align-self: flex-end;
+      margin-top: 120px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    --v-sep-height: 170px;
+    --text-offset: -130px;
+    --bottom-pad: 260px;
+    padding: var(--v-sep-height) 0 var(--bottom-pad);
+
+    &__title {
+      font-size: 32px;
+      text-align: left;
+      margin-bottom: 70px;
+    }
+
+    &__card {
+      max-width: 100%;
+
+      &_right {
+        align-self: flex-start;
+        margin-top: 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,167 @@
+@use '../../../styles/variables' as *;
+
+.tools {
+  background-color: $deep-olive;
+  padding: 100px 0;
+  color: #fff;
+
+  &__container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; // Ensure full width
+  }
+
+  &__title {
+    font-family: $font-inter; // Changed to Inter based on Figma
+    font-size: 48px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 60px;
+    color: #fff;
+  }
+
+  &__carousel {
+    width: 100%;
+    overflow-x: auto; // Enable manual scroll
+    overflow-y: hidden;
+    margin-bottom: 60px;
+    padding: 20px 0;
+    // Hide scrollbar
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    // Mask to fade edges
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  }
+
+  &__track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    // Animation removed, handled by JS
+  }
+
+  .card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 380 / 453;
+    width: 380px; // Fixed width for carousel
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    background-color: #f0f0f0; // Default light bg
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+
+    &__image_wrapper {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &__content {
+      position: relative;
+      z-index: 2;
+    }
+
+    &__title {
+      font-family: $font-inter;
+      font-size: 18px;
+      font-weight: 700;
+      color: #000; // Default text color
+      margin: 0;
+    }
+
+    // Variants
+    &--default {
+      background-color: #fff;
+    }
+
+    &--dark {
+      background-color: #1a1a1a;
+      .card__title {
+        color: #fff;
+      }
+    }
+
+    &--yellow {
+      background-color: #ffd700; // Bright yellow
+      .card__title {
+        color: #fff; // Or black depending on contrast, design shows white text on yellow? No, design shows white text on dark, but yellow card has black text usually. Let's check screenshot.
+        // Screenshot: Startup Design (Yellow card) -> Text is White? Hard to see. Let's assume white for consistency or black if it's bright yellow.
+        // Actually looking at screenshot, "Startup Design" text is white.
+        color: #fff;
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 32px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 30px;
+    color: #fff;
+    font-family: $font-inter;
+    font-size: 16px; // Updated from Figma
+    font-weight: 600;
+    letter-spacing: 1.28px; // Added tracking
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: #fff;
+    }
+
+    svg {
+      transition: transform 0.3s ease;
+    }
+
+    &:hover svg {
+      transform: translateX(4px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    &__container {
+      padding: 0; // Full width on mobile
+    }
+
+    &__title {
+      font-size: 32px;
+      padding: 0 16px; // Keep title padding
+    }
+
+    .card {
+      width: 280px; // Smaller cards on mobile
+    }
+  }
+}

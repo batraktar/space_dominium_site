@@ -1,5 +1,5 @@
 //global
-[class*="__container"] {
+[class*='__container'] {
   max-width: 1660px;
   padding-left: 15px;
   padding-right: 15px;
@@ -11,25 +11,25 @@
 }
 //pc adaptive
 @media (max-width: 1199.98px) {
-  [class*="__container"] {
+  [class*='__container'] {
     max-width: 970px;
   }
 } //tablet
 @media (max-width: 991.98px) {
-  [class*="__container"] {
+  [class*='__container'] {
     max-width: 750px;
   }
 }
 //mobile
 @media (max-width: 767.98px) {
-  [class*="__container"] {
+  [class*='__container'] {
     max-width: 450px;
     /* max-width: none; */
   }
 }
 //mobile small
 @media (max-width: 480px) {
-  [class*="__container"] {
+  [class*='__container'] {
     max-width: none;
   }
 }

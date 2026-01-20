@@ -1,11 +1,11 @@
-@use "./variables.scss" as *;
+@use './variables.scss' as *;
 
 @mixin soft-glow {
   position: relative;
   isolation: isolate;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
