@@ -1,5 +1,5 @@
 import ServiceLayout from '../../shared/layout/ServiceLayout'
-import HeroCta from '../../shared/sections/hero-cta/HeroCta'
+import Hero from './components/Hero'
 import ChoosePlan from './components/ChoosePlan'
 import Tools from './components/Tools'
 
@@ -9,23 +9,7 @@ function Smm() {
   return (
     <ServiceLayout
       className={styles.smm}
-      hero={
-        <HeroCta
-          text="Ваш бренд заслуговує на більше, ніж 10 лайків від друзів! Поговоримо про те, як зробити ваші соцмережі живими."
-          ctaLabel="Давайте створювати ♡"
-          textColor="#28301C"
-          btnTextSizePx={24}
-          btnTextColor="#FFC3CC"
-          btnBg="#28301C"
-          gradient={`conic-gradient(
-            from -12deg at 48.46% 74%,
-            #D3DB76 100.38461208343506deg,
-            #FFCDC3 141.9230818748474deg,
-            #FFCDC3 281.60184144973755deg,
-            #D3DB76 358.3087491989136deg
-          )`}
-        />
-      }
+      hero={<Hero />}
       faq={{
         sheetUrl:
           'https://docs.google.com/spreadsheets/d/e/2PACX-1vQe_2b7SqCf4At0pw-SvLPavigCx3XqY2Ht1ikJjFvlxni3jV0PynxifiiABhhjK-t3Nn205SQMXXzM/pub?gid=1942219183&single=true&output=csv',

@@ -2,6 +2,10 @@
   margin-top: 14px;
 }
 
+.line-solid {
+  opacity: 0;
+}
+
 .line-svg {
   display: flex;
   justify-content: center;
@@ -88,4 +92,14 @@
 
 .box_line_icon:focus-visible {
   box-shadow: 0 0 0 3px #0a0a60;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-inner-fade {
+    animation: none;
+  }
+
+  .box_line_icon {
+    transition: none;
+  }
 }

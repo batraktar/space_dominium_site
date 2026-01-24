@@ -12,7 +12,7 @@ const items = [
   { id: '/smm', label: 'SMM' },
   { id: '/design', label: 'Дизайн' },
   { id: '/web-develop', label: 'Веб-розробка' },
-  { id: '/contacts', label: 'Контакти' },
+  { id: '/contacts', label: 'Про нас' },
 ]
 
 function LogoMenu({ behavior = 'static' }: LogoMenuProps) {

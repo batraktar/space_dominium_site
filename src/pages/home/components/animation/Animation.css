@@ -42,6 +42,11 @@
   background: rgba(98, 78, 146, 0.12);
 }
 
+.nav-bloks:focus-visible {
+  outline: 2px solid #a88aed;
+  outline-offset: 2px;
+}
+
 .content-wrapper {
   display: flex;
   justify-content: center;

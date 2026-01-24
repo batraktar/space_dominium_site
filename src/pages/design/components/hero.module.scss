@@ -1,4 +1,4 @@
-@use '../../styles/variables' as *;
+@use '../../../styles/variables' as *;
 
 .hero {
   position: relative;
@@ -16,11 +16,14 @@
 .heroTop {
   display: flex;
   align-items: center;
+  width: 100%;
+  background-color: $indigo;
   min-height: var(--hero-top-height);
 }
 
 .heroTopInner {
   width: min(1200px, 100%);
+  height: 850px;
   margin: 0 auto;
   padding: clamp(32px, 6vw, 72px) clamp(24px, 8vw, 140px) clamp(24px, 6vw, 48px);
   display: flex;
@@ -124,7 +127,6 @@
   .heroMark {
     align-self: flex-end;
   }
-
 }
 
 @media (max-width: 768px) {

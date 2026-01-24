@@ -1,0 +1,11 @@
+Model Information:
+* title:	Робот
+* source:	https://sketchfab.com/3d-models/e547a43413c84d3ca08b7ab4c8e694ed
+* author:	Suhomlinova (https://sketchfab.com/Suhomlinova)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Робот" (https://sketchfab.com/3d-models/e547a43413c84d3ca08b7ab4c8e694ed) by Suhomlinova (https://sketchfab.com/Suhomlinova) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

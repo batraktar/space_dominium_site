@@ -1,12 +1,22 @@
 import React from 'react'
 import decorativeGraphic from '../../../assets/img/web-dev/decorative-shapes.png'
+import RobotScene from '../../../shared/three/RobotScene'
 import styles from './hero.module.scss'
 
 const Hero: React.FC = () => {
+  const robotModelUrl = new URL(
+    '../../../assets/img/it/model-robot-it/scene.gltf',
+    import.meta.url,
+  ).href
+
   return (
     <section className={styles.hero}>
       <div className={styles.hero__decorative}>
         <img src={decorativeGraphic} alt="" className={styles.hero__graphic} />
+      </div>
+
+      <div className={styles.hero__robot} aria-hidden>
+        <RobotScene modelUrl={robotModelUrl} />
       </div>
 
       <div className={styles.hero__container}>
@@ -25,7 +35,9 @@ const Hero: React.FC = () => {
               <input type="tel" placeholder="Номер телефону" className={styles.hero__input} />
             </div>
 
-            <button className={styles.hero__submit_btn}>Звʼязатись ♡</button>
+            <a className={styles.hero__submit_btn} href="#contact">
+              Звʼязатись ♡
+            </a>
           </div>
         </div>
       </div>

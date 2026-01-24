@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import arrowsGraphic from '../../../assets/img/design/Графічні елементи_design-41.svg'
+// import arrowsGraphic from '../../../assets/img/design/Графічні елементи_design-41.svg'
+import aiIcon from '../../../assets/img/design/ai-svgrepo-com.svg'
+import photoshopIcon from '../../../assets/img/design/photoshop-svgrepo-com.svg'
+import pinterestIcon from '../../../assets/img/design/pinterest-color-svgrepo-com.svg'
+import instagramIcon from '../../../assets/img/design/instagram-svgrepo-com.svg'
+import canvaIcon from '../../../assets/img/design/canva-svgrepo-com.svg'
 import styles from './floating-shapes.module.scss'
 
 type Shape = {
@@ -10,34 +15,40 @@ type Shape = {
   vy: number
   rotation: number
   size: number
+  icon: string
 }
 
 const FloatingShapes: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [shapes, setShapes] = useState<Shape[]>([])
   const requestRef = useRef<number | undefined>(undefined)
-  const boundsRef = useRef({ maxX: 95, maxY: 95 })
-  const shapeSize = 200
+  const boundsRef = useRef({ maxX: 95, maxY: 95, width: 0, height: 0 })
+  const shapeSize = 72
+  const icons = [aiIcon, photoshopIcon, pinterestIcon, instagramIcon, canvaIcon]
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
     const count = 8
-    const minDistance = 18 // percent
+    const minDistance = 18 // percent fallback
     const maxAttempts = 40
     const positions: Array<{ x: number; y: number }> = []
 
     const getBounds = () => {
       const rect = container.getBoundingClientRect()
-      if (!rect.width || !rect.height) return { maxX: 95, maxY: 95 }
+      if (!rect.width || !rect.height) {
+        return { maxX: 95, maxY: 95, width: 0, height: 0 }
+      }
       const maxX = Math.max(0, 100 - (shapeSize / rect.width) * 100)
       const maxY = Math.max(0, 100 - (shapeSize / rect.height) * 100)
-      return { maxX, maxY }
+      return { maxX, maxY, width: rect.width, height: rect.height }
     }
 
-    const { maxX, maxY } = getBounds()
-    boundsRef.current = { maxX, maxY }
+    const { maxX, maxY, width, height } = getBounds()
+    boundsRef.current = { maxX, maxY, width, height }
+    const sizePct = width && height ? Math.max((shapeSize / width) * 100, (shapeSize / height) * 100) : minDistance
+    const spacedMinDistance = sizePct * 1.2
 
     for (let i = 0; i < count; i += 1) {
       let placed = false
@@ -49,7 +60,7 @@ const FloatingShapes: React.FC = () => {
         const isFarEnough = positions.every((pos) => {
           const dx = pos.x - x
           const dy = pos.y - y
-          return Math.hypot(dx, dy) >= minDistance
+          return Math.hypot(dx, dy) >= spacedMinDistance
         })
 
         if (isFarEnough) {
@@ -74,6 +85,7 @@ const FloatingShapes: React.FC = () => {
       vy: (Math.random() - 0.5) * 0.15,
       rotation: 0,
       size: shapeSize,
+      icon: icons[i % icons.length],
     }))
     setShapes(initialShapes)
 
@@ -89,24 +101,70 @@ const FloatingShapes: React.FC = () => {
 
   useEffect(() => {
     const animate = () => {
-      setShapes((prevShapes) =>
-        prevShapes.map((shape) => {
-          const { maxX, maxY } = boundsRef.current
-          let { x, y, vx, vy } = shape
+      setShapes((prevShapes) => {
+        const next = prevShapes.map((shape) => ({ ...shape }))
+        const { maxX, maxY, width, height } = boundsRef.current
+        if (!width || !height) return next
 
-          x += vx
-          y += vy
+        next.forEach((shape) => {
+          shape.x += shape.vx
+          shape.y += shape.vy
 
-          // Bounce logic (using percentage 0-100)
-          if (x <= 0 || x >= maxX) vx = -vx
-          if (y <= 0 || y >= maxY) vy = -vy
+          if (shape.x <= 0 || shape.x >= maxX) shape.vx = -shape.vx
+          if (shape.y <= 0 || shape.y >= maxY) shape.vy = -shape.vy
 
-          x = Math.max(0, Math.min(x, maxX))
-          y = Math.max(0, Math.min(y, maxY))
+          shape.x = Math.max(0, Math.min(shape.x, maxX))
+          shape.y = Math.max(0, Math.min(shape.y, maxY))
+        })
 
-          return { ...shape, x, y, vx, vy }
-        }),
-      )
+        const radius = shapeSize / 2
+        for (let i = 0; i < next.length; i += 1) {
+          for (let j = i + 1; j < next.length; j += 1) {
+            const a = next[i]
+            const b = next[j]
+
+            const ax = (a.x / 100) * width + radius
+            const ay = (a.y / 100) * height + radius
+            const bx = (b.x / 100) * width + radius
+            const by = (b.y / 100) * height + radius
+
+            const dx = bx - ax
+            const dy = by - ay
+            const dist = Math.hypot(dx, dy)
+            const minDist = shapeSize
+
+            if (dist > 0 && dist < minDist) {
+              const overlap = (minDist - dist) / 2
+              const nx = dx / dist
+              const ny = dy / dist
+
+              const axNew = ax - nx * overlap
+              const ayNew = ay - ny * overlap
+              const bxNew = bx + nx * overlap
+              const byNew = by + ny * overlap
+
+              a.x = ((axNew - radius) / width) * 100
+              a.y = ((ayNew - radius) / height) * 100
+              b.x = ((bxNew - radius) / width) * 100
+              b.y = ((byNew - radius) / height) * 100
+
+              const tmpVx = a.vx
+              const tmpVy = a.vy
+              a.vx = b.vx
+              a.vy = b.vy
+              b.vx = tmpVx
+              b.vy = tmpVy
+            }
+          }
+        }
+
+        next.forEach((shape) => {
+          shape.x = Math.max(0, Math.min(shape.x, maxX))
+          shape.y = Math.max(0, Math.min(shape.y, maxY))
+        })
+
+        return next
+      })
       requestRef.current = requestAnimationFrame(animate)
     }
 
@@ -128,7 +186,7 @@ const FloatingShapes: React.FC = () => {
             height: `${shape.size}px`,
           }}
         >
-          <img src={arrowsGraphic} alt="" className={styles.shape__icon} />
+          <img src={shape.icon} alt="" className={styles.shape__icon} />
         </div>
       ))}
     </div>

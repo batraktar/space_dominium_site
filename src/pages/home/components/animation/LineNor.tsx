@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useLayoutEffect, useMemo, useRef } from 'react'
 import './LineNor.css'
 
 export type DottedSide = 'left' | 'right' | 'both'
@@ -8,95 +8,132 @@ export interface Variant {
   contentIcon: string
   bullets: string[]
 }
-export interface Tab {
-  id: 'social' | 'market' | 'sites' | 'retail' | 'apps'
-  label: string
-  navIcon: string
-  contentIcon: string
-  variants: Variant[]
-}
 
 interface LineNorProps {
   dottedSide?: DottedSide
-  activeTab: Tab
+  variants: Variant[]
   activeVarIdx: number | null
   setActiveVarIdx: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function useStrokeDraw(
-  pathsRefs: Array<React.RefObject<SVGPathElement | null>>,
-  isOn: boolean,
+const usePrefersReducedMotion = () => {
+  const [reduced, setReduced] = React.useState(false)
+
+  React.useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReduced(media.matches)
+    update()
+
+    if (media.addEventListener) {
+      media.addEventListener('change', update)
+      return () => media.removeEventListener('change', update)
+    }
+
+    media.addListener(update)
+    return () => media.removeListener(update)
+  }, [])
+
+  return reduced
+}
+
+const useStrokeDraw = (
+  pathRefs: Array<React.RefObject<SVGPathElement | null>>,
+  isActive: boolean,
   opts: { duration?: number; easing?: string } = {},
-) {
+) => {
   const { duration = 750, easing = 'ease-in-out' } = opts
-  const prevOn = useRef(isOn)
+  const reducedMotion = usePrefersReducedMotion()
+  const lengthsRef = useRef(new WeakMap<SVGPathElement, { key: string; length: number }>())
+  const animationsRef = useRef(new WeakMap<SVGPathElement, Animation>())
 
-  useEffect(() => {
-    if (prevOn.current === isOn) return
-
-    pathsRefs.forEach((ref) => {
+  useLayoutEffect(() => {
+    pathRefs.forEach((ref, index) => {
       const el = ref.current
       if (!el) return
 
-      const len = el.getTotalLength()
-      el.style.strokeDasharray = `${len}`
-      el.getAnimations?.().forEach((a) => a.cancel())
+      const key = el.getAttribute('d') ?? `${index}`
+      const cached = lengthsRef.current.get(el)
+      let length = cached?.length
 
-      const keyframes: Keyframe[] = isOn
-        ? [
-            { strokeDashoffset: len as unknown as string, opacity: 0 },
-            { strokeDashoffset: 0 as unknown as string, opacity: 1 },
-          ]
-        : [
-            { strokeDashoffset: 0 as unknown as string, opacity: 1 },
-            { strokeDashoffset: len as unknown as string, opacity: 0 },
-          ]
+      if (!cached || cached.key !== key) {
+        length = el.getTotalLength()
+        lengthsRef.current.set(el, { key, length })
+      }
 
-      el.animate(keyframes, { duration, easing, fill: 'forwards' })
+      if (!length) return
+
+      const targetOffset = isActive ? 0 : length
+      el.style.strokeDasharray = `${length}`
+
+      const prev = animationsRef.current.get(el)
+      if (prev) prev.cancel()
+
+      if (!isActive) {
+        el.style.strokeDashoffset = `${length}`
+        el.style.opacity = '0'
+        return
+      }
+
+      if (reducedMotion) {
+        el.style.strokeDashoffset = '0'
+        el.style.opacity = '1'
+        return
+      }
+
+      const keyframes: Keyframe[] = [
+        { strokeDashoffset: length, opacity: 0 },
+        { strokeDashoffset: 0, opacity: 1 },
+      ]
+
+      const animation = el.animate(keyframes, { duration, easing, fill: 'forwards' })
+      animationsRef.current.set(el, animation)
+
+      animation.onfinish = () => {
+        el.style.strokeDashoffset = `${targetOffset}`
+        el.style.opacity = isActive ? '1' : '0'
+      }
     })
 
-    prevOn.current = isOn
-  }, [isOn, pathsRefs, duration, easing])
+    return () => {
+      pathRefs.forEach((ref) => {
+        const el = ref.current
+        if (!el) return
+        const animation = animationsRef.current.get(el)
+        if (animation) animation.cancel()
+      })
+    }
+  }, [pathRefs, isActive, reducedMotion, duration, easing])
 }
 
 const LineNor: React.FC<LineNorProps> = ({
   dottedSide = 'left',
-  activeTab,
+  variants,
   activeVarIdx,
   setActiveVarIdx,
 }) => {
   const leftIsDotted = dottedSide === 'left' || dottedSide === 'both'
   const rightIsDotted = dottedSide === 'right' || dottedSide === 'both'
 
-  // refs для суцільних сегментів
   const L1 = useRef<SVGPathElement | null>(null)
   const L2 = useRef<SVGPathElement | null>(null)
   const R1 = useRef<SVGPathElement | null>(null)
   const R2 = useRef<SVGPathElement | null>(null)
 
-  useStrokeDraw([L1, L2], !leftIsDotted)
-  useStrokeDraw([R1, R2], !rightIsDotted)
+  const leftRefs = useMemo(() => [L1, L2], [])
+  const rightRefs = useMemo(() => [R1, R2], [])
+
+  useStrokeDraw(leftRefs, !leftIsDotted)
+  useStrokeDraw(rightRefs, !rightIsDotted)
 
   return (
     <div className="line_wrapper">
       <div className="line-svg">
-        <svg
-          width="1044"
-          height="154"
-          viewBox="0 0 1044 154"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width="1044" height="154" viewBox="0 0 1044 154" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Ліва частина */}
-          <svg
-            width="1044"
-            height="154"
-            viewBox="0 0 1044 154"
-            fill="none"
-            style={{ maxWidth: '100%' }}
-          >
+          <svg width="1044" height="154" viewBox="0 0 1044 154" fill="none" style={{ maxWidth: '100%' }}>
             <circle cx="3" cy="151" r="2.5" stroke="black" />
             <path
+              className="line-dotted"
               d="M3 149C3 63 3 63.2333 40 63"
               stroke="#1E1E5B"
               strokeWidth="2"
@@ -104,6 +141,7 @@ const LineNor: React.FC<LineNorProps> = ({
               fill="none"
             />
             <path
+              className="line-dotted"
               d="M40 63H240"
               stroke="#1E1E5B"
               strokeWidth="2"
@@ -112,32 +150,27 @@ const LineNor: React.FC<LineNorProps> = ({
             />
             <path
               ref={L1}
+              className="line-solid"
               d="M3 149C3 63 3 63.2333 40 63"
               stroke="url(#paint4)"
               strokeWidth="2"
               fill="none"
-              style={{ opacity: 0 }}
             />
             <path
               ref={L2}
+              className="line-solid"
               d="M40 63H240"
               stroke="#A88AED"
               strokeWidth="2"
               fill="none"
-              style={{ opacity: 0 }}
             />
           </svg>
 
           {/* Права частина */}
-          <svg
-            width="1044"
-            height="154"
-            viewBox="0 0 1044 154"
-            fill="none"
-            style={{ maxWidth: '100%' }}
-          >
+          <svg width="1044" height="154" viewBox="0 0 1044 154" fill="none" style={{ maxWidth: '100%' }}>
             <circle cx="1040.5" cy="151" r="2.5" stroke="black" />
             <path
+              className="line-dotted"
               d="M1040.5 149C1040.5 63 1040.5 63.2333 1003.5 63"
               stroke="#1E1E5B"
               strokeWidth="2"
@@ -145,6 +178,7 @@ const LineNor: React.FC<LineNorProps> = ({
               fill="none"
             />
             <path
+              className="line-dotted"
               d="M1003.5 63H803"
               stroke="#1E1E5B"
               strokeWidth="2"
@@ -153,19 +187,19 @@ const LineNor: React.FC<LineNorProps> = ({
             />
             <path
               ref={R1}
+              className="line-solid"
               d="M1040.5 149C1040.5 63 1040.5 63.2333 1003.5 63"
               stroke="url(#paint4)"
               strokeWidth="2"
               fill="none"
-              style={{ opacity: 0 }}
             />
             <path
               ref={R2}
+              className="line-solid"
               d="M1003.5 63H803"
               stroke="#A88AED"
               strokeWidth="2"
               fill="none"
-              style={{ opacity: 0 }}
             />
           </svg>
 
@@ -282,7 +316,7 @@ const LineNor: React.FC<LineNorProps> = ({
 
       {/* НИЖНІ СЕКТОРИ */}
       <div className="line_icon_wrapper" role="tablist" aria-label="Підменю">
-        {activeTab?.variants?.map((v, i) => {
+        {variants.map((v, i) => {
           const isActive = i === activeVarIdx
           return (
             <div key={v.id} className={`line_icon ${isActive ? 'is-active' : ''}`}>
@@ -308,4 +342,4 @@ const LineNor: React.FC<LineNorProps> = ({
   )
 }
 
-export default LineNor
+export default React.memo(LineNor)

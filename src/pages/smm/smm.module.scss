@@ -1,13 +1,61 @@
 @use '../../styles/variables' as *;
 
 .smm {
-  background-color: #2f3620;
-  background-image:
-    radial-gradient(540px at 92% 4%, rgba(255, 201, 209, 0.75) 0%, rgba(255, 201, 209, 0) 60%),
-    radial-gradient(260px at 16% 6%, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0) 70%),
-    radial-gradient(520px at 28% 32%, rgba(248, 255, 195, 0.12) 0%, rgba(248, 255, 195, 0) 70%),
-    radial-gradient(600px at 72% 72%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%),
-    linear-gradient(180deg, rgba(35, 39, 27, 0.6) 0%, rgba(35, 39, 27, 0) 30%);
+  position: relative;
+  isolation: isolate;
+  background-color: $deep-olive;
+  background-image: none;
   min-height: 100vh;
   color: #fff;
+}
+
+.smm::after {
+  content: '';
+  position: absolute;
+  right: 80px;
+  top: 52%;
+  width: 920px;
+  height: 420px;
+  transform: translateY(-50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(135, 148, 78, 0.46) 0%,
+    rgba(53, 60, 39, 0.32) 55%,
+    rgba(5, 5, 5, 0) 75%
+  );
+  filter: blur(4px);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.smm > * {
+  position: relative;
+}
+
+@media (max-width: 1024px) {
+  .smm::after {
+    right: 20px;
+    top: 48%;
+    width: 720px;
+    height: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .smm::after {
+    right: -40px;
+    top: 54%;
+    width: 560px;
+    height: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .smm::after {
+    right: -120px;
+    top: 60%;
+    width: 420px;
+    height: 220px;
+  }
 }

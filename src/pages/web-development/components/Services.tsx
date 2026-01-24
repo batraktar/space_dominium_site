@@ -6,8 +6,14 @@ import jsIcon from '../../../assets/img/web-dev/eae06ff2a124a74202d9673859bb7366
 import reactIcon from '../../../assets/img/web-dev/8dd7fe335d15a4793f80c5298d2c048aae186243.svg'
 import pythonIcon from '../../../assets/img/web-dev/python.svg'
 import gitIcon from '../../../assets/img/web-dev/9e0e9286c5111031737c9dc4f39bd0b477cf62b1.svg'
+import RobotScene from '../../../shared/three/RobotScene'
 
 const Services: React.FC = () => {
+  const robotModelUrl = new URL(
+    '../../../assets/img/it/model-robot-it/scene.gltf',
+    import.meta.url,
+  ).href
+
   const services = [
     {
       id: 1,
@@ -40,6 +46,7 @@ const Services: React.FC = () => {
       title: 'Чат телеграм-боти (Python, Git)',
       description:
         'Розробляємо розумних ботів для Telegram, Instagram, Facebook. Від приймання замовлень до автоматичної підтримки клієнтів - 24/7 без вихідних.',
+      highlighted: true,
       icons: [
         { key: 'python', src: pythonIcon },
         { key: 'git', src: gitIcon },
@@ -56,7 +63,19 @@ const Services: React.FC = () => {
 
         <div className={styles.services__grid}>
           {services.map((service) => (
-            <article key={service.id} className={styles.card}>
+            <article
+              key={service.id}
+              className={`${styles.card} ${service.highlighted ? styles.cardHighlighted : ''}`}
+            >
+              {service.highlighted && (
+                <div className={styles.card__robot} aria-hidden>
+                  <RobotScene
+                    modelUrl={robotModelUrl}
+                    modelScale={0.9}
+                    cameraPosition={[0, 0.45, 2]}
+                  />
+                </div>
+              )}
               <div className={styles.card__tag}>{service.tag}</div>
               <h3 className={styles.card__title}>{service.title}</h3>
               <p className={styles.card__description}>{service.description}</p>

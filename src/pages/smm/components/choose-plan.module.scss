@@ -137,22 +137,6 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-.glow {
-  position: absolute;
-  right: 80px;
-  bottom: -260px;
-  width: 920px;
-  height: 420px;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(135, 148, 78, 0.46) 0%,
-    rgba(53, 60, 39, 0.32) 55%,
-    rgba(5, 5, 5, 0) 75%
-  );
-  filter: blur(4px);
-  opacity: 0.9;
-  pointer-events: none;
-}
 
 @media (max-width: 1439px) {
   .container {
@@ -202,12 +186,7 @@
     font-size: 13.5px;
   }
 
-  .glow {
-    width: 820px;
-    height: 360px;
-    right: 40px;
-    bottom: -220px;
-  }
+  // glow moved to page-level background
 }
 
 @media (max-width: 1024px) {
@@ -249,12 +228,7 @@
     font-size: 13px;
   }
 
-  .glow {
-    width: 700px;
-    height: 300px;
-    right: -20px;
-    bottom: -200px;
-  }
+  // glow moved to page-level background
 }
 
 @media (max-width: 640px) {
@@ -292,10 +266,5 @@
     font-size: 12.5px;
   }
 
-  .glow {
-    width: 620px;
-    height: 280px;
-    right: -120px;
-    bottom: -180px;
-  }
+  // glow moved to page-level background
 }

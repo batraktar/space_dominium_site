@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 
 import AffixedMenuShell from './AffixedMenuShell'
 import Contact from '../sections/contact/Contact'
@@ -37,6 +37,8 @@ type Props = {
   affix?: {
     topOffsetPx?: number
     bottomGapPx?: number
+    fixedPosition?: 'top' | 'bottom'
+    alwaysFixed?: boolean
   }
 }
 
@@ -49,9 +51,23 @@ export default function ServiceLayout({
   footer,
   affix,
 }: Props) {
+  useEffect(() => {
+    const root = document.documentElement
+    const prev = root.style.scrollBehavior
+    root.style.scrollBehavior = 'smooth'
+    return () => {
+      root.style.scrollBehavior = prev
+    }
+  }, [])
+
   return (
     <div className={className}>
-      <AffixedMenuShell topOffsetPx={affix?.topOffsetPx} bottomGapPx={affix?.bottomGapPx}>
+      <AffixedMenuShell
+        topOffsetPx={affix?.topOffsetPx}
+        bottomGapPx={affix?.bottomGapPx}
+        fixedPosition={affix?.fixedPosition}
+        alwaysFixed={affix?.alwaysFixed}
+      >
         {hero}
       </AffixedMenuShell>
 

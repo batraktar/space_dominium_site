@@ -38,7 +38,6 @@ const steps = [
 function ChoosePlan() {
   return (
     <section className={styles.section} id="choose-plan">
-      <div className={styles.glow} />
       <div className={styles.container}>
         <div className={styles.left}>
           <h2 className={styles.title}>

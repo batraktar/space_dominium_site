@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './Animation.css'
 import LineNor from './LineNor'
 
@@ -262,8 +262,10 @@ const dottedByTab: Record<TabId, DottedSide> = {
 const Animation: React.FC = () => {
   const [activeId, setActiveId] = useState<TabId>(TABS[0].id)
   const [activeVarIdx, setActiveVarIdx] = useState<number | null>(null)
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
 
-  const activeTab = TABS.find((t) => t.id === activeId)!
+  const activeTab = useMemo(() => TABS.find((t) => t.id === activeId)!, [activeId])
+  const activeVariants = activeTab?.variants ?? []
 
   useEffect(() => {
     setActiveVarIdx(null)
@@ -275,6 +277,37 @@ const Animation: React.FC = () => {
   const centerIcon = currentVariant?.contentIcon ?? activeTab?.contentIcon
   const centerBullets = currentVariant?.bullets ?? []
   const hasText = centerBullets.length > 0
+  const contentKey = `${activeId}-${activeVarIdx ?? 'none'}`
+
+  const focusTab = useCallback((index: number) => {
+    const next = TABS[index]
+    if (!next) return
+    setActiveId(next.id)
+    tabRefs.current[index]?.focus()
+  }, [])
+
+  const handleTabKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+      const total = TABS.length
+      if (event.key === 'ArrowRight') {
+        event.preventDefault()
+        focusTab((index + 1) % total)
+      }
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault()
+        focusTab((index - 1 + total) % total)
+      }
+      if (event.key === 'Home') {
+        event.preventDefault()
+        focusTab(0)
+      }
+      if (event.key === 'End') {
+        event.preventDefault()
+        focusTab(total - 1)
+      }
+    },
+    [focusTab],
+  )
 
   return (
     <div className="page-ani">
@@ -282,16 +315,20 @@ const Animation: React.FC = () => {
         <div className="containet-wrapper">
           {/* Верхнє меню */}
           <div className="ani-nav" role="tablist" aria-label="Категорії">
-            {TABS.map((tab) => (
+            {TABS.map((tab, index) => (
               <button
                 key={tab.id}
                 type="button"
                 role="tab"
                 aria-selected={activeId === tab.id}
+                aria-controls={`panel-${tab.id}`}
+                id={`tab-${tab.id}`}
+                tabIndex={activeId === tab.id ? 0 : -1}
                 className={`nav-bloks ${activeId === tab.id ? 'is-active' : ''}`}
                 onClick={() => setActiveId(tab.id)}
-                onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
-                  if (e.key === 'Enter' || e.key === ' ') setActiveId(tab.id)
+                onKeyDown={(event) => handleTabKeyDown(event, index)}
+                ref={(node) => {
+                  tabRefs.current[index] = node
                 }}
               >
                 <img className="nav-icon" src={tab.navIcon} alt="" />
@@ -337,9 +374,16 @@ const Animation: React.FC = () => {
 
           {/* Центральний контент */}
           <div className="content-wrapper">
-            <div className="content" tabIndex={0} role="region" aria-label="Деталі категорії">
+            <div
+              className="content"
+              tabIndex={0}
+              role="tabpanel"
+              aria-label="Деталі категорії"
+              aria-labelledby={`tab-${activeId}`}
+              id={`panel-${activeId}`}
+            >
               <div
-                key={`${activeId}-${activeVarIdx ?? 'none'}`}
+                key={contentKey}
                 className={`content-inner-fade ${hasText ? 'has-text' : 'no-text'}`}
               >
                 <img className="content-icon" src={centerIcon} alt="" />
@@ -360,7 +404,7 @@ const Animation: React.FC = () => {
           <div className="line">
             <LineNor
               dottedSide={dottedByTab[activeId] ?? 'right'}
-              activeTab={activeTab}
+              variants={activeVariants}
               activeVarIdx={activeVarIdx}
               setActiveVarIdx={setActiveVarIdx}
             />

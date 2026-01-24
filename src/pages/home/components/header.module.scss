@@ -1,7 +1,8 @@
 .header {
   position: relative;
   width: 100%;
-  height: 780px;
+  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
 
   padding-bottom: var(--bar-h, 0px);
@@ -22,63 +23,58 @@
   right: 0;
   bottom: 20px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   flex-wrap: nowrap;
   gap: 20px;
   padding: 0 20px;
   z-index: 20;
 }
 
-.header__bar--fixed {
+.header__center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header__bar--fixedBottom {
   position: fixed;
-  top: 0;
-  bottom: auto;
+  top: auto;
+  bottom: 20px;
   left: 0;
   right: 0;
   padding: 0 20px;
-  z-index: 1000;
-}
-
-.header__left {
-  display: flex;
-  align-items: center;
-  gap: 58px;
-  min-width: 0;
-  flex: 1 1 auto;
+  z-index: 60000;
+  pointer-events: auto;
 }
 
 .header__right {
-  margin-left: auto;
-  align-self: flex-end;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-flex;
 }
 
-/* адаптив висоти героя */
-@media (max-width: 1440px) {
-  .header {
-    height: 640px;
-  }
-}
 @media (max-width: 1024px) {
-  .header {
-    height: 520px;
-  }
   .header__video {
     object-position: 60% center;
   }
 }
 @media (max-width: 768px) {
-  .header {
-    height: 420px;
-  }
   .header__video {
     object-position: 55% center;
   }
+
+  .header__bar--fixedBottom {
+    bottom: 16px;
+  }
+
+  .header__right {
+    right: 16px;
+  }
 }
 @media (max-width: 375px) {
-  .header {
-    height: 320px;
-  }
   .header__video {
     object-position: 55% center;
   }
