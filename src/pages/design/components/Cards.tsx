@@ -52,7 +52,6 @@ const Cards: React.FC<Props> = ({ items = defaultItems, initialIndex = 0 }) => {
   }, [activeIndex, safeItems.length])
 
   const total = safeItems.length
-  const active = safeItems[activeIndex]
   const canCycle = total > 1
   const hasPrev = activeIndex > 0
   const hasNext = activeIndex < total - 1

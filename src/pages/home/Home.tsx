@@ -5,13 +5,14 @@ import HeroCta from '../../shared/sections/hero-cta/HeroCta'
 import Contact from '../../shared/sections/contact/Contact'
 import Faq from '../../shared/sections/faq/Faq'
 import Footer from '../../shared/sections/footer/Footer'
+import './home.scss'
 
 function Home() {
   return (
     <div className="wrapper">
       <Header />
       <main className="page">
-        <div className="page__container">
+        <div className="page__container home__container">
           <Slider />
           <HeroCta
             text={<>Досить гуглити інші агенції. Поговоріть з нами. Напишіть прямо зараз!</>}

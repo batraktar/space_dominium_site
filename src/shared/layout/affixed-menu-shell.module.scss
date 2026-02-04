@@ -38,6 +38,10 @@
 }
 
 @media (max-width: 768px) {
+  .shell {
+    min-height: auto;
+  }
+
   .bar {
     bottom: 16px;
     padding: 0 16px;

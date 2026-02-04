@@ -35,6 +35,15 @@
   display: block;
 }
 
+.nav-divider {
+  width: 13px;
+  height: 9px;
+  display: inline-block;
+  background: url('./assets/icons/menu-divider.svg') center/contain no-repeat;
+  opacity: 0.9;
+  flex: 0 0 auto;
+}
+
 .nav-bloks.is-active,
 .nav-bloks:hover {
   color: #624e92;

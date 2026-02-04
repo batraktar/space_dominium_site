@@ -97,7 +97,7 @@ const Showcase: React.FC = () => {
                         src={fallbackImage}
                         alt="Web development preview"
                         className={styles.desktop__preview_image}
-                        loading="lazy"
+                        decoding="async"
                       />
                       <div className={styles.desktop__preview_actions}>
                         <button

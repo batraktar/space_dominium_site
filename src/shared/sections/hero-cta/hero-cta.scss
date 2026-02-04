@@ -1,5 +1,7 @@
 @use '../../../styles/variables.scss' as *;
 
+/* ================= BASE (1960+) ================= */
+
 .talk-container {
   padding-top: 160px;
 }
@@ -8,7 +10,6 @@
   display: flex;
   padding: 79px 506px 46px 507px;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
   gap: 86px;
   border-radius: 20px;
@@ -31,25 +32,103 @@
   text-align: center;
   font-family: $font-gilroy;
   font-size: 30px;
-  font-style: normal;
   font-weight: 400;
-  line-height: normal;
 }
 
 .talk-btn {
   font-family: $font-gilroy;
-  font-size: var(--talk-btn-size, 24px);
+  font-size: 24px;
   color: var(--talk-btn-color, #000);
   border-radius: 10px;
-  font-style: normal;
   font-weight: 400;
   min-width: 170px;
   min-height: 67px;
   background-color: var(--talk-btn-bg, $sky-blue);
-  padding: 19px 36px 19px 37px;
+  padding: 19px 36px;
   transition: all 0.3s ease;
 
   &:active {
     transform: scale(0.98);
+  }
+}
+
+/* ================= 1440 ================= */
+
+@media (max-width: 1440px) {
+  .talk-body {
+    padding: 70px 320px 40px;
+    gap: 64px;
+  }
+
+  .talk-text {
+    font-size: 26px;
+  }
+}
+
+/* ================= 1024 ================= */
+
+@media (max-width: 1024px) {
+  .talk-container {
+    padding-top: 120px;
+  }
+
+  .talk-body {
+    padding: 60px 160px 36px;
+    gap: 48px;
+  }
+
+  .talk-text {
+    font-size: 22px;
+  }
+
+  .talk-btn {
+    min-height: 60px;
+  }
+}
+
+/* ================= 768 ================= */
+
+@media (max-width: 768px) {
+  .talk-container {
+    padding-top: 100px;
+  }
+
+  .talk-body {
+    padding: 50px 80px 32px;
+    gap: 40px;
+  }
+
+  .talk-text {
+    font-size: 20px;
+  }
+
+  .talk-btn {
+    font-size: 20px;
+    min-height: 56px;
+  }
+}
+
+/* ================= 375 ================= */
+
+@media (max-width: 375px) {
+  .talk-container {
+    padding-top: 60px;
+  }
+
+  .talk-body {
+    padding: 40px 20px 28px;
+    gap: 28px;
+    border-radius: 14px;
+  }
+
+  .talk-text {
+    font-size: 16px;
+  }
+
+  .talk-btn {
+    font-size: 16px;
+    min-width: 100%;
+    min-height: 48px;
+    padding: 14px;
   }
 }

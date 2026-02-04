@@ -2,6 +2,7 @@ import './logo-menu.scss'
 import { NavLink } from 'react-router-dom'
 import React from 'react'
 import logo from '../../../assets/img/logo/logo-nav-menu.svg'
+import burgerIcon from './icons/burger.svg'
 
 type LogoMenuProps = {
   behavior?: 'floating' | 'static'
@@ -17,6 +18,7 @@ const items = [
 
 function LogoMenu({ behavior = 'static' }: LogoMenuProps) {
   const [isAtTop, setIsAtTop] = React.useState(true)
+  const [isOpen, setIsOpen] = React.useState(false)
 
   React.useEffect(() => {
     if (behavior !== 'floating') return
@@ -41,7 +43,18 @@ function LogoMenu({ behavior = 'static' }: LogoMenuProps) {
         <img src={logo} alt="Space logo" />
       </NavLink>
 
-      <nav className="nav">
+      <button
+        type="button"
+        className="logo-menu__toggle"
+        aria-label="Відкрити меню"
+        aria-expanded={isOpen}
+        aria-controls="logo-menu-nav"
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        <img src={burgerIcon} alt="" />
+      </button>
+
+      <nav className={`nav${isOpen ? ' nav--open' : ''}`} id="logo-menu-nav">
         <ul className="nav__list">
           {items.map((it) => (
             <li key={it.id} className="nav__item">
@@ -49,6 +62,7 @@ function LogoMenu({ behavior = 'static' }: LogoMenuProps) {
                 to={it.id}
                 end={it.id === '/'}
                 className={({ isActive }) => `nav__link${isActive ? ' nav__link--active' : ''}`}
+                onClick={() => setIsOpen(false)}
               >
                 {it.label}
               </NavLink>

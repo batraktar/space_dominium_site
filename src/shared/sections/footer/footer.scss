@@ -58,11 +58,25 @@
     justify-content: space-between;
     font-family: $font-gilroy;
 
-    .footer_menu_content {
-      h2 {
+    .footer_menu_item {
+      margin: 0;
+      padding: 0;
+      border: none;
+
+      summary {
         font-size: 16px;
         font-weight: 700;
         padding: 0 0 20px 0;
+        list-style: none;
+        cursor: default;
+      }
+
+      summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .footer_menu_body {
+        display: block;
       }
 
       p {
@@ -85,5 +99,121 @@
     padding-bottom: 65px;
     font-size: 14px;
     font-weight: 400;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer_wrapper {
+    flex-direction: column;
+    margin-top: 60px;
+    padding-top: 40px;
+    gap: 32px;
+  }
+
+  .footer_right {
+    display: none;
+  }
+
+  .footer_left {
+    .footer_title {
+      h1 {
+        font-size: 32px;
+        padding-bottom: 24px;
+      }
+    }
+
+    .footer_button {
+      font-size: 24px;
+      padding-bottom: 32px;
+      gap: 12px;
+
+      button {
+        font-size: 24px;
+      }
+
+      .footer_arrow {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .footer_menu {
+      flex-direction: column;
+      gap: 18px;
+
+      .footer_menu_item {
+        summary {
+          font-size: 18px;
+          font-weight: 500;
+          padding: 14px 0;
+          border-bottom: 1px solid currentColor;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin: 0;
+          cursor: pointer;
+        }
+
+        summary::after {
+          content: '';
+          width: 8px;
+          height: 8px;
+          border-right: 2px solid currentColor;
+          border-bottom: 2px solid currentColor;
+          transform: rotate(45deg);
+          transition: transform 0.2s ease;
+        }
+
+        .footer_menu_body {
+          display: block;
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          padding-top: 0;
+          transition:
+            max-height 0.3s ease,
+            opacity 0.3s ease,
+            padding-top 0.3s ease;
+        }
+
+        &[open] {
+          summary::after {
+            transform: rotate(-135deg);
+          }
+
+          .footer_menu_body {
+            max-height: 480px;
+            opacity: 1;
+            padding-top: 12px;
+          }
+        }
+      }
+    }
+  }
+
+  .Antoshka {
+    p {
+      padding-top: 32px;
+      padding-bottom: 40px;
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 375px) {
+  .footer_left {
+    .footer_title {
+      h1 {
+        font-size: 28px;
+      }
+    }
+
+    .footer_button {
+      font-size: 20px;
+
+      button {
+        font-size: 20px;
+      }
+    }
   }
 }

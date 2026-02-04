@@ -518,7 +518,7 @@
   box-shadow: 0 12px 24px rgba(78, 91, 255, 0.35);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
   .desktop {
     &__body {
       grid-template-columns: 240px 1fr 280px;
@@ -553,7 +553,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .showcase {
     padding: 72px 18px 90px;
   }

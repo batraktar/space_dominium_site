@@ -198,7 +198,7 @@
 @media (max-width: 768px) {
   .hero {
     padding: 0 20px;
-    min-height: 600px;
+    min-height: auto;
 
     &__content {
       max-width: 100%;
@@ -240,10 +240,10 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 375px) {
   .hero {
     padding: 0 16px;
-    min-height: 500px;
+    min-height: auto;
 
     &__title {
       font-size: 48px;

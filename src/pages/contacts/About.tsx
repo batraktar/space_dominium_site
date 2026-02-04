@@ -1,14 +1,25 @@
 import React from 'react'
 import AffixedMenuShell from '../../shared/layout/AffixedMenuShell'
+import { usePrefersReducedMotion } from '../../shared/hooks/usePrefersReducedMotion'
 import videoMp4 from '../../assets/video/laptop_people_1920x780.mp4'
 import videoWebm from '../../assets/video/output_1920x780.webm'
 import styles from './about.module.scss'
 
 const About: React.FC = () => {
+  const prefersReducedMotion = usePrefersReducedMotion()
+
   return (
     <AffixedMenuShell>
       <section className={styles.about}>
-        <video className={styles.about__video} autoPlay muted loop playsInline preload="metadata">
+        <video
+          className={styles.about__video}
+          autoPlay={!prefersReducedMotion}
+          muted
+          loop={!prefersReducedMotion}
+          playsInline
+          preload="metadata"
+          aria-hidden
+        >
           {videoWebm && <source src={videoWebm} type="video/webm" />}
           <source src={videoMp4} type="video/mp4" />
         </video>

@@ -40,16 +40,32 @@
   justify-content: center;
   width: 76px;
   height: 60px;
-  border-radius: 18px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(6px);
   text-decoration: none;
 }
 
 .logo-menu__logo img {
   display: block;
-  width: 54px;
+  width: 540px;
   height: auto;
+}
+
+.logo-menu__toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.logo-menu__toggle img {
+  width: 24px;
+  height: 16px;
+  display: block;
 }
 
 /* меню */
@@ -109,7 +125,7 @@
   height: 80%;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
   .logo-menu--bottom {
     bottom: 32px;
   }
@@ -142,9 +158,8 @@
     gap: 14px;
   }
   .logo-menu__logo {
-    width: 56px;
+    width: 52px;
     height: 52px;
-    border-radius: 16px;
   }
   .logo-menu__logo img {
     width: 56px;
@@ -155,7 +170,7 @@
     border-radius: 18px;
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 375px) {
   .logo-menu--bottom {
     bottom: 16px;
   }
@@ -167,17 +182,67 @@
     max-width: calc(100vw - 24px);
   }
   .logo-menu__logo {
-    width: 50px;
+    width: 48px;
     height: 48px;
-    border-radius: 14px;
   }
   .logo-menu__logo img {
-    width: 48px;
+    width: 56px;
   }
   .nav__list {
     gap: 14px;
     font-size: 0.9rem;
     padding: 10px 14px;
     max-width: calc(100vw - 92px);
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-menu,
+  .logo-menu--floating {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    top: 12px;
+    bottom: auto;
+    transform: none;
+    width: auto;
+    max-width: none;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .logo-menu__toggle {
+    display: inline-flex;
+  }
+
+  .nav {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 12px);
+  }
+
+  .nav--open {
+    display: block;
+  }
+
+  .nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 16px;
+    font-size: 1.05rem;
+    max-width: none;
+    width: 100%;
+  }
+
+  .nav__item::before {
+    display: none;
+  }
+
+  .nav__link--active::before {
+    content: '/';
+    color: #a88aed;
   }
 }

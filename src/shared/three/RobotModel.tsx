@@ -2,6 +2,7 @@ import React from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
 import { useAnimations, useGLTF } from '@react-three/drei'
+import type { GLTF } from 'three-stdlib'
 
 type Props = {
   modelUrl: string
@@ -51,8 +52,8 @@ const RobotModel: React.FC<Props> = ({ modelUrl, active, modelScale = 1 }) => {
   const leftLeg = React.useMemo(() => new THREE.Group(), [])
   const rightLeg = React.useMemo(() => new THREE.Group(), [])
   const legsReady = React.useRef(false)
-  const { scene } = useGLTF(modelUrl)
-  const headNode = React.useMemo(() => findHeadNode(scene), [scene])
+  const { scene } = useGLTF(modelUrl) as GLTF & { scene: THREE.Group }
+  const headNode = React.useMemo<THREE.Object3D | null>(() => findHeadNode(scene), [scene])
   const clips = React.useMemo(() => createClips(), [])
   const { actions, mixer } = useAnimations(clips, group)
   const actionTimeout = React.useRef<number | null>(null)

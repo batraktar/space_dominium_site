@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import './footer.scss'
 import { useInView } from '../../hooks/useInView'
 
@@ -31,6 +31,28 @@ const Footer: React.FC<FooterProps> = ({
 }) => {
   const previewRef = useRef<HTMLDivElement>(null)
   const isPreviewVisible = useInView(previewRef, { rootMargin: '200px' })
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === 'undefined' || !('matchMedia' in window)) return true
+    return window.matchMedia('(min-width: 769px)').matches
+  })
+
+  useEffect(() => {
+    if (!('matchMedia' in window)) return
+    const media = window.matchMedia('(min-width: 769px)')
+    const onChange = (event: MediaQueryListEvent) => {
+      setIsDesktop(event.matches)
+    }
+    setIsDesktop(media.matches)
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [])
+
+  const handleDesktopToggle = (event: React.SyntheticEvent<HTMLDetailsElement>) => {
+    if (!isDesktop) return
+    if (!event.currentTarget.open) {
+      event.currentTarget.open = true
+    }
+  }
 
   type FooterCssVars = React.CSSProperties & {
     '--footer-title-color'?: string
@@ -88,40 +110,58 @@ const Footer: React.FC<FooterProps> = ({
             </div>
 
             <div className="footer_menu">
-              <div className="footer_menu_content">
-                <h2>Послуги</h2>
-                <p>IT-рішення / Веб-розробка</p>
-                <p>Графічний Дизайн</p>
-                <p>SMM</p>
-              </div>
+              <details
+                className="footer_menu_item"
+                open={isDesktop}
+                onToggle={handleDesktopToggle}
+              >
+                <summary>Послуги</summary>
+                <div className="footer_menu_body">
+                  <p>IT-рішення / Веб-розробка</p>
+                  <p>Графічний Дизайн</p>
+                  <p>SMM</p>
+                </div>
+              </details>
 
-              <div className="footer_menu_content">
-                <h2>Компанія</h2>
-                <p>Про нас</p>
-                <p>Наша місія</p>
-                <p>Команда</p>
-                <p>Досягнення</p>
-                <p>Вакансії</p>
-              </div>
+              <details
+                className="footer_menu_item"
+                open={isDesktop}
+                onToggle={handleDesktopToggle}
+              >
+                <summary>Компанія</summary>
+                <div className="footer_menu_body">
+                  <p>Про нас</p>
+                  <p>Наша місія</p>
+                  <p>Команда</p>
+                  <p>Досягнення</p>
+                  <p>Вакансії</p>
+                </div>
+              </details>
 
-              <div className="footer_menu_content">
-                <h2>Контакти</h2>
-                <p>
-                  <a href="mailto:hello@space.dominium">Email: hello@space.dominium.com.ua</a>
-                </p>
-                <p>
-                  <a href="tel:+380XXXXXXXXX">Телефон: +380XXXXXXXXX</a>
-                </p>
-                <p>
-                  <a
-                    href="https://maps.google.com/?q=м.+Хуст,+Україна"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Адреса: м. Хуст, Україна
-                  </a>
-                </p>
-              </div>
+              <details
+                className="footer_menu_item"
+                open={isDesktop}
+                onToggle={handleDesktopToggle}
+              >
+                <summary>Контакти</summary>
+                <div className="footer_menu_body">
+                  <p>
+                    <a href="mailto:hello@space.dominium">Email: hello@space.dominium.com.ua</a>
+                  </p>
+                  <p>
+                    <a href="tel:+380XXXXXXXXX">Телефон: +380XXXXXXXXX</a>
+                  </p>
+                  <p>
+                    <a
+                      href="https://maps.google.com/?q=м.+Хуст,+Україна"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Адреса: м. Хуст, Україна
+                    </a>
+                  </p>
+                </div>
+              </details>
             </div>
           </div>
 

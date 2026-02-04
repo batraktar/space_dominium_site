@@ -2,7 +2,7 @@
 
 .hero {
   position: relative;
-  min-height: clamp(900px, 70vh, 640px);
+  min-height: clamp(640px, 70vh, 900px);
   display: flex;
   align-items: center;
   color: #fff;
@@ -10,29 +10,6 @@
   padding: clamp(40px, 8vw, 80px) 0;
 }
 
-.hero::before,
-.hero::after {
-  content: '';
-  position: absolute;
-  width: 591.69px;
-  height: 591.69px;
-  background: rgba(0, 0, 0, 0.62);
-  opacity: 0.25;
-  filter: blur(35.5px);
-  border-radius: 287px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.hero::before {
-  right: -73.69px;
-  top: 101px;
-}
-
-.hero::after {
-  left: -120px;
-  top: 220px;
-}
 
 .heroInner {
   position: relative;
@@ -188,18 +165,54 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .hero {
-    padding: 32px 0 48px;
+    min-height: auto;
+    align-items: flex-start;
+    padding: 100px 0 32px;
+  }
+
+  .heroInner {
+    width: 100%;
+    padding: 0 20px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .content {
+    max-width: 620px;
+    width: 100%;
+    margin-inline: auto;
+    gap: 16px;
   }
 
   .actions {
-    gap: 14px;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .socials {
+    width: 100%;
+    gap: 0;
+    justify-content: space-between;
   }
 
   .social {
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     font-size: 11px;
+    margin-left: 0;
+  }
+
+  .logoWrap {
+    display: none;
   }
 }

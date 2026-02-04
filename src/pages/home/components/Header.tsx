@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ContactButton from '../../../shared/ui/contact-button/ContactButton'
 import LogoMenu from '../../../shared/ui/logo-menu/LogoMenu'
+import { usePrefersReducedMotion } from '../../../shared/hooks/usePrefersReducedMotion'
 import videoMp4 from '../../../assets/video/laptop_people_1920x780.mp4'
 import videoWebm from '../../../assets/video/output_1920x780.webm'
 import styles from './header.module.scss'
@@ -22,10 +23,20 @@ const Header: React.FC = () => {
     return () => ro.disconnect()
   }, [barEl])
 
+  const prefersReducedMotion = usePrefersReducedMotion()
+
   return (
     <>
       <header className={styles.header}>
-        <video className={styles.header__video} autoPlay muted loop playsInline preload="metadata">
+        <video
+          className={styles.header__video}
+          autoPlay={!prefersReducedMotion}
+          muted
+          loop={!prefersReducedMotion}
+          playsInline
+          preload="metadata"
+          aria-hidden
+        >
           {videoWebm && <source src={videoWebm} type="video/webm" />}
           <source src={videoMp4} type="video/mp4" />
         </video>

@@ -13,7 +13,7 @@ import bounceTexture from '../../../assets/img/design/bounce.svg'
 import styles from './bouncing-balls-physics.module.scss'
 
 type Props = {
-  wrapperRef: RefObject<HTMLElement>
+  wrapperRef: RefObject<HTMLElement | null>
   shelfIds?: string[]
   maxBalls?: number
   spawnMinMs?: number

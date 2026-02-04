@@ -2,7 +2,6 @@ import ServiceLayout from '../../shared/layout/ServiceLayout'
 import Hero from './components/Hero'
 import ChoosePlan from './components/ChoosePlan'
 import Tools from './components/Tools'
-
 import styles from './smm.module.scss'
 
 function Smm() {

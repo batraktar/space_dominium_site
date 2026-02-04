@@ -22,7 +22,12 @@ const Portfolio: React.FC = () => {
           {cases.map((item) => (
             <div key={item.id} className={styles.card}>
               <div className={styles.card__image_wrapper}>
-                <img src={item.img} alt={item.title} className={styles.card__image} />
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className={styles.card__image}
+                  decoding="async"
+                />
               </div>
               <div className={styles.card__overlay}>
                 <h3 className={styles.card__title}>{item.title}</h3>

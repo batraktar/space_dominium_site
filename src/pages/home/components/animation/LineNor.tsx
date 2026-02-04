@@ -14,6 +14,7 @@ interface LineNorProps {
   variants: Variant[]
   activeVarIdx: number | null
   setActiveVarIdx: React.Dispatch<React.SetStateAction<number | null>>
+  drawDurationMs?: number
 }
 
 const usePrefersReducedMotion = () => {
@@ -45,6 +46,7 @@ const useStrokeDraw = (
   const reducedMotion = usePrefersReducedMotion()
   const lengthsRef = useRef(new WeakMap<SVGPathElement, { key: string; length: number }>())
   const animationsRef = useRef(new WeakMap<SVGPathElement, Animation>())
+  const activeStateRef = useRef(new WeakMap<SVGPathElement, boolean>())
 
   useLayoutEffect(() => {
     pathRefs.forEach((ref, index) => {
@@ -62,35 +64,56 @@ const useStrokeDraw = (
 
       if (!length) return
 
-      const targetOffset = isActive ? 0 : length
       el.style.strokeDasharray = `${length}`
 
       const prev = animationsRef.current.get(el)
       if (prev) prev.cancel()
 
+      const wasActive = activeStateRef.current.get(el) ?? false
+
       if (!isActive) {
-        el.style.strokeDashoffset = `${length}`
-        el.style.opacity = '0'
+        if (reducedMotion || !wasActive) {
+          el.style.strokeDashoffset = `${length}`
+          el.style.opacity = '0'
+          activeStateRef.current.set(el, false)
+          return
+        }
+
+        const hideAnimation = el.animate(
+          [
+            { strokeDashoffset: 0, opacity: 1 },
+            { strokeDashoffset: length, opacity: 0 },
+          ],
+          { duration, easing, fill: 'forwards' },
+        )
+        animationsRef.current.set(el, hideAnimation)
+        hideAnimation.onfinish = () => {
+          el.style.strokeDashoffset = `${length}`
+          el.style.opacity = '0'
+          activeStateRef.current.set(el, false)
+        }
         return
       }
 
       if (reducedMotion) {
         el.style.strokeDashoffset = '0'
         el.style.opacity = '1'
+        activeStateRef.current.set(el, true)
         return
       }
 
-      const keyframes: Keyframe[] = [
-        { strokeDashoffset: length, opacity: 0 },
-        { strokeDashoffset: 0, opacity: 1 },
-      ]
-
-      const animation = el.animate(keyframes, { duration, easing, fill: 'forwards' })
-      animationsRef.current.set(el, animation)
-
-      animation.onfinish = () => {
-        el.style.strokeDashoffset = `${targetOffset}`
-        el.style.opacity = isActive ? '1' : '0'
+      const showAnimation = el.animate(
+        [
+          { strokeDashoffset: length, opacity: 0 },
+          { strokeDashoffset: 0, opacity: 1 },
+        ],
+        { duration, easing, fill: 'forwards' },
+      )
+      animationsRef.current.set(el, showAnimation)
+      showAnimation.onfinish = () => {
+        el.style.strokeDashoffset = '0'
+        el.style.opacity = '1'
+        activeStateRef.current.set(el, true)
       }
     })
 
@@ -110,9 +133,17 @@ const LineNor: React.FC<LineNorProps> = ({
   variants,
   activeVarIdx,
   setActiveVarIdx,
+  drawDurationMs,
 }) => {
   const leftIsDotted = dottedSide === 'left' || dottedSide === 'both'
   const rightIsDotted = dottedSide === 'right' || dottedSide === 'both'
+
+  const drawDuration = drawDurationMs ?? 750
+
+  const slotPositions = useMemo(
+    () => [0.287356, 20.114943, 40.229885, 60.383142, 80.785441, 99.664751],
+    [],
+  )
 
   const L1 = useRef<SVGPathElement | null>(null)
   const L2 = useRef<SVGPathElement | null>(null)
@@ -122,8 +153,8 @@ const LineNor: React.FC<LineNorProps> = ({
   const leftRefs = useMemo(() => [L1, L2], [])
   const rightRefs = useMemo(() => [R1, R2], [])
 
-  useStrokeDraw(leftRefs, !leftIsDotted)
-  useStrokeDraw(rightRefs, !rightIsDotted)
+  useStrokeDraw(leftRefs, !leftIsDotted, { duration: drawDuration })
+  useStrokeDraw(rightRefs, !rightIsDotted, { duration: drawDuration })
 
   return (
     <div className="line_wrapper">
@@ -318,16 +349,27 @@ const LineNor: React.FC<LineNorProps> = ({
       <div className="line_icon_wrapper" role="tablist" aria-label="Підменю">
         {variants.map((v, i) => {
           const isActive = i === activeVarIdx
+          const isPlaceholder = v.bullets.length === 0
           return (
-            <div key={v.id} className={`line_icon ${isActive ? 'is-active' : ''}`}>
+            <div
+              key={v.id}
+              className={`line_icon ${isActive ? 'is-active' : ''}`}
+              style={{ left: `${slotPositions[i] ?? 0}%` }}
+            >
               <button
                 type="button"
                 className="box_line_icon"
                 role="tab"
                 aria-selected={isActive}
-                tabIndex={0}
-                onClick={() => setActiveVarIdx(i)}
+                aria-disabled={isPlaceholder}
+                disabled={isPlaceholder}
+                tabIndex={isPlaceholder ? -1 : 0}
+                onClick={() => {
+                  if (isPlaceholder) return
+                  setActiveVarIdx(i)
+                }}
                 onKeyDown={(e) => {
+                  if (isPlaceholder) return
                   if (e.key === 'Enter' || e.key === ' ') setActiveVarIdx(i)
                 }}
                 aria-label={`Вибрати варіант ${i + 1}`}

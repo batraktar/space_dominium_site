@@ -1,8 +1,42 @@
-import { useEffect, useState, type FC } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type FC, type CSSProperties } from 'react'
 import Papa from 'papaparse'
 import './faq.scss'
 
 type FaqItem = { question: string; answer: string }
+type CachePayload = { ts: number; items: FaqItem[] }
+
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000
+const GID_REGEX = /[?&]gid=(\d+)/
+
+const resolveSheetUrl = (sheetUrl: string) => {
+  if (!import.meta.env.PROD) return sheetUrl
+  const match = sheetUrl.match(GID_REGEX)
+  if (!match) return sheetUrl
+  return `/faq-cache.php?gid=${match[1]}`
+}
+
+const loadCache = (key: string): CachePayload | null => {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(key)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as CachePayload
+    if (!parsed || !Array.isArray(parsed.items)) return null
+    return parsed
+  } catch {
+    return null
+  }
+}
+
+const saveCache = (key: string, items: FaqItem[]) => {
+  if (typeof window === 'undefined') return
+  try {
+    const payload: CachePayload = { ts: Date.now(), items }
+    window.localStorage.setItem(key, JSON.stringify(payload))
+  } catch {
+    // ignore cache write errors
+  }
+}
 
 type Props = {
   sheetUrl: string
@@ -11,18 +45,38 @@ type Props = {
 }
 
 const Faq: FC<Props> = ({ sheetUrl, plusColor = '#0A0A60', titleColor = '#0A0A60' }) => {
-  const [open, setOpen] = useState<number | null>(0)
+  const [open, setOpen] = useState<Set<number>>(() => new Set())
   const [items, setItems] = useState<FaqItem[]>([])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState<string | null>(null)
+  const [measureTick, setMeasureTick] = useState(0)
+  const answerRefs = useRef<Array<HTMLDivElement | null>>([])
+
+  useLayoutEffect(() => {
+    setMeasureTick((tick) => tick + 1)
+  }, [items.length])
 
   useEffect(() => {
     const controller = new AbortController()
+    const resolvedUrl = resolveSheetUrl(sheetUrl)
+    const cacheKey = `faq-cache:${sheetUrl}`
+    const cached = loadCache(cacheKey)
+    const hasCache = Boolean(cached?.items?.length)
+    if (hasCache && cached) {
+      setItems(cached.items)
+      setLoading(false)
+    }
+
+    const isFresh = cached ? Date.now() - cached.ts < CACHE_TTL_MS : false
+    if (isFresh) {
+      return () => controller.abort()
+    }
+
     ;(async () => {
       try {
-        setLoading(true)
+        if (!hasCache) setLoading(true)
         setErr(null)
-        const res = await fetch(sheetUrl, { signal: controller.signal })
+        const res = await fetch(resolvedUrl, { signal: controller.signal })
         if (!res.ok) throw new Error(`Failed to load FAQ (${res.status})`)
         const text = await res.text()
 
@@ -35,18 +89,19 @@ const Faq: FC<Props> = ({ sheetUrl, plusColor = '#0A0A60', titleColor = '#0A0A60
         if (rows.length > 1) {
           // Skip header row
           const [, ...data] = rows
-          setItems(
-            data
-              .map((r) => ({ question: r[0] ?? '', answer: r[1] ?? '' }))
-              .filter((x) => x.question && x.answer),
-          )
+          const nextItems = data
+            .map((r) => ({ question: r[0] ?? '', answer: r[1] ?? '' }))
+            .filter((x) => x.question && x.answer)
+          setItems(nextItems)
+          saveCache(cacheKey, nextItems)
         } else {
           setItems([])
+          saveCache(cacheKey, [])
         }
       } catch (e: unknown) {
         if (e instanceof DOMException && e.name === 'AbortError') return
         const message = e instanceof Error ? e.message : 'Unknown error'
-        setErr(message)
+        if (!hasCache) setErr(message)
       } finally {
         setLoading(false)
       }
@@ -54,7 +109,7 @@ const Faq: FC<Props> = ({ sheetUrl, plusColor = '#0A0A60', titleColor = '#0A0A60
     return () => controller.abort()
   }, [sheetUrl])
 
-  type QuestionCssVars = React.CSSProperties & {
+  type QuestionCssVars = CSSProperties & {
     '--faq-plus': string
     '--faq-title': string
   }
@@ -71,19 +126,34 @@ const Faq: FC<Props> = ({ sheetUrl, plusColor = '#0A0A60', titleColor = '#0A0A60
           Актуальні питання
         </h2>
 
-        {loading && <p>Завантажуємо питання…</p>}
-        {err && <p>Не вдалося завантажити FAQ: {err}</p>}
+        {loading && items.length === 0 && <p>Завантажуємо питання…</p>}
+        {err && items.length === 0 && <p>Не вдалося завантажити FAQ: {err}</p>}
 
         {!loading &&
           !err &&
           items.map((item, idx) => {
-            const isActive = open === idx
+            const isActive = open.has(idx)
             const answerId = `ans-${idx}`
+            const answerHeight = answerRefs.current[idx]?.scrollHeight ?? 0
+            const answerStyle: CSSProperties = {
+              maxHeight: isActive ? `${answerHeight}px` : '0px',
+            }
+
             return (
               <div key={idx} className={`faq_item ${isActive ? 'active' : ''}`}>
                 <button
                   className="faq_question"
-                  onClick={() => setOpen((p) => (p === idx ? null : idx))}
+                  onClick={() =>
+                    setOpen((prev) => {
+                      const next = new Set(prev)
+                      if (next.has(idx)) {
+                        next.delete(idx)
+                      } else {
+                        next.add(idx)
+                      }
+                      return next
+                    })
+                  }
                   aria-expanded={isActive}
                   aria-controls={answerId}
                   type="button"
@@ -100,8 +170,16 @@ const Faq: FC<Props> = ({ sheetUrl, plusColor = '#0A0A60', titleColor = '#0A0A60
                     </svg>
                   </span>
                 </button>
-                <div id={answerId} className="faq_answer">
-                  <p>{item.answer}</p>
+                <div id={answerId} className="faq_answer" style={answerStyle}>
+                  <div
+                    className="faq_answer_inner"
+                    ref={(node) => {
+                      answerRefs.current[idx] = node
+                    }}
+                    data-measure={measureTick}
+                  >
+                    <p>{item.answer}</p>
+                  </div>
                 </div>
               </div>
             )

@@ -10,7 +10,7 @@ const About = lazy(() => import('../pages/contacts/About'))
 
 function App() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="app-fallback">Завантаження…</div>}>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />

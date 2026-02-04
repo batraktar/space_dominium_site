@@ -1,262 +1,51 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './Animation.css'
 import LineNor from './LineNor'
+import emptyDotIcon from './assets/icons/empty-dot.svg'
+import { TABS } from './data'
+import type { Tab, TabId, Variant } from './data'
 
-type TabId = 'social' | 'market' | 'sites' | 'retail' | 'apps'
 type DottedSide = 'left' | 'right' | 'both'
 
-const assetUrl = (relativePath: string) => {
-  const normalizedPath = relativePath.replace(/^\.\.\/\.\.\/assets\//, '../../../../assets/')
-  return new URL(normalizedPath, import.meta.url).href
-}
-
-interface Variant {
-  id: string
-  thumb: string
-  contentIcon: string
-  bullets: string[]
-}
-
-interface Tab {
-  id: TabId
-  label: string
-  navIcon: string
-  contentIcon: string
-  variants: Variant[]
-}
-
-// ===== Дані =====
-const TABS: Tab[] = [
-  {
-    id: 'social',
-    label: 'Соцмережі',
-    navIcon: assetUrl('../../assets/img/icon/famicons_share-social-outline (1).svg'),
-    contentIcon: assetUrl('../../assets/img/icon-hover/famicons_share-social-outline.svg'),
-    variants: [
-      {
-        id: 'soc-1',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Stories pack', 'Reels сет', 'Пак іконок highlights'],
-      },
-      {
-        id: 'soc-2',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Місячний контент-план', 'TOV/копірайт', 'Контент-гайд'],
-      },
-      {
-        id: 'soc-3',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Photo-сетап', 'Лайтрум пресети', 'Грід-сітка 3×3'],
-      },
-      {
-        id: 'soc-4',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['UGC пакет', 'Сценарії рілсів', 'Титри/сабтайтли'],
-      },
-      {
-        id: 'soc-5',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['SMM-старт', 'Оформлення профілю', 'Гайд по шрифтам/кольорам'],
-      },
-      {
-        id: 'soc-6',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Таргет запуск', 'Сегментація', 'Креативи A/B'],
-      },
-    ],
-  },
-  {
-    id: 'market',
-    label: 'Маркетплейси',
-    navIcon: assetUrl('../../assets/img/icon/Vector (5).svg'),
-    contentIcon: assetUrl(
-      '../../assets/img/icon-hover/material-symbols-light_dashboard-outline-rounded.svg',
-    ),
-    variants: [
-      {
-        id: 'soc-2-1',
-        thumb: assetUrl('../../assets/img/Vector (3).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (3).svg'),
-        bullets: ['Stories pack', 'Reels сет', 'Пак іконок highlights'],
-      },
-      {
-        id: 'soc-2',
-        thumb: assetUrl('../../assets/img/Vector (3).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (3).svg'),
-        bullets: ['Місячний контент-план', 'TOV/копірайт', 'Контент-гайд'],
-      },
-      {
-        id: 'soc-3',
-        thumb: assetUrl('../../assets/img/Vector (3).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (3).svg'),
-        bullets: ['Photo-сетап', 'Лайтрум пресети', 'Грід-сітка 3×3'],
-      },
-      {
-        id: 'soc-4',
-        thumb: assetUrl('../../assets/img/Vector (3).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (3).svg'),
-        bullets: ['UGC пакет', 'Сценарії рілсів', 'Титри/сабтайтли'],
-      },
-      {
-        id: 'soc-5',
-        thumb: assetUrl('../../assets/img/Vector (3).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (3).svg'),
-        bullets: ['SMM-старт', 'Оформлення профілю', 'Гайд по шрифтам/кольорам'],
-      },
-      {
-        id: 'soc-6',
-        thumb: assetUrl('../../assets/img/Vector (3).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (3).svg'),
-        bullets: ['Таргет запуск', 'Сегментація', 'Креативи A/B'],
-      },
-    ],
-  },
-  {
-    id: 'sites',
-    label: 'Сайти',
-    navIcon: assetUrl('../../assets/img/icon/cuida_monitor-outline.svg'),
-    contentIcon: assetUrl('../../assets/img/icon-hover/cuida_monitor-outline (2).svg'),
-    variants: [
-      {
-        id: 'soc-1',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Stories pack', 'Reels сет', 'Пак іконок highlights'],
-      },
-      {
-        id: 'soc-2',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Місячний контент-план', 'TOV/копірайт', 'Контент-гайд'],
-      },
-      {
-        id: 'soc-3',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Photo-сетап', 'Лайтрум пресети', 'Грід-сітка 3×3'],
-      },
-      {
-        id: 'soc-4',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['UGC пакет', 'Сценарії рілсів', 'Титри/сабтайтли'],
-      },
-      {
-        id: 'soc-5',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['SMM-старт', 'Оформлення профілю', 'Гайд по шрифтам/кольорам'],
-      },
-      {
-        id: 'soc-6',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Таргет запуск', 'Сегментація', 'Креативи A/B'],
-      },
-    ],
-  },
-  {
-    id: 'retail',
-    label: 'Рітейл',
-    navIcon: assetUrl('../../assets/img/icon/fluent_building-retail-20-regular.svg'),
-    contentIcon: assetUrl('../../assets/img/icon-hover/fluent_building-retail-20-regular (1).svg'),
-    variants: [
-      {
-        id: 'soc-1',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Stories pack', 'Reels сет', 'Пак іконок highlights'],
-      },
-      {
-        id: 'soc-2',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Місячний контент-план', 'TOV/копірайт', 'Контент-гайд'],
-      },
-      {
-        id: 'soc-3',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Photo-сетап', 'Лайтрум пресети', 'Грід-сітка 3×3'],
-      },
-      {
-        id: 'soc-4',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['UGC пакет', 'Сценарії рілсів', 'Титри/сабтайтли'],
-      },
-      {
-        id: 'soc-5',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['SMM-старт', 'Оформлення профілю', 'Гайд по шрифтам/кольорам'],
-      },
-      {
-        id: 'soc-6',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Таргет запуск', 'Сегментація', 'Креативи A/B'],
-      },
-    ],
-  },
-  {
-    id: 'apps',
-    label: 'Додатки',
-    navIcon: assetUrl('../../assets/img/icon/proicons_phone.svg'),
-    contentIcon: assetUrl('../../assets/img/icon-hover/proicons_phone (1).svg'),
-    variants: [
-      {
-        id: 'soc-1',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Stories pack', 'Reels сет', 'Пак іконок highlights'],
-      },
-      {
-        id: 'soc-2',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Місячний контент-план', 'TOV/копірайт', 'Контент-гайд'],
-      },
-      {
-        id: 'soc-3',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Photo-сетап', 'Лайтрум пресети', 'Грід-сітка 3×3'],
-      },
-      {
-        id: 'soc-4',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['UGC пакет', 'Сценарії рілсів', 'Титри/сабтайтли'],
-      },
-      {
-        id: 'soc-5',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['SMM-старт', 'Оформлення профілю', 'Гайд по шрифтам/кольорам'],
-      },
-      {
-        id: 'soc-6',
-        thumb: assetUrl('../../assets/img/Vector (1).svg'),
-        contentIcon: assetUrl('../../assets/img/Vector (1).svg'),
-        bullets: ['Таргет запуск', 'Сегментація', 'Креативи A/B'],
-      },
-    ],
-  },
-]
+const LINE_ANIM_MS = 1500
+const LINE_WIDTH_PX = 1044
+const LINE_ICON_SIZE_PX = 120
 
 const dottedByTab: Record<TabId, DottedSide> = {
   social: 'left',
-  market: 'both',
+  brandStyle: 'both',
   sites: 'left',
   retail: 'right',
   apps: 'both',
+}
+
+const EMPTY_ICON = emptyDotIcon
+
+const makePlaceholder = (id: string, contentIcon: string): Variant => ({
+  id,
+  thumb: EMPTY_ICON,
+  contentIcon,
+  bullets: [],
+})
+
+const buildVariants = (tab: Tab, dottedSide: DottedSide): Variant[] => {
+  const leftEmpty = dottedSide === 'left' || dottedSide === 'both'
+  const rightEmpty = dottedSide === 'right' || dottedSide === 'both'
+  const result = [...tab.variants]
+
+  if (leftEmpty) {
+    result.unshift(makePlaceholder(`${tab.id}-empty-left`, tab.contentIcon))
+  }
+
+  if (rightEmpty) {
+    result.push(makePlaceholder(`${tab.id}-empty-right`, tab.contentIcon))
+  }
+
+  while (result.length < 6) {
+    result.push(makePlaceholder(`${tab.id}-empty-${result.length + 1}`, tab.contentIcon))
+  }
+
+  return result
 }
 
 const Animation: React.FC = () => {
@@ -265,14 +54,18 @@ const Animation: React.FC = () => {
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
 
   const activeTab = useMemo(() => TABS.find((t) => t.id === activeId)!, [activeId])
-  const activeVariants = activeTab?.variants ?? []
+  const dottedSide = dottedByTab[activeId] ?? 'right'
+  const activeVariants = useMemo(
+    () => buildVariants(activeTab, dottedSide),
+    [activeTab, dottedSide],
+  )
 
   useEffect(() => {
     setActiveVarIdx(null)
   }, [activeId])
 
   const currentVariant: Variant | null =
-    activeVarIdx !== null ? (activeTab?.variants?.[activeVarIdx] ?? null) : null
+    activeVarIdx !== null ? (activeVariants?.[activeVarIdx] ?? null) : null
 
   const centerIcon = currentVariant?.contentIcon ?? activeTab?.contentIcon
   const centerBullets = currentVariant?.bullets ?? []
@@ -316,24 +109,26 @@ const Animation: React.FC = () => {
           {/* Верхнє меню */}
           <div className="ani-nav" role="tablist" aria-label="Категорії">
             {TABS.map((tab, index) => (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={activeId === tab.id}
-                aria-controls={`panel-${tab.id}`}
-                id={`tab-${tab.id}`}
-                tabIndex={activeId === tab.id ? 0 : -1}
-                className={`nav-bloks ${activeId === tab.id ? 'is-active' : ''}`}
-                onClick={() => setActiveId(tab.id)}
-                onKeyDown={(event) => handleTabKeyDown(event, index)}
-                ref={(node) => {
-                  tabRefs.current[index] = node
-                }}
-              >
-                <img className="nav-icon" src={tab.navIcon} alt="" />
-                <p>{tab.label}</p>
-              </button>
+              <React.Fragment key={tab.id}>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeId === tab.id}
+                  aria-controls={`panel-${tab.id}`}
+                  id={`tab-${tab.id}`}
+                  tabIndex={activeId === tab.id ? 0 : -1}
+                  className={`nav-bloks ${activeId === tab.id ? 'is-active' : ''}`}
+                  onClick={() => setActiveId(tab.id)}
+                  onKeyDown={(event) => handleTabKeyDown(event, index)}
+                  ref={(node) => {
+                    tabRefs.current[index] = node
+                  }}
+                >
+                  <img className="nav-icon" src={tab.navIcon} alt="" />
+                  <p>{tab.label}</p>
+                </button>
+                {index < TABS.length - 1 && <span className="nav-divider" aria-hidden="true" />}
+              </React.Fragment>
             ))}
           </div>
 
@@ -401,12 +196,22 @@ const Animation: React.FC = () => {
           </div>
 
           {/* Лінії + нижні блоки */}
-          <div className="line">
+          <div
+            className="line"
+            style={
+              {
+                '--line-anim-ms': `${LINE_ANIM_MS}ms`,
+                '--line-width': `${LINE_WIDTH_PX}px`,
+                '--box-size': `${LINE_ICON_SIZE_PX}px`,
+              } as React.CSSProperties
+            }
+          >
             <LineNor
-              dottedSide={dottedByTab[activeId] ?? 'right'}
+              dottedSide={dottedSide}
               variants={activeVariants}
               activeVarIdx={activeVarIdx}
               setActiveVarIdx={setActiveVarIdx}
+              drawDurationMs={LINE_ANIM_MS}
             />
           </div>
         </div>

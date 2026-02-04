@@ -7,13 +7,44 @@
   background-image: none;
   min-height: 100vh;
   color: #fff;
+  overflow-x: hidden;
 }
 
+.smm::before,
 .smm::after {
   content: '';
   position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.smm::before {
+  inset: 0;
+  background:
+    radial-gradient(
+      50% 50% at 50% 50%,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.25) 45%,
+      rgba(0, 0, 0, 0.1) 70%,
+      rgba(0, 0, 0, 0) 100%
+    ),
+    radial-gradient(
+      50% 50% at 50% 50%,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.25) 45%,
+      rgba(0, 0, 0, 0.1) 70%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  background-repeat: no-repeat;
+  background-size: 591.69px 591.69px, 591.69px 591.69px;
+  background-position: right -73.69px top 101px, left -120px top 220px;
+  filter: blur(60px);
+  opacity: 0.25;
+}
+
+.smm::after {
   right: 80px;
-  top: 52%;
+  top: 62%;
   width: 920px;
   height: 420px;
   transform: translateY(-50%);
@@ -25,8 +56,6 @@
   );
   filter: blur(4px);
   opacity: 0.9;
-  pointer-events: none;
-  z-index: -1;
 }
 
 .smm > * {
@@ -43,19 +72,8 @@
 }
 
 @media (max-width: 768px) {
+  .smm::before,
   .smm::after {
-    right: -40px;
-    top: 54%;
-    width: 560px;
-    height: 260px;
-  }
-}
-
-@media (max-width: 480px) {
-  .smm::after {
-    right: -120px;
-    top: 60%;
-    width: 420px;
-    height: 220px;
+    display: none;
   }
 }

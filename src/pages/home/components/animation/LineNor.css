@@ -9,21 +9,30 @@
 .line-svg {
   display: flex;
   justify-content: center;
+  width: min(100%, var(--line-width, 1044px));
+  margin: 0 auto;
+}
+
+.line-svg > svg {
+  width: 100%;
+  height: auto;
 }
 
 .line_icon_wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 47px;
+  position: relative;
+  display: block;
+  height: var(--box-size, 120px);
   margin-top: 22.99px;
+  width: min(100%, var(--line-width, 1044px));
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.box_line_icon {
-  background-color: #0f0f0f;
-  border: 1.19px solid #2d2d2d;
-  border-radius: 23.88px;
-  padding: 51px;
+.line_icon {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  animation: lineIconIn var(--line-anim-ms, 750ms) ease both;
 }
 
 .solid {
@@ -73,12 +82,24 @@
   background: #111;
   border: 0;
   border-radius: 20px;
-  padding: 48px;
+  width: var(--box-size, 120px);
+  height: var(--box-size, 120px);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition:
     transform 0.16s ease,
-    box-shadow 0.16s ease,
-    background 0.16s ease;
+    box-shadow var(--line-anim-ms, 750ms) ease,
+    background var(--line-anim-ms, 750ms) ease;
+}
+
+.box_line_icon img {
+  max-width: 60%;
+  max-height: 60%;
+  width: auto;
+  height: auto;
 }
 
 .line_icon.is-active .box_line_icon {
@@ -94,6 +115,24 @@
   box-shadow: 0 0 0 3px #0a0a60;
 }
 
+.box_line_icon:disabled {
+  cursor: default;
+}
+
+.box_line_icon:disabled:hover {
+  transform: none;
+}
+
+@keyframes lineIconIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .content-inner-fade {
     animation: none;
@@ -101,5 +140,9 @@
 
   .box_line_icon {
     transition: none;
+  }
+
+  .line_icon {
+    animation: none;
   }
 }

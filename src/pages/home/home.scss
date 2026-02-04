@@ -1,0 +1,29 @@
+@use '../../styles/variables' as *;
+
+.home__container {
+  position: relative;
+}
+
+.home__container::after {
+  content: '';
+  position: absolute;
+  width: 768px;
+  height: 1059px;
+  right: -210px;
+  top: 1900px;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(155, 137, 192, 0.6) 0%,
+    rgba(155, 137, 192, 0.28) 45%,
+    rgba(155, 137, 192, 0.12) 70%,
+    rgba(155, 137, 192, 0) 100%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.home__container > * {
+  position: relative;
+  z-index: 2;
+}

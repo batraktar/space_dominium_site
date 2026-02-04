@@ -21,3 +21,12 @@ body {
 .footer {
   min-height: 800px;
 }
+
+.app-fallback {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-gilroy;
+  color: $text-color;
+}

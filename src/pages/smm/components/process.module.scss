@@ -3,7 +3,7 @@
 .process {
   position: relative;
   padding: 100px 0;
-  background-color: #fff; // Or transparent if on white bg
+  background-color: transparent;
   overflow: hidden;
 
   &__blur {
@@ -37,10 +37,10 @@
 
   &__btn {
     padding: 12px 32px;
-    border: 1px solid #ffcdc3; // Pinkish border from SMM theme
+    border: 1px solid #ff8b20;
     border-radius: 50px;
-    background: #fff;
-    color: #000;
+    background: transparent;
+    color: #fff;
     font-family: $font-inter;
     font-size: 16px;
     font-weight: 500;
@@ -58,14 +58,11 @@
 
   &__line {
     position: absolute;
-    left: 29px; // Center of the node (node width 20px + border? No, let's align carefully)
-    // Node is 20px. Center is 10px.
-    // If padding-left is 60px, let's place line relative to that.
-    // Actually, let's make the line absolute to the timeline container.
+    left: 15px;
     top: 10px;
     bottom: 10px;
-    width: 2px;
-    border-left: 2px dashed #ffcdc3; // Dashed line
+    width: 1px;
+    border-left: 1px dashed #ff8b20;
     z-index: 0;
   }
 
@@ -77,19 +74,17 @@
   }
 
   &__node {
-    flex: 0 0 20px;
-    height: 20px;
+    flex: 0 0 32px;
+    height: 32px;
     border-radius: 50%;
-    border: 2px solid #ffcdc3;
+    border: 0.8px solid #ff8b20;
     background-color: #fff;
     position: relative;
     z-index: 1;
-    margin-top: 6px; // Align with text top
-    margin-left: 20px; // Adjust to align with dashed line
-    // If line is at left: 29px.
-    // Node center should be at 29px + 1px (border width).
-    // Let's adjust layout:
-    // We can put the node inside the padding area.
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8px;
   }
 
   // Re-adjusting alignment
@@ -98,17 +93,23 @@
   }
 
   &__line {
-    left: 9px; // Center of 20px node is 10px. Border 2px.
+    left: 15px;
   }
 
   &__step {
-    padding-left: 40px; // Space for line
+    padding-left: 52px;
   }
 
   &__node {
     position: absolute;
     left: 0;
     margin-left: 0;
+  }
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    display: block;
   }
 
   &__content {
@@ -121,14 +122,14 @@
     font-family: $font-gilroy;
     font-size: 24px;
     font-weight: 700;
-    color: #000;
+    color: #fff;
     margin: 0;
   }
 
   &__desc {
     font-family: $font-inter;
     font-size: 16px;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(255, 255, 255, 0.8);
     margin: 0;
     max-width: 500px;
   }

@@ -67,7 +67,12 @@ const Tools: React.FC = () => {
                   className={`${styles.card} ${styles[`card--${tool.variant}`]}`}
                 >
                   <div className={styles.card__image_wrapper}>
-                    <img src={tool.img} alt={tool.title} className={styles.card__image} />
+                    <img
+                      src={tool.img}
+                      alt={tool.title}
+                      className={styles.card__image}
+                      decoding="async"
+                    />
                   </div>
                   <div className={styles.card__content}>
                     <h3 className={styles.card__title}>{tool.title}</h3>
