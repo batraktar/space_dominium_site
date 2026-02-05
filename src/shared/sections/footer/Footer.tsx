@@ -1,8 +1,8 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import './footer.scss'
 import { useInView } from '../../hooks/useInView'
-
-const ModelViewer = lazy(() => import('../../three/ModelViewer'))
+import HouseViewer from '../../three/HouseViewer'
 
 type FooterProps = {
   title?: React.ReactNode
@@ -31,6 +31,7 @@ const Footer: React.FC<FooterProps> = ({
 }) => {
   const previewRef = useRef<HTMLDivElement>(null)
   const isPreviewVisible = useInView(previewRef, { rootMargin: '200px' })
+  const location = useLocation()
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window === 'undefined' || !('matchMedia' in window)) return true
     return window.matchMedia('(min-width: 769px)').matches
@@ -69,6 +70,15 @@ const Footer: React.FC<FooterProps> = ({
     ...(arrowColor ? { '--footer-arrow-color': arrowColor } : {}),
     ...(arrowCircleColor ? { '--footer-arrow-circle-color': arrowCircleColor } : {}),
   }
+
+  const modelColors: Record<string, string> = {
+    '/': '#A88AED',
+    '/smm': '#FFC3CC',
+    '/design': '#D2DB76',
+    '/web-develop': '#8CCBFF',
+    '/contacts': '#F3C7E9',
+  }
+  const modelColor = modelColors[location.pathname] || '#A88AED'
 
   return (
     <footer>
@@ -167,21 +177,24 @@ const Footer: React.FC<FooterProps> = ({
 
           <div className="footer_right" ref={previewRef}>
             {isPreviewVisible && (
-              <Suspense fallback={null}>
-                <ModelViewer
-                  url="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/ToyCar/glTF-Binary/ToyCar.glb"
-                  width={400}
-                  height={400}
-                  showScreenshotButton={false}
-                />
-              </Suspense>
+              <HouseViewer
+                url="/models/house.glb"
+                width={520}
+                height={400}
+                modelScale={1.6}
+                modelYOffset={-0.2}
+                color={modelColor}
+                autoRotate={false}
+                enableMouseYaw
+                environmentPreset="none"
+              />
             )}
           </div>
         </div>
-
+{/* 
         <div className="Antoshka">
           <p>Website made by Pylypiuk</p>
-        </div>
+        </div> */}
       </div>
     </footer>
   )

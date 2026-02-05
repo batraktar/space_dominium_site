@@ -10,42 +10,42 @@ import styles from './hero.module.scss'
 const Hero: React.FC = () => {
   return (
     <section className={styles.hero}>
-      <div className={styles.heroInner}>
-        <div className={styles.content}>
-          <h1 className={styles.title}>SMM SPACE</h1>
-          <p className={styles.subtitle}>
+      <div className={styles.hero__inner}>
+        <div className={styles.hero__content}>
+          <h1 className={styles.hero__title}>SMM SPACE</h1>
+          <p className={styles.hero__subtitle}>
             Тут ваш бренд нарешті перестане бути тінню в соцмережах. Робимо візуал, слова й меми,
             щоб про вас таки заговорили - і бажано добре.
           </p>
 
-          <div className={styles.actions}>
-            <a className={styles.cta} href="#contact">
-              хочу так само <span className={styles.ctaArrow}>→</span>
+          <div className={styles.hero__actions}>
+            <a className={styles.hero__cta} href="#contact">
+              хочу так само <span className={styles.hero__ctaArrow}>→</span>
             </a>
 
-            <div className={styles.socials} aria-label="Соціальні мережі">
-              <a className={styles.social} href="https://space.dominium.com.ua" aria-label="Facebook">
+            <div className={styles.hero__socials} aria-label="Соціальні мережі">
+              <a className={styles.hero__social} href="https://space.dominium.com.ua" aria-label="Facebook">
                 <img src={fbIcon} alt="" />
               </a>
-              <a className={styles.social} href="https://space.dominium.com.ua" aria-label="TikTok">
+              <a className={styles.hero__social} href="https://space.dominium.com.ua" aria-label="TikTok">
                 <img src={ttIcon} alt="" />
               </a>
-              <a className={styles.social} href="https://space.dominium.com.ua" aria-label="Email">
+              <a className={styles.hero__social} href="https://space.dominium.com.ua" aria-label="Email">
                 <img src={mailIcon} alt="" />
               </a>
-              <a className={styles.social} href="https://space.dominium.com.ua" aria-label="Instagram">
+              <a className={styles.hero__social} href="https://space.dominium.com.ua" aria-label="Instagram">
                 <img src={instIcon} alt="" />
               </a>
-              <a className={styles.social} href="https://space.dominium.com.ua" aria-label="YouTube">
+              <a className={styles.hero__social} href="https://space.dominium.com.ua" aria-label="YouTube">
                 <img src={ytIcon} alt="" />
               </a>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className={styles.logoWrap} aria-hidden>
-          <img src={heroLogo} alt="" className={styles.logo} />
-        </div>
+      <div className={styles.hero__logoWrap} aria-hidden>
+        <img src={heroLogo} alt="" className={styles.hero__logo} />
       </div>
     </section>
   )

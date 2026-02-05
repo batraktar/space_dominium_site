@@ -18,13 +18,14 @@ type Shape = {
   icon: string
 }
 
+const ICONS = [aiIcon, photoshopIcon, pinterestIcon, instagramIcon, canvaIcon]
+
 const FloatingShapes: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [shapes, setShapes] = useState<Shape[]>([])
   const requestRef = useRef<number | undefined>(undefined)
   const boundsRef = useRef({ maxX: 95, maxY: 95, width: 0, height: 0 })
   const shapeSize = 72
-  const icons = [aiIcon, photoshopIcon, pinterestIcon, instagramIcon, canvaIcon]
 
   useEffect(() => {
     const container = containerRef.current
@@ -85,7 +86,7 @@ const FloatingShapes: React.FC = () => {
       vy: (Math.random() - 0.5) * 0.15,
       rotation: 0,
       size: shapeSize,
-      icon: icons[i % icons.length],
+      icon: ICONS[i % ICONS.length],
     }))
     setShapes(initialShapes)
 

@@ -3,33 +3,33 @@
 .section {
   position: relative;
   color: #fff;
-  --node-size: 64px;
-  --title-size: 18px;
-  --content-gap: 6px;
-  padding: 120px 0;
+  --node-size: clamp(48px, 4vw, 64px);
+  --title-size: clamp(16px, 1.4vw, 18px);
+  --content-gap: clamp(4px, 0.7vw, 6px);
+  padding: clamp(80px, 8vw, 120px) 0;
   overflow: hidden;
 }
 
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 clamp(24px, 3vw, 40px);
   display: flex;
-  gap: 120px;
+  gap: clamp(48px, 8vw, 120px);
   align-items: flex-start;
 }
 
 .left {
-  flex: 0 0 320px;
+  flex: 0 0 clamp(260px, 24vw, 320px);
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: clamp(20px, 3vw, 32px);
 }
 
 .title {
   margin: 0;
   font-family: $font-gilroy;
-  font-size: clamp(28px, 3vw, 36px);
+  font-size: clamp(26px, 3vw, 36px);
   line-height: 1.2;
   letter-spacing: 0.2px;
 }
@@ -38,13 +38,13 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 22px;
+  padding: clamp(12px, 1.6vw, 14px) clamp(18px, 2.2vw, 22px);
   border: 1px solid #f5b86c;
   border-radius: 999px;
   background: transparent;
   color: #f7d9c5;
   font-family: $font-inter;
-  font-size: 14px;
+  font-size: clamp(12px, 1.1vw, 14px);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: pointer;
@@ -94,14 +94,14 @@
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: 46px;
+  gap: clamp(28px, 3.2vw, 46px);
 }
 
 .step {
   position: relative;
   display: grid;
   grid-template-columns: var(--node-size) 1fr;
-  column-gap: 28px;
+  column-gap: clamp(18px, 2.2vw, 28px);
   align-items: start;
 }
 
@@ -128,7 +128,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--content-gap);
-  max-width: 560px;
+  max-width: clamp(420px, 45vw, 560px);
 }
 
 .stepTitle {
@@ -143,82 +143,11 @@
 .stepDesc {
   margin: 0;
   font-family: $font-inter;
-  font-size: 14px;
+  font-size: clamp(12.5px, 1.1vw, 14px);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.7);
 }
 
-
-@media (max-width: 1440px) {
-  .container {
-    gap: 72px;
-    padding: 0 32px;
-  }
-
-  .title {
-    font-size: clamp(26px, 3vw, 32px);
-  }
-
-  .cta {
-    padding: 12px 18px;
-    font-size: 13px;
-    gap: 8px;
-  }
-
-  .section {
-    --node-size: 56px;
-    --title-size: 17px;
-  }
-
-  .timeline {
-    gap: 40px;
-  }
-
-  .line {
-    bottom: 100px;
-  }
-
-  .stepTitle {
-    font-size: 17px;
-  }
-
-  .stepDesc {
-    font-size: 13.5px;
-  }
-
-  // glow moved to page-level background
-}
-
-@media (max-width: 1024px) {
-  .container {
-    flex-direction: column;
-    gap: 48px;
-    padding: 0 28px;
-  }
-
-  .section {
-    --node-size: 48px;
-    --title-size: 16px;
-  }
-
-  .line {
-    bottom: 72px;
-  }
-
-  .timeline {
-    gap: 34px;
-  }
-
-  .stepTitle {
-    font-size: 16px;
-  }
-
-  .stepDesc {
-    font-size: 13px;
-  }
-
-  // glow moved to page-level background
-}
 
 @media (max-width: 768px) {
   .section {
@@ -226,6 +155,7 @@
   }
 
   .container {
+    flex-direction: column;
     padding: 0 24px;
     gap: 28px;
   }

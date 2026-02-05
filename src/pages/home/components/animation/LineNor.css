@@ -1,5 +1,5 @@
 .line_wrapper {
-  margin-top: 14px;
+  margin-top: clamp(10px, calc(14px * var(--line-scale, 1)), 14px);
 }
 
 .line-solid {
@@ -22,7 +22,7 @@
   position: relative;
   display: block;
   height: var(--box-size, 120px);
-  margin-top: 22.99px;
+  margin-top: var(--line-gap, 22.99px);
   width: min(100%, var(--line-width, 1044px));
   margin-left: auto;
   margin-right: auto;

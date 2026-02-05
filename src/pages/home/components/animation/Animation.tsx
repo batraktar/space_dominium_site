@@ -8,8 +8,6 @@ import type { Tab, TabId, Variant } from './data'
 type DottedSide = 'left' | 'right' | 'both'
 
 const LINE_ANIM_MS = 1500
-const LINE_WIDTH_PX = 1044
-const LINE_ICON_SIZE_PX = 120
 
 const dottedByTab: Record<TabId, DottedSide> = {
   social: 'left',
@@ -105,7 +103,7 @@ const Animation: React.FC = () => {
   return (
     <div className="page-ani">
       <div className="container">
-        <div className="containet-wrapper">
+        <div className="container-wrapper">
           {/* Верхнє меню */}
           <div className="ani-nav" role="tablist" aria-label="Категорії">
             {TABS.map((tab, index) => (
@@ -170,7 +168,7 @@ const Animation: React.FC = () => {
           {/* Центральний контент */}
           <div className="content-wrapper">
             <div
-              className="content"
+              className={`content ${hasText ? 'has-text' : 'no-text'}`}
               tabIndex={0}
               role="tabpanel"
               aria-label="Деталі категорії"
@@ -201,8 +199,6 @@ const Animation: React.FC = () => {
             style={
               {
                 '--line-anim-ms': `${LINE_ANIM_MS}ms`,
-                '--line-width': `${LINE_WIDTH_PX}px`,
-                '--box-size': `${LINE_ICON_SIZE_PX}px`,
               } as React.CSSProperties
             }
           >

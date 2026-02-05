@@ -6,7 +6,7 @@ import contentPlanIcon from '../../../assets/img/smm/content-plan.svg'
 import createContentIcon from '../../../assets/img/smm/create-content.svg'
 import publishingIcon from '../../../assets/img/smm/publishing.svg'
 import targetAdsIcon from '../../../assets/img/smm/target-ads.svg'
-import optimizationIcon from '../../../assets/img/smm/optimiizatiion.svg'
+import optimizationIcon from '../../../assets/img/smm/optimization.svg'
 import scalingIcon from '../../../assets/img/smm/scaling-report.svg'
 import supportIcon from '../../../assets/img/smm/support.svg'
 

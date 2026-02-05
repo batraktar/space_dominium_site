@@ -49,33 +49,37 @@ const useStrokeDraw = (
   const activeStateRef = useRef(new WeakMap<SVGPathElement, boolean>())
 
   useLayoutEffect(() => {
+    const lengths = lengthsRef.current
+    const animations = animationsRef.current
+    const activeState = activeStateRef.current
+
     pathRefs.forEach((ref, index) => {
       const el = ref.current
       if (!el) return
 
       const key = el.getAttribute('d') ?? `${index}`
-      const cached = lengthsRef.current.get(el)
+      const cached = lengths.get(el)
       let length = cached?.length
 
       if (!cached || cached.key !== key) {
         length = el.getTotalLength()
-        lengthsRef.current.set(el, { key, length })
+        lengths.set(el, { key, length })
       }
 
       if (!length) return
 
       el.style.strokeDasharray = `${length}`
 
-      const prev = animationsRef.current.get(el)
+      const prev = animations.get(el)
       if (prev) prev.cancel()
 
-      const wasActive = activeStateRef.current.get(el) ?? false
+      const wasActive = activeState.get(el) ?? false
 
       if (!isActive) {
         if (reducedMotion || !wasActive) {
           el.style.strokeDashoffset = `${length}`
           el.style.opacity = '0'
-          activeStateRef.current.set(el, false)
+          activeState.set(el, false)
           return
         }
 
@@ -86,11 +90,11 @@ const useStrokeDraw = (
           ],
           { duration, easing, fill: 'forwards' },
         )
-        animationsRef.current.set(el, hideAnimation)
+        animations.set(el, hideAnimation)
         hideAnimation.onfinish = () => {
           el.style.strokeDashoffset = `${length}`
           el.style.opacity = '0'
-          activeStateRef.current.set(el, false)
+          activeState.set(el, false)
         }
         return
       }
@@ -98,7 +102,7 @@ const useStrokeDraw = (
       if (reducedMotion) {
         el.style.strokeDashoffset = '0'
         el.style.opacity = '1'
-        activeStateRef.current.set(el, true)
+        activeState.set(el, true)
         return
       }
 
@@ -109,11 +113,11 @@ const useStrokeDraw = (
         ],
         { duration, easing, fill: 'forwards' },
       )
-      animationsRef.current.set(el, showAnimation)
+      animations.set(el, showAnimation)
       showAnimation.onfinish = () => {
         el.style.strokeDashoffset = '0'
         el.style.opacity = '1'
-        activeStateRef.current.set(el, true)
+        activeState.set(el, true)
       }
     })
 
@@ -121,7 +125,7 @@ const useStrokeDraw = (
       pathRefs.forEach((ref) => {
         const el = ref.current
         if (!el) return
-        const animation = animationsRef.current.get(el)
+        const animation = animations.get(el)
         if (animation) animation.cancel()
       })
     }

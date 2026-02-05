@@ -18,48 +18,53 @@
   align-items: center;
   width: 100%;
   background-color: $indigo;
-  min-height: var(--hero-top-height);
+  min-height: clamp(520px, 40.6vw, 780px);
+  position: relative;
 }
 
 .heroTopInner {
-  width: min(1200px, 100%);
-  height: 850px;
+  width: min(1600px, 100%);
   margin: 0 auto;
-  padding: clamp(32px, 6vw, 72px) clamp(24px, 8vw, 140px) clamp(24px, 6vw, 48px);
+  height: 100%;
+  padding: clamp(32px, 6vw, 72px) clamp(24px, 9vw, 180px) clamp(24px, 6vw, 48px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: clamp(24px, 6vw, 80px);
+  gap: clamp(24px, 8vw, 80px);
+  position: relative;
 }
 
 .heroCopy {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: clamp(18px, 3vw, 36px);
+  max-width: clamp(320px, 38vw, 760px);
 }
 
 .heroTitle {
   font-family: $font-gilroy;
-  font-size: clamp(48px, 8vw, 96px);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: clamp(72px, 10.5vw, 198px);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 0.8;
   color: #fff;
 }
 
 .heroCta {
   font-family: $font-gilroy;
-  font-size: clamp(14px, 2vw, 18px);
-  font-weight: 500;
+  font-size: clamp(18px, 2.2vw, 42px);
+  font-weight: 400;
   color: $pearl;
   display: inline-flex;
   align-items: center;
   gap: 10px;
   text-decoration: none;
+  text-transform: lowercase;
 }
 
 .heroCtaIcon {
   width: auto;
-  height: clamp(14px, 2vw, 18px);
+  height: clamp(16px, 2vw, 26px);
   display: block;
 }
 
@@ -68,18 +73,20 @@
   width: clamp(260px, 34vw, 560px);
   height: clamp(140px, 22vw, 300px);
   flex-shrink: 0;
+  pointer-events: none;
+  margin-left: 100px;
 }
 
 .heroTriangle {
   position: absolute;
-  width: 58%;
+  width: 70%;
   left: 0;
   top: 0;
 }
 
 .heroLogo {
   position: absolute;
-  width: 72%;
+  width: 70%;
   right: 0;
   bottom: 0;
 }
@@ -118,17 +125,6 @@
   }
 }
 
-@media (max-width: 1024px) {
-  .heroTopInner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .heroMark {
-    align-self: flex-end;
-  }
-}
-
 @media (max-width: 768px) {
   .hero {
     --v-sep-height: 170px;
@@ -142,6 +138,7 @@
 
   .heroTitle {
     font-size: clamp(40px, 12vw, 64px);
+    line-height: 0.95;
   }
 
   .heroMark {

@@ -1,54 +1,44 @@
-import { Canvas, invalidate, useFrame, useThree } from '@react-three/fiber'
+import { Canvas, useFrame, useThree, invalidate } from '@react-three/fiber'
 import { Environment, useGLTF } from '@react-three/drei'
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { FC } from 'react'
 import * as THREE from 'three'
 
-type EnvironmentPreset =
-  | 'city'
-  | 'sunset'
-  | 'night'
-  | 'dawn'
-  | 'studio'
-  | 'apartment'
-  | 'forest'
-  | 'park'
-  | 'none'
-
-type RobotSceneProps = {
-  modelUrl: string
+type HouseViewerProps = {
+  url?: string
   width?: number | string
   height?: number | string
   modelScale?: number
   modelYOffset?: number
+  color?: string
   autoRotate?: boolean
   autoRotateSpeed?: number
   enableMouseYaw?: boolean
-  environmentPreset?: EnvironmentPreset
-  cameraPosition?: [number, number, number]
-  cameraFov?: number
+  environmentPreset?:
+    | 'city'
+    | 'sunset'
+    | 'night'
+    | 'dawn'
+    | 'studio'
+    | 'apartment'
+    | 'forest'
+    | 'park'
+    | 'none'
 }
 
+const DEFAULT_URL = '/models/house.glb'
 const HOVER_EASE = 0.15
 const HOVER_MAG = (6 * Math.PI) / 180
 
-const RobotModel: FC<{
+const HouseModel: FC<{
   url: string
   modelScale: number
   modelYOffset: number
+  color?: string
   autoRotate: boolean
   autoRotateSpeed: number
   enableMouseYaw: boolean
-  cameraPosition?: [number, number, number]
-}> = ({
-  url,
-  modelScale,
-  modelYOffset,
-  autoRotate,
-  autoRotateSpeed,
-  enableMouseYaw,
-  cameraPosition,
-}) => {
+}> = ({ url, modelScale, modelYOffset, color, autoRotate, autoRotateSpeed, enableMouseYaw }) => {
   const { scene } = useGLTF(url) as unknown as { scene: THREE.Group }
   const content = useMemo(() => scene.clone(), [scene])
   const group = useRef<THREE.Group>(null!)
@@ -73,19 +63,31 @@ const RobotModel: FC<{
     const scale = maxDim > 0 ? (1 / maxDim) * modelScale : modelScale
     g.scale.setScalar(scale)
 
-    // keep model facing forward
+    if (color) {
+      const tint = new THREE.Color(color)
+      g.traverse((obj) => {
+        if (!(obj instanceof THREE.Mesh)) return
+        const material = obj.material
+        if (Array.isArray(material)) {
+          material.forEach((m) => {
+            if ('color' in m && m.color instanceof THREE.Color) m.color = tint.clone()
+          })
+        } else if ('color' in material && material.color instanceof THREE.Color) {
+          material.color = tint.clone()
+        }
+      })
+    }
+
+    // keep model facing the camera by default
     group.current.rotation.set(0, 0, 0)
 
+    // set a stable camera
     if ((camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
       const persp = camera as THREE.PerspectiveCamera
-      if (cameraPosition) {
-        persp.position.set(...cameraPosition)
-      } else {
-        persp.position.set(0, 0, 2.2)
-      }
+      persp.position.set(0, 0, 2.2)
       persp.updateProjectionMatrix()
     }
-  }, [camera, content, modelScale, modelYOffset, cameraPosition])
+  }, [camera, content, modelScale, modelYOffset, color])
 
   useEffect(() => {
     if (!enableMouseYaw) return
@@ -108,32 +110,31 @@ const RobotModel: FC<{
   return <group ref={group} />
 }
 
-const RobotScene: FC<RobotSceneProps> = ({
-  modelUrl,
-  width = '100%',
-  height = '100%',
+const HouseViewer: FC<HouseViewerProps> = ({
+  url = DEFAULT_URL,
+  width = 400,
+  height = 400,
   modelScale = 1,
   modelYOffset = 0,
+  color,
   autoRotate = false,
   autoRotateSpeed = 0.25,
   enableMouseYaw = true,
   environmentPreset = 'none',
-  cameraPosition,
-  cameraFov = 50,
 }) => {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     setReady(false)
-  }, [modelUrl])
+  }, [url])
 
   return (
     <div style={{ width, height, position: 'relative' }}>
       <Canvas
-        frameloop={autoRotate ? 'always' : 'demand'}
+        frameloop="demand"
         dpr={1}
         gl={{ antialias: true, powerPreference: 'high-performance' }}
-        camera={{ fov: cameraFov, position: [0, 0, 2.2], near: 0.01, far: 100 }}
+        camera={{ fov: 50, position: [0, 0, 2.2], near: 0.01, far: 100 }}
         style={{ touchAction: 'pan-y pinch-zoom', opacity: ready ? 1 : 0, transition: 'opacity 200ms ease' }}
         onCreated={() => setReady(true)}
       >
@@ -143,14 +144,14 @@ const RobotScene: FC<RobotSceneProps> = ({
         <ambientLight intensity={0.6} />
         <directionalLight position={[4, 4, 6]} intensity={1} />
         <Suspense fallback={null}>
-          <RobotModel
-            url={modelUrl}
+          <HouseModel
+            url={url}
             modelScale={modelScale}
             modelYOffset={modelYOffset}
+            color={color}
             autoRotate={autoRotate}
             autoRotateSpeed={autoRotateSpeed}
             enableMouseYaw={enableMouseYaw}
-            cameraPosition={cameraPosition}
           />
         </Suspense>
       </Canvas>
@@ -158,4 +159,4 @@ const RobotScene: FC<RobotSceneProps> = ({
   )
 }
 
-export default RobotScene
+export default HouseViewer

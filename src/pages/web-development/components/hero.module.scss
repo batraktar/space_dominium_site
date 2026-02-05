@@ -3,31 +3,21 @@
 .hero {
   position: relative;
   width: 100%;
-  min-height: 926px;
+  min-height: clamp(700px, calc(22px + 47.0833vw), 926px);
   background-color: #0a0a60;
   overflow: hidden;
-  padding: 0 130px;
+  padding: 0 clamp(60px, calc(-150px + 14.5833vw), 130px);
   display: flex;
   align-items: center;
 
   &__decorative {
     position: absolute;
-    right: -190px;
-    top: -155px;
-    width: 1017px;
-    height: 1029px;
+    right: clamp(-260px, calc(-70px + 14.5833vw), -180px);
+    top: clamp(-155px, calc(-111px - 2.2917vw), -144px);
+    width: clamp(800px, calc(149px + 45.2083vw), 1017px);
+    height: clamp(800px, calc(113px + 47.7083vw), 1029px);
     pointer-events: none;
     z-index: 1;
-  }
-
-  &__robot {
-    position: absolute;
-    top: -40px;
-    right: -120px;
-    width: 460px;
-    height: 460px;
-    pointer-events: none;
-    z-index: 2;
   }
 
   &__graphic {
@@ -53,11 +43,11 @@
   &__title {
     font-family: 'Gilroy', sans-serif;
     font-weight: 700;
-    font-size: 178px;
+    font-size: clamp(140px, calc(26px + 7.9167vw), 178px);
     line-height: 1;
     color: #ffffff;
     margin: 0;
-    margin-bottom: 200px;
+    margin-bottom: clamp(150px, calc(10.4167vw), 200px);
     white-space: nowrap;
   }
 
@@ -68,10 +58,10 @@
   &__cta_text {
     font-family: 'Gilroy', sans-serif;
     font-weight: 400;
-    font-size: 32px;
+    font-size: clamp(28px, calc(16px + 0.8333vw), 32px);
     line-height: 1.3;
     color: #ffb2f7;
-    margin: 0 0 60px 0;
+    margin: 0 0 clamp(50px, calc(20px + 2.0833vw), 60px) 0;
   }
 
   &__inputs {
@@ -137,60 +127,23 @@
 // Responsive
 @media (max-width: 1440px) {
   .hero {
-    padding: 0 60px;
+    padding: 0 clamp(20px, 6vw, 60px);
 
     &__title {
-      font-size: 140px;
-      margin-bottom: 150px;
+      font-size: clamp(64px, 12vw, 140px);
+      margin-bottom: clamp(80px, 12vw, 150px);
     }
 
     &__cta_text {
-      font-size: 28px;
-      margin-bottom: 50px;
+      font-size: clamp(20px, 2.8vw, 28px);
+      margin-bottom: clamp(30px, 5vw, 50px);
     }
 
     &__decorative {
-      width: 800px;
-      height: 800px;
-      right: -260px;
-    }
-
-    &__robot {
-      width: 380px;
-      height: 380px;
-      right: -140px;
-      top: -30px;
-    }
-  }
-}
-
-@media (max-width: 1024px) {
-  .hero {
-    padding: 0 40px;
-    min-height: 700px;
-
-    &__title {
-      font-size: 100px;
-      margin-bottom: 120px;
-    }
-
-    &__cta_text {
-      font-size: 24px;
-      margin-bottom: 40px;
-    }
-
-    &__decorative {
-      width: 600px;
-      height: 600px;
-      right: -230px;
-      top: -50px;
-    }
-
-    &__robot {
-      width: 300px;
-      height: 300px;
-      right: -120px;
-      top: -20px;
+      width: clamp(400px, 60vw, 800px);
+      height: clamp(400px, 60vw, 800px);
+      right: clamp(-160px, -18vw, -110px);
+      top: clamp(-155px, -10vw, -50px);
     }
   }
 }
@@ -220,11 +173,8 @@
       width: 400px;
       height: 400px;
       opacity: 0.5;
-      right: -190px;
-    }
-
-    &__robot {
-      display: none;
+      right: -100px;
+      top: -50px;
     }
 
     &__input {

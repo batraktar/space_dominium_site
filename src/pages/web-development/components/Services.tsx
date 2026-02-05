@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './services.module.scss'
 import htmlIcon from '../../../assets/img/web-dev/4658d343c3a74c0675f60d2305b2beabe092f7e0.svg'
 import cssIcon from '../../../assets/img/web-dev/3648841d191122a262472dac5cbe23436c16185a.svg'
@@ -8,12 +8,33 @@ import pythonIcon from '../../../assets/img/web-dev/python.svg'
 import gitIcon from '../../../assets/img/web-dev/9e0e9286c5111031737c9dc4f39bd0b477cf62b1.svg'
 import RobotScene from '../../../shared/three/RobotScene'
 
+const useIsMobile = (maxWidth = 768) => {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const media = window.matchMedia(`(max-width: ${maxWidth}px)`)
+    const update = () => setIsMobile(media.matches)
+    update()
+
+    if (media.addEventListener) {
+      media.addEventListener('change', update)
+      return () => media.removeEventListener('change', update)
+    }
+
+    media.addListener(update)
+    return () => media.removeListener(update)
+  }, [maxWidth])
+
+  return isMobile
+}
+
 const Services: React.FC = () => {
   const robotModelUrl = new URL(
     '../../../assets/img/it/model-robot-it/scene.gltf',
     import.meta.url,
   ).href
-
+  const isMobile = useIsMobile(768)
   const services = [
     {
       id: 1,
@@ -53,6 +74,8 @@ const Services: React.FC = () => {
       ],
     },
   ]
+  const highlightedService = services.find((service) => service.highlighted)
+  const robotTargetId = isMobile ? 1 : highlightedService?.id
 
   return (
     <section className={styles.services}>
@@ -67,12 +90,15 @@ const Services: React.FC = () => {
               key={service.id}
               className={`${styles.card} ${service.highlighted ? styles.cardHighlighted : ''}`}
             >
-              {service.highlighted && (
-                <div className={styles.card__robot} aria-hidden>
+              {service.id === robotTargetId && (
+                <div className={styles.card__robot} aria-hidden="true">
                   <RobotScene
                     modelUrl={robotModelUrl}
                     modelScale={0.9}
                     cameraPosition={[0, 0.45, 2]}
+                    autoRotate
+                    autoRotateSpeed={0.4}
+                    enableMouseYaw={false}
                   />
                 </div>
               )}

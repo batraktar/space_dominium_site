@@ -111,11 +111,14 @@
 
 .card__robot {
   position: absolute;
-  top: -70px;
+  top: 0;
   right: 24px;
+  left: auto;
+  transform: translateY(-50%);
   width: 180px;
   height: 180px;
   pointer-events: none;
+  z-index: 2;
 }
 
 // Responsive
@@ -160,7 +163,7 @@
     .card__robot {
       width: 150px;
       height: 150px;
-      top: -60px;
+      top: 0;
       right: 18px;
     }
   }
@@ -210,7 +213,7 @@
     .card__robot {
       width: 130px;
       height: 130px;
-      top: -50px;
+      top: 0;
       right: 16px;
     }
   }
@@ -259,7 +262,11 @@
     }
 
     .card__robot {
-      display: none;
+      width: 120px;
+      height: 120px;
+      top: 0;
+      right: auto;
+      left: 16px;
     }
   }
 }

@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as *;
+
 /* Контейнер шарів поверх дрібних крапок */
 .fg-bubbles {
   position: absolute;
@@ -31,6 +33,7 @@
   color: #0b0b0b;
   font-weight: 600;
   font-size: 16px;
+  font-family: $font-gilroy;
 }
 
 /* ===== 1920 (база): 5 кіл по 160px ===== */

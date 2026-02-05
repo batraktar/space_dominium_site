@@ -11,6 +11,7 @@
   justify-content: space-between;
   margin-top: 90px;
   padding-top: 65px;
+  padding-bottom: 65px;
 }
 
 .footer_left {
@@ -92,15 +93,15 @@
   }
 }
 
-.Antoshka {
-  p {
-    font-family: $font-gilroy;
-    padding-top: 107px;
-    padding-bottom: 65px;
-    font-size: 14px;
-    font-weight: 400;
-  }
-}
+// .Antoshka {
+//   p {
+//     font-family: $font-gilroy;
+//     padding-top: 107px;
+//     padding-bottom: 65px;
+//     font-size: 14px;
+//     font-weight: 400;
+//   }
+// }
 
 @media (max-width: 768px) {
   .footer_wrapper {
