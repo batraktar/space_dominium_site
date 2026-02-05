@@ -1,5 +1,5 @@
 .line_wrapper {
-  margin-top: clamp(10px, calc(14px * var(--line-scale, 1)), 14px);
+  margin-top: var(--line-margin, 14px);
 }
 
 .line-solid {
@@ -33,6 +33,26 @@
   top: 0;
   transform: translateX(-50%);
   animation: lineIconIn var(--line-anim-ms, 750ms) ease both;
+}
+
+.line_icon.is-placeholder {
+  width: var(--box-size, 120px);
+  height: var(--box-size, 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.placeholder-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #a88aed;
+  background: white;
+  box-sizing: border-box;
 }
 
 .solid {
@@ -95,11 +115,23 @@
     background var(--line-anim-ms, 750ms) ease;
 }
 
-.box_line_icon img {
-  max-width: 60%;
-  max-height: 60%;
-  width: auto;
-  height: auto;
+.line-icon-img {
+  width: 60%;
+  height: 60%;
+  display: block;
+  object-fit: contain;
+}
+
+.line-icon-img--mask {
+  background-color: var(--icon-color, currentColor);
+  -webkit-mask-image: var(--icon-url);
+  mask-image: var(--icon-url);
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 .line_icon.is-active .box_line_icon {

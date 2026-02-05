@@ -15,6 +15,7 @@ interface LineNorProps {
   activeVarIdx: number | null
   setActiveVarIdx: React.Dispatch<React.SetStateAction<number | null>>
   drawDurationMs?: number
+  subIconColors?: Array<string | null>
 }
 
 const usePrefersReducedMotion = () => {
@@ -138,6 +139,7 @@ const LineNor: React.FC<LineNorProps> = ({
   activeVarIdx,
   setActiveVarIdx,
   drawDurationMs,
+  subIconColors,
 }) => {
   const leftIsDotted = dottedSide === 'left' || dottedSide === 'both'
   const rightIsDotted = dottedSide === 'right' || dottedSide === 'both'
@@ -351,34 +353,60 @@ const LineNor: React.FC<LineNorProps> = ({
 
       {/* НИЖНІ СЕКТОРИ */}
       <div className="line_icon_wrapper" role="tablist" aria-label="Підменю">
-        {variants.map((v, i) => {
+        {slotPositions.map((left, i) => {
+          const v = variants[i]
+          if (!v) return null
+
           const isActive = i === activeVarIdx
           const isPlaceholder = v.bullets.length === 0
+
+          if (isPlaceholder) {
+            return (
+              <div
+                key={`slot-${i}`}
+                className="line_icon is-placeholder"
+                style={{ left: `${left}%` }}
+                aria-hidden="true"
+              >
+                <span className="placeholder-dot" />
+              </div>
+            )
+          }
+
+          const iconColor = subIconColors?.[i] ?? null
+
           return (
             <div
-              key={v.id}
+              key={`slot-${i}`}
               className={`line_icon ${isActive ? 'is-active' : ''}`}
-              style={{ left: `${slotPositions[i] ?? 0}%` }}
+              style={{ left: `${left}%` }}
             >
               <button
                 type="button"
                 className="box_line_icon"
                 role="tab"
                 aria-selected={isActive}
-                aria-disabled={isPlaceholder}
-                disabled={isPlaceholder}
-                tabIndex={isPlaceholder ? -1 : 0}
-                onClick={() => {
-                  if (isPlaceholder) return
-                  setActiveVarIdx(i)
-                }}
+                tabIndex={0}
+                onClick={() => setActiveVarIdx(i)}
                 onKeyDown={(e) => {
-                  if (isPlaceholder) return
                   if (e.key === 'Enter' || e.key === ' ') setActiveVarIdx(i)
                 }}
                 aria-label={`Вибрати варіант ${i + 1}`}
               >
-                <img src={v.thumb} alt="" />
+                {iconColor ? (
+                  <span
+                    className="line-icon-img line-icon-img--mask"
+                    aria-hidden="true"
+                    style={
+                      {
+                        '--icon-url': `url("${v.thumb}")`,
+                        '--icon-color': iconColor,
+                      } as React.CSSProperties
+                    }
+                  />
+                ) : (
+                  <img className="line-icon-img" src={v.thumb} alt="" />
+                )}
               </button>
             </div>
           )

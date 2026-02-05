@@ -12,6 +12,9 @@ type FooterProps = {
   underlineColor?: string
   arrowColor?: string
   arrowCircleColor?: string
+  houseColor?: string
+  housePartColors?: Record<string, string>
+  houseDebugMeshNames?: boolean
 }
 
 const Footer: React.FC<FooterProps> = ({
@@ -28,6 +31,9 @@ const Footer: React.FC<FooterProps> = ({
   underlineColor,
   arrowColor,
   arrowCircleColor,
+  houseColor,
+  housePartColors,
+  houseDebugMeshNames,
 }) => {
   const previewRef = useRef<HTMLDivElement>(null)
   const isPreviewVisible = useInView(previewRef, { rootMargin: '200px' })
@@ -78,7 +84,7 @@ const Footer: React.FC<FooterProps> = ({
     '/web-develop': '#8CCBFF',
     '/contacts': '#F3C7E9',
   }
-  const modelColor = modelColors[location.pathname] || '#A88AED'
+  const modelColor = houseColor ?? modelColors[location.pathname]
 
   return (
     <footer>
@@ -181,9 +187,11 @@ const Footer: React.FC<FooterProps> = ({
                 url="/models/house.glb"
                 width={520}
                 height={400}
-                modelScale={1.6}
-                modelYOffset={-0.2}
+                modelScale={1.65}
+                modelYOffset={0}
                 color={modelColor}
+                partColors={housePartColors}
+                debugMeshNames={houseDebugMeshNames}
                 autoRotate={false}
                 enableMouseYaw
                 environmentPreset="none"

@@ -25,6 +25,9 @@ type FooterConfig = {
   underlineColor?: string
   arrowColor?: string
   arrowCircleColor?: string
+  houseColor?: string
+  housePartColors?: Record<string, string>
+  houseDebugMeshNames?: boolean
 }
 
 type Props = {
@@ -87,6 +90,9 @@ export default function ServiceLayout({
         underlineColor={footer?.underlineColor}
         arrowColor={footer?.arrowColor}
         arrowCircleColor={footer?.arrowCircleColor}
+        houseColor={footer?.houseColor}
+        housePartColors={footer?.housePartColors}
+        houseDebugMeshNames={footer?.houseDebugMeshNames}
       />
     </div>
   )
