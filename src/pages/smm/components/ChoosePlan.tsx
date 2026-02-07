@@ -1,12 +1,12 @@
 import styles from './choose-plan.module.scss'
-import analysisIcon from '../../../assets/img/smm/analysis-strategy.svg'
-import contentPlanIcon from '../../../assets/img/smm/content-plan.svg'
-import createContentIcon from '../../../assets/img/smm/create-content.svg'
-import publishingIcon from '../../../assets/img/smm/publishing.svg'
-import targetAdsIcon from '../../../assets/img/smm/target-ads.svg'
-import optimizationIcon from '../../../assets/img/smm/optimization.svg'
-import scalingIcon from '../../../assets/img/smm/scaling-report.svg'
-import supportIcon from '../../../assets/img/smm/support.svg'
+import analysisIcon from '../../../assets/img/smm/analysis-strategy.svg?raw'
+import contentPlanIcon from '../../../assets/img/smm/content-plan.svg?raw'
+import createContentIcon from '../../../assets/img/smm/create-content.svg?raw'
+import publishingIcon from '../../../assets/img/smm/publishing.svg?raw'
+import targetAdsIcon from '../../../assets/img/smm/target-ads.svg?raw'
+import optimizationIcon from '../../../assets/img/smm/optimization.svg?raw'
+import scalingIcon from '../../../assets/img/smm/scaling-report.svg?raw'
+import supportIcon from '../../../assets/img/smm/support.svg?raw'
 
 const steps = [
   {
@@ -51,7 +51,16 @@ const steps = [
   },
 ]
 
-function ChoosePlan() {
+type ChoosePlanProps = {
+  iconColor?: string
+}
+
+const normalizeIcon = (svg: string) =>
+  svg
+    .replace(/stroke="(?!none)[^"]*"/g, 'stroke="currentColor"')
+    .replace(/fill="(?!none)[^"]*"/g, 'fill="currentColor"')
+
+function ChoosePlan({ iconColor }: ChoosePlanProps) {
   return (
     <section className={styles.section} id="choose-plan">
       <div className={styles.container}>
@@ -82,13 +91,20 @@ function ChoosePlan() {
           </button>
         </div>
 
-        <div className={styles.timelineWrap}>
+        <div
+          className={styles.timelineWrap}
+          style={iconColor ? { '--choose-plan-icon-color': iconColor } : undefined}
+        >
           <div className={styles.line} />
           <div className={styles.timeline}>
             {steps.map((step) => (
               <div key={step.title} className={styles.step}>
                 <div className={styles.node} aria-hidden>
-                  <img src={step.icon} alt="" className={styles.nodeIcon} />
+                  <span
+                    className={styles.nodeIcon}
+                    aria-hidden
+                    dangerouslySetInnerHTML={{ __html: normalizeIcon(step.icon) }}
+                  />
                 </div>
                 <div className={styles.content}>
                   <p className={styles.stepTitle}>{step.title}</p>

@@ -7,6 +7,11 @@ import styles from './smm.module.scss'
 function Smm() {
   return (
     <ServiceLayout
+    affix={{
+      burgerColor: 'var(--blush-rose)',
+      contactButtonBg: 'var(--blush-rose)',
+      contactButtonTextColor: 'var(--deep-olive)',
+    }}
       className={styles.smm}
       hero={<Hero />}
       faq={{
@@ -14,11 +19,14 @@ function Smm() {
           'https://docs.google.com/spreadsheets/d/e/2PACX-1vQe_2b7SqCf4At0pw-SvLPavigCx3XqY2Ht1ikJjFvlxni3jV0PynxifiiABhhjK-t3Nn205SQMXXzM/pub?gid=1942219183&single=true&output=csv',
         plusColor: '#FFCDC3',
         titleColor: '#FFCDC3',
+        textColor: '#FFF',
       }}
       contact={{
         formBg: 'rgba(255, 255, 255, 0.20)',
-        inputBorder: '#FFCDC3',
-        buttonBg: '#FFCDC3',
+        inputBorder: '#ffc2cb',
+        buttonBg: '#ffc2cb',
+        textColor: '#fff',
+
       }}
       footer={{
         title: (
@@ -29,14 +37,33 @@ function Smm() {
         ),
         titleColor: '#FFF',
         buttonLabel: 'почати співпрацю',
-        btnTextColor: '#FFC3CC',
+        btnTextColor: '#ffc2cb',
         underlineColor: '#FFF',
         arrowCircleColor: '#FFF',
-        arrowColor: '#FFC3CC',
+        arrowColor: '#ffc2cb',
+        menuTextColor: '#fff',
+        phoneColor: '#FFFFFF',
+        housePartColors: {
+          Floor: '#fdeb9f',
+          Walls: '#ffc2cb',
+          FrontWindow: '#ffc2cb',
+          FrontGlass: '#fdeb9f',
+          FirstLevelWindow: '#ffc2cb',
+          FirstLevelGlass: '#ffc2cb',
+          SecondLevelWindow: '#ffc2cb',
+          SecondLevelGlass: '#ffc2cb',
+          Roof: '#fdeb9f',
+          DoorArch: '#ffc2cb',
+          Ceiling: '#ffc2cb',
+          Foundation: '#ffc2cb',
+          Door: '#ffc2cb',
+          DoorHandle: '#fdeb9f',
+        },
+        houseDebugMeshNames: true,
       }}
     >
       <Tools />
-      <ChoosePlan />
+      <ChoosePlan iconColor="#ffc2cb" />
     </ServiceLayout>
   )
 }

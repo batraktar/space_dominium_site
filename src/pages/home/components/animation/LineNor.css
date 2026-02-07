@@ -135,7 +135,7 @@
 }
 
 .line_icon.is-active .box_line_icon {
-  box-shadow: 0 0 0 3px #a88aed inset;
+  box-shadow: 0 0 0 3px var(--active-ring-color, #a88aed) inset;
   background: #1b1b1b;
 }
 

@@ -51,7 +51,7 @@ const Services: React.FC = () => {
     },
     {
       id: 2,
-      tag: 'АВТОМАТИЗАЦІЯ ПРОЦЕСІВ',
+      tag: 'ЕФЕКТИВНІСТЬ',
       title: 'Автоматизація бізнес-процесів',
       description:
         'Автоматизуємо рутинні завдання вашого бізнесу. Економте час і ресурси завдяки кастомним рішенням, які працюють за вас.',
@@ -88,7 +88,9 @@ const Services: React.FC = () => {
           {services.map((service) => (
             <article
               key={service.id}
-              className={`${styles.card} ${service.highlighted ? styles.cardHighlighted : ''}`}
+              className={`${styles.card} ${service.highlighted ? styles.cardHighlighted : ''} ${
+                service.id === robotTargetId ? styles.cardWithRobot : ''
+              }`}
             >
               {service.id === robotTargetId && (
                 <div className={styles.card__robot} aria-hidden="true">
@@ -103,8 +105,10 @@ const Services: React.FC = () => {
                 </div>
               )}
               <div className={styles.card__tag}>{service.tag}</div>
-              <h3 className={styles.card__title}>{service.title}</h3>
-              <p className={styles.card__description}>{service.description}</p>
+              <div className={styles.card__body}>
+                <h3 className={styles.card__title}>{service.title}</h3>
+                <p className={styles.card__description}>{service.description}</p>
+              </div>
               <div className={styles.card__icons} aria-hidden="true">
                 {service.icons.map((icon) => (
                   <span key={`${service.id}-${icon.key}`} className={styles.card__icon}>

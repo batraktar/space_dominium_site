@@ -20,12 +20,19 @@ type Shape = {
 
 const ICONS = [aiIcon, photoshopIcon, pinterestIcon, instagramIcon, canvaIcon]
 
+const getResponsiveShapeSize = (width: number) => {
+  if (width <= 375) return 32
+  if (width <= 768) return 44
+  if (width <= 1024) return 56
+  if (width <= 1440) return 64
+  return 72
+}
+
 const FloatingShapes: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [shapes, setShapes] = useState<Shape[]>([])
   const requestRef = useRef<number | undefined>(undefined)
   const boundsRef = useRef({ maxX: 95, maxY: 95, width: 0, height: 0 })
-  const shapeSize = 72
 
   useEffect(() => {
     const container = containerRef.current
@@ -36,19 +43,22 @@ const FloatingShapes: React.FC = () => {
     const maxAttempts = 40
     const positions: Array<{ x: number; y: number }> = []
 
-    const getBounds = () => {
+    const getBounds = (size: number) => {
       const rect = container.getBoundingClientRect()
       if (!rect.width || !rect.height) {
         return { maxX: 95, maxY: 95, width: 0, height: 0 }
       }
-      const maxX = Math.max(0, 100 - (shapeSize / rect.width) * 100)
-      const maxY = Math.max(0, 100 - (shapeSize / rect.height) * 100)
+      const maxX = Math.max(0, 100 - (size / rect.width) * 100)
+      const maxY = Math.max(0, 100 - (size / rect.height) * 100)
       return { maxX, maxY, width: rect.width, height: rect.height }
     }
 
-    const { maxX, maxY, width, height } = getBounds()
+    const initialSize = getResponsiveShapeSize(container.getBoundingClientRect().width || window.innerWidth)
+    const { maxX, maxY, width, height } = getBounds(initialSize)
     boundsRef.current = { maxX, maxY, width, height }
-    const sizePct = width && height ? Math.max((shapeSize / width) * 100, (shapeSize / height) * 100) : minDistance
+    const sizePct = width && height
+      ? Math.max((initialSize / width) * 100, (initialSize / height) * 100)
+      : minDistance
     const spacedMinDistance = sizePct * 1.2
 
     for (let i = 0; i < count; i += 1) {
@@ -85,13 +95,24 @@ const FloatingShapes: React.FC = () => {
       vx: (Math.random() - 0.5) * 0.15, // velocity
       vy: (Math.random() - 0.5) * 0.15,
       rotation: 0,
-      size: shapeSize,
+      size: initialSize,
       icon: ICONS[i % ICONS.length],
     }))
     setShapes(initialShapes)
 
     const ro = new ResizeObserver(() => {
-      boundsRef.current = getBounds()
+      const width = container.getBoundingClientRect().width || window.innerWidth
+      const nextSize = getResponsiveShapeSize(width)
+      const nextBounds = getBounds(nextSize)
+      boundsRef.current = nextBounds
+      setShapes((prev) =>
+        prev.map((shape) => ({
+          ...shape,
+          size: nextSize,
+          x: Math.max(0, Math.min(shape.x, nextBounds.maxX)),
+          y: Math.max(0, Math.min(shape.y, nextBounds.maxY)),
+        })),
+      )
     })
     ro.observe(container)
 
@@ -118,21 +139,22 @@ const FloatingShapes: React.FC = () => {
           shape.y = Math.max(0, Math.min(shape.y, maxY))
         })
 
-        const radius = shapeSize / 2
         for (let i = 0; i < next.length; i += 1) {
           for (let j = i + 1; j < next.length; j += 1) {
             const a = next[i]
             const b = next[j]
+            const aRadius = a.size / 2
+            const bRadius = b.size / 2
 
-            const ax = (a.x / 100) * width + radius
-            const ay = (a.y / 100) * height + radius
-            const bx = (b.x / 100) * width + radius
-            const by = (b.y / 100) * height + radius
+            const ax = (a.x / 100) * width + aRadius
+            const ay = (a.y / 100) * height + aRadius
+            const bx = (b.x / 100) * width + bRadius
+            const by = (b.y / 100) * height + bRadius
 
             const dx = bx - ax
             const dy = by - ay
             const dist = Math.hypot(dx, dy)
-            const minDist = shapeSize
+            const minDist = aRadius + bRadius
 
             if (dist > 0 && dist < minDist) {
               const overlap = (minDist - dist) / 2
@@ -144,10 +166,10 @@ const FloatingShapes: React.FC = () => {
               const bxNew = bx + nx * overlap
               const byNew = by + ny * overlap
 
-              a.x = ((axNew - radius) / width) * 100
-              a.y = ((ayNew - radius) / height) * 100
-              b.x = ((bxNew - radius) / width) * 100
-              b.y = ((byNew - radius) / height) * 100
+              a.x = ((axNew - aRadius) / width) * 100
+              a.y = ((ayNew - aRadius) / height) * 100
+              b.x = ((bxNew - bRadius) / width) * 100
+              b.y = ((byNew - bRadius) / height) * 100
 
               const tmpVx = a.vx
               const tmpVy = a.vy

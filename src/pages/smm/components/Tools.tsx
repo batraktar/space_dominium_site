@@ -96,7 +96,7 @@ const Tools: React.FC = () => {
             >
               <path
                 d="M1 6H23M23 6L18 1M23 6L18 11"
-                stroke="currentColor"
+                stroke="#ffc2cb"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"

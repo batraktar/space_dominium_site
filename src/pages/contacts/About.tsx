@@ -1,8 +1,8 @@
 import React from 'react'
 import AffixedMenuShell from '../../shared/layout/AffixedMenuShell'
 import { usePrefersReducedMotion } from '../../shared/hooks/usePrefersReducedMotion'
-import videoMp4 from '../../assets/video/laptop_people_1920x780.mp4'
-import videoWebm from '../../assets/video/output_1920x780.webm'
+import videoMp4 from '../../assets/video/laptop_people_crop.mp4'
+import videoWebm from '../../assets/video/laptop_people_crop.mp4'
 import styles from './about.module.scss'
 
 const About: React.FC = () => {

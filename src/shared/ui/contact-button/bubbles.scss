@@ -1,274 +1,82 @@
 @use '../../../styles/variables' as *;
 
-/* Контейнер шарів поверх дрібних крапок */
 .fg-bubbles {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1; // над фоном крапок
+  z-index: 1;
+  --bubble-size: clamp(40px, 9.8vw, 180px);
 }
 
 .fg-bubbles .bubble {
   position: absolute;
   border-radius: 50%;
-  // Шар 1 (нижній): суцільний колір фону (var(--bg)), щоб перекрити крапки
   background-color: var(--bg);
-  // Шар 2 (верхній): напівпрозорий білий, щоб створити ефект "світлої бульбашки"
   background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
-
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   line-height: 1.2;
-  padding: 8px;
+  padding: clamp(4px, 0.45vw, 8px);
   pointer-events: none;
+  width: var(--bubble-size);
+  height: var(--bubble-size);
+  left: var(--bubble-left);
+  top: var(--bubble-top);
+  transform: translate(-50%, -50%);
 }
-
-// ::before більше не потрібен, бо ми використовуємо background-color + background-image
 
 .fg-bubbles .bubble__content {
   position: relative;
   z-index: 1;
   color: #0b0b0b;
   font-weight: 600;
-  font-size: 16px;
+  font-size: clamp(10px, 1vw, 26px);
+  line-height: 1.12;
+  max-width: 85%;
+  overflow-wrap: anywhere;
   font-family: $font-gilroy;
 }
 
-/* ===== 1920 (база): 5 кіл по 160px ===== */
+/* Percent-based anchors so all 5 stay visible on any width */
 .bubble.b1 {
-  width: 160px;
-  height: 160px;
-  left: 1101px;
-  top: 186px;
+  --bubble-left: 57.35%;
+  --bubble-top: 14%;
 }
+
 .bubble.b2 {
-  width: 160px;
-  height: 160px;
-  left: 456px;
-  top: 127px;
+  --bubble-left: 23.75%;
+  --bubble-top: 10%;
 }
+
 .bubble.b3 {
-  width: 160px;
-  height: 160px;
-  left: 588px;
-  top: 649px;
+  --bubble-left: 30.6%;
+  --bubble-top: 49%;
 }
+
 .bubble.b4 {
-  width: 160px;
-  height: 160px;
-  left: 1081px;
-  top: 1020px;
+  --bubble-left: 56.3%;
+  --bubble-top: 72%;
 }
+
 .bubble.b5 {
-  width: 160px;
-  height: 160px;
-  left: 427px;
-  top: 997px;
+  --bubble-left: 22.24%;
+  --bubble-top: 74%;
 }
 
-/* ===== ≤1440 і ≥1025: 5 кіл по 120px ===== */
-@media (max-width: 1440px) and (min-width: 1025px) {
-  .bubble {
-    display: none;
-  }
-  .bubble.b1 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 826px;
-    top: 139px;
-  }
-  .bubble.b2 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 342px;
-    top: 95px;
-  }
-  .bubble.b3 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 441px;
-    top: 487px;
-  }
-  .bubble.b4 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 811px;
-    top: 760px;
-  }
-  .bubble.b5 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 320px;
-    top: 748px;
+@media (max-width: 768px) {
+  .fg-bubbles {
+    --bubble-size: clamp(46px, 19vw, 95px);
   }
 }
 
-/* ===== ≤1024 і ≥769: 10 кіл (5×120px + 5×85px) ===== */
-@media (max-width: 1024px) and (min-width: 769px) {
-  .bubble {
-    display: none;
-  }
-  /* 120px */
-  .bubble.b1 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 826px;
-    top: 139px;
-  }
-  .bubble.b2 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 342px;
-    top: 95px;
-  }
-  .bubble.b3 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 441px;
-    top: 487px;
-  }
-  .bubble.b4 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 811px;
-    top: 760px;
-  }
-  .bubble.b5 {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    left: 320px;
-    top: 748px;
-  }
-  /* 85px */
-  .bubble.b6 {
-    display: flex;
-    width: 85px;
-    height: 85px;
-    left: 587px;
-    top: 99px;
-  }
-  .bubble.b7 {
-    display: flex;
-    width: 85px;
-    height: 85px;
-    left: 243px;
-    top: 68px;
-  }
-  .bubble.b8 {
-    display: flex;
-    width: 85px;
-    height: 85px;
-    left: 313px;
-    top: 347px;
-  }
-  .bubble.b9 {
-    display: flex;
-    width: 85px;
-    height: 85px;
-    left: 577px;
-    top: 563px;
-  }
-  .bubble.b10 {
-    display: flex;
-    width: 85px;
-    height: 85px;
-    left: 228px;
-    top: 532px;
-  }
-}
-
-/* ===== ≤768 і ≥376: 5 кіл по 64px ===== */
-@media (max-width: 768px) and (min-width: 376px) {
-  .bubble {
-    display: none;
-  }
-  .bubble.b1 {
-    display: flex;
-    width: 64px;
-    height: 64px;
-    left: 440px;
-    top: 75px;
-  }
-  .bubble.b2 {
-    display: flex;
-    width: 64px;
-    height: 64px;
-    left: 182px;
-    top: 51px;
-  }
-  .bubble.b3 {
-    display: flex;
-    width: 64px;
-    height: 64px;
-    left: 235px;
-    top: 260px;
-  }
-  .bubble.b4 {
-    display: flex;
-    width: 64px;
-    height: 64px;
-    left: 432px;
-    top: 395px;
-  }
-  .bubble.b5 {
-    display: flex;
-    width: 64px;
-    height: 64px;
-    left: 171px;
-    top: 399px;
-  }
-}
-
-/* ===== ≤375: 5 кіл по 31px ===== */
 @media (max-width: 375px) {
-  .bubble {
-    display: none;
+  .fg-bubbles {
+    --bubble-size: clamp(40px, 13vw, 58px);
   }
-  .bubble.b1 {
-    display: flex;
-    width: 31px;
-    height: 31px;
-    left: 215px;
-    top: 37px;
-  }
-  .bubble.b2 {
-    display: flex;
-    width: 31px;
-    height: 31px;
-    left: 89px;
-    top: 25px;
-  }
-  .bubble.b3 {
-    display: flex;
-    width: 31px;
-    height: 31px;
-    left: 115px;
-    top: 127px;
-  }
-  .bubble.b4 {
-    display: flex;
-    width: 31px;
-    height: 31px;
-    left: 211px;
-    top: 190px;
-  }
-  .bubble.b5 {
-    display: flex;
-    width: 31px;
-    height: 31px;
-    left: 84px;
-    top: 195px;
+
+  .fg-bubbles .bubble__content {
+    font-size: clamp(9px, 2.5vw, 11px);
   }
 }

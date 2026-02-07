@@ -12,6 +12,8 @@ type FooterProps = {
   underlineColor?: string
   arrowColor?: string
   arrowCircleColor?: string
+  phoneColor?: string
+  menuTextColor?: string
   houseColor?: string
   housePartColors?: Record<string, string>
   houseDebugMeshNames?: boolean
@@ -31,6 +33,8 @@ const Footer: React.FC<FooterProps> = ({
   underlineColor,
   arrowColor,
   arrowCircleColor,
+  phoneColor,
+  menuTextColor,
   houseColor,
   housePartColors,
   houseDebugMeshNames,
@@ -67,6 +71,8 @@ const Footer: React.FC<FooterProps> = ({
     '--footer-underline-color'?: string
     '--footer-arrow-color'?: string
     '--footer-arrow-circle-color'?: string
+    '--footer-phone-color'?: string
+    '--footer-menu-color'?: string
   }
 
   const cssVars: FooterCssVars = {
@@ -75,11 +81,13 @@ const Footer: React.FC<FooterProps> = ({
     ...(underlineColor ? { '--footer-underline-color': underlineColor } : {}),
     ...(arrowColor ? { '--footer-arrow-color': arrowColor } : {}),
     ...(arrowCircleColor ? { '--footer-arrow-circle-color': arrowCircleColor } : {}),
+    ...(phoneColor ? { '--footer-phone-color': phoneColor } : {}),
+    ...(menuTextColor ? { '--footer-menu-color': menuTextColor } : {}),
   }
 
   const modelColors: Record<string, string> = {
     '/': '#A88AED',
-    '/smm': '#FFC3CC',
+    '/smm': '#ffc2cb',
     '/design': '#D2DB76',
     '/web-develop': '#8CCBFF',
     '/contacts': '#F3C7E9',
@@ -193,7 +201,10 @@ const Footer: React.FC<FooterProps> = ({
                 partColors={housePartColors}
                 debugMeshNames={houseDebugMeshNames}
                 autoRotate={false}
-                enableMouseYaw
+                enableMouseYaw={true}
+                enableMouseFloat={true}
+                baseYaw={0}
+                basePitch={0}
                 environmentPreset="none"
               />
             )}

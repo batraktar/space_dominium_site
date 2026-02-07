@@ -2,13 +2,12 @@
 
 .hero {
   position: relative;
-  min-height: clamp(640px, 70vh, 900px);
+  min-height: clamp(640px, 90vh, 900px);
   display: flex;
   align-items: center;
   color: #fff;
   overflow: hidden;
-  padding: clamp(40px, 8vw, 80px) 0;
-  --logo-overhang: 150px;
+  --logo-overhang: 250px;
 }
 
 
@@ -134,7 +133,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: clamp(360px, 62vw, 660px);
+  width: clamp(360px, 62vw, 1660px);
   right: calc(-1 * var(--logo-overhang));
   display: flex;
   justify-content: flex-end;

@@ -9,12 +9,14 @@ type FaqConfig = {
   sheetUrl: string
   plusColor?: string
   titleColor?: string
+  textColor?: string
 }
 
 type ContactConfig = {
   formBg?: string
   inputBorder?: string
   buttonBg?: string
+  textColor?: string
 }
 
 type FooterConfig = {
@@ -25,6 +27,8 @@ type FooterConfig = {
   underlineColor?: string
   arrowColor?: string
   arrowCircleColor?: string
+  phoneColor?: string
+  menuTextColor?: string
   houseColor?: string
   housePartColors?: Record<string, string>
   houseDebugMeshNames?: boolean
@@ -42,6 +46,9 @@ type Props = {
     bottomGapPx?: number
     fixedPosition?: 'top' | 'bottom'
     alwaysFixed?: boolean
+    burgerColor?: string
+    contactButtonBg?: string
+    contactButtonTextColor?: string
   }
 }
 
@@ -70,17 +77,26 @@ export default function ServiceLayout({
         bottomGapPx={affix?.bottomGapPx}
         fixedPosition={affix?.fixedPosition}
         alwaysFixed={affix?.alwaysFixed}
+        burgerColor={affix?.burgerColor}
+        contactButtonBg={affix?.contactButtonBg}
+        contactButtonTextColor={affix?.contactButtonTextColor}
       >
         {hero}
       </AffixedMenuShell>
 
       {children}
 
-      <Faq sheetUrl={faq.sheetUrl} plusColor={faq.plusColor} titleColor={faq.titleColor} />
+      <Faq
+        sheetUrl={faq.sheetUrl}
+        plusColor={faq.plusColor}
+        titleColor={faq.titleColor}
+        textColor={faq.textColor}
+      />
       <Contact
         formBg={contact?.formBg}
         inputBorder={contact?.inputBorder}
         buttonBg={contact?.buttonBg}
+        textColor={contact?.textColor}
       />
       <Footer
         title={footer?.title}
@@ -90,6 +106,8 @@ export default function ServiceLayout({
         underlineColor={footer?.underlineColor}
         arrowColor={footer?.arrowColor}
         arrowCircleColor={footer?.arrowCircleColor}
+        phoneColor={footer?.phoneColor}
+        menuTextColor={footer?.menuTextColor}
         houseColor={footer?.houseColor}
         housePartColors={footer?.housePartColors}
         houseDebugMeshNames={footer?.houseDebugMeshNames}

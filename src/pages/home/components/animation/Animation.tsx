@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './Animation.css'
 import LineNor from './LineNor'
+// import OrbitalStationMobile from './OrbitalStationMobile'
 import emptyDotIcon from './assets/icons/empty-dot.svg'
 import { TABS } from './data'
 import type { Tab, TabId, Variant } from './data'
@@ -61,6 +62,9 @@ const buildVariants = (tab: Tab, dottedSide: DottedSide, placeholderIcon: string
 }
 
 const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false,
+  )
   const [activeId, setActiveId] = useState<TabId>(TABS[0].id)
   const [activeVarIdx, setActiveVarIdx] = useState<number | null>(null)
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
@@ -86,10 +90,10 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
     activeVarIdx !== null ? (activeVariants?.[activeVarIdx] ?? null) : null
 
   const centerIcon = currentVariant?.contentIcon ?? activeContentIcon
-  const centerBullets = currentVariant?.bullets ?? []
-  const hasText = centerBullets.length > 0
+  const centerBullets: string[] = []
+  const hasText = false
   const contentKey = `${activeId}-${activeVarIdx ?? 'none'}`
-  const showCategoryIconColor = !hasText && Boolean(activeContentIconColor)
+  const showCategoryIconColor = Boolean(activeContentIconColor)
   const contentStyle = useMemo<React.CSSProperties>(() => {
     const style: React.CSSProperties = {}
     if (activeOverride?.contentBg) {
@@ -101,9 +105,22 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
     return style
   }, [activeOverride?.contentBg, activeOverride?.contentBorder])
 
-  const subIconColors = useMemo(() => {
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const media = window.matchMedia('(max-width: 768px)')
+    const update = () => setIsMobile(media.matches)
+    update()
+    if (media.addEventListener) {
+      media.addEventListener('change', update)
+      return () => media.removeEventListener('change', update)
+    }
+    media.addListener(update)
+    return () => media.removeListener(update)
+  }, [])
+
+  const subIconColorMap = useMemo(() => {
     const palette = activeOverride?.subIconColors ?? []
-    if (palette.length === 0) return null
+    if (palette.length === 0) return null as Record<string, string> | null
 
     const key = palette.join('|')
     const existing = subIconColorMapsRef.current[activeId]
@@ -116,13 +133,21 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
       subIconColorMapsRef.current[activeId] = { key, map }
     }
 
-    const map = subIconColorMapsRef.current[activeId]?.map
-    if (!map) return null
+    return subIconColorMapsRef.current[activeId]?.map ?? null
+  }, [activeId, activeOverride?.subIconColors, activeTab.variants])
 
-    return activeVariants.map((variant) =>
-      variant.bullets.length > 0 ? map[variant.id] : null,
-    )
-  }, [activeId, activeOverride?.subIconColors, activeTab.variants, activeVariants])
+  const subIconColors = useMemo(
+    () =>
+      activeVariants.map((variant) =>
+        variant.bullets.length > 0 ? (subIconColorMap?.[variant.id] ?? null) : null,
+      ),
+    [activeVariants, subIconColorMap],
+  )
+
+  const mobileSubIconColors = useMemo(
+    () => activeTab.variants.map((variant) => subIconColorMap?.[variant.id] ?? null),
+    [activeTab.variants, subIconColorMap],
+  )
 
   const focusTab = useCallback((index: number) => {
     const next = TABS[index]
@@ -153,6 +178,36 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
     },
     [focusTab],
   )
+
+  // if (isMobile) {
+  //   return (
+  //     <div className="page-ani-mobile">
+  //       <div className="ani-mobile-nav" role="tablist" aria-label="Категорії">
+  //         {TABS.map((tab) => (
+  //           <button
+  //             key={tab.id}
+  //             type="button"
+  //             role="tab"
+  //             aria-selected={activeId === tab.id}
+  //             className={`ani-mobile-tab ${activeId === tab.id ? 'is-active' : ''}`}
+  //             onClick={() => setActiveId(tab.id)}
+  //           >
+  //             {tab.label}
+  //           </button>
+  //         ))}
+  //       </div>
+
+  //       <OrbitalStationMobile
+  //         hubIcon={activeOverride?.contentIcon ?? activeTab.contentIcon}
+  //         hubIconColor={activeOverride?.contentIconColor}
+  //         items={activeTab.variants}
+  //         itemColors={mobileSubIconColors}
+  //         activeIndex={activeVarIdx}
+  //         onActiveIndexChange={setActiveVarIdx}
+  //       />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="page-ani">

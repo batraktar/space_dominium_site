@@ -2,10 +2,10 @@ import './logo-menu.scss'
 import { NavLink } from 'react-router-dom'
 import React from 'react'
 import logo from '../../../assets/img/logo/logo-nav-menu.svg'
-import burgerIcon from './icons/burger.svg'
 
 type LogoMenuProps = {
   behavior?: 'floating' | 'static'
+  burgerColor?: string
 }
 
 const items = [
@@ -13,10 +13,10 @@ const items = [
   { id: '/smm', label: 'SMM' },
   { id: '/design', label: 'Дизайн' },
   { id: '/web-develop', label: 'Веб-розробка' },
-  { id: '/contacts', label: 'Про нас' },
+  // { id: '/contacts', label: 'Про нас' },
 ]
 
-function LogoMenu({ behavior = 'static' }: LogoMenuProps) {
+function LogoMenu({ behavior = 'static', burgerColor }: LogoMenuProps) {
   const [isAtTop, setIsAtTop] = React.useState(true)
   const [isOpen, setIsOpen] = React.useState(false)
 
@@ -37,8 +37,12 @@ function LogoMenu({ behavior = 'static' }: LogoMenuProps) {
       ? `logo-menu logo-menu--floating ${isAtTop ? 'logo-menu--bottom' : 'logo-menu--top'}`
       : 'logo-menu'
 
+  const rootStyle = burgerColor
+    ? ({ '--burger-color': burgerColor } as React.CSSProperties)
+    : undefined
+
   return (
-    <div className={rootClassName}>
+    <div className={rootClassName} style={rootStyle}>
       <NavLink to="/" className="logo-menu__logo">
         <img src={logo} alt="Space logo" />
       </NavLink>
@@ -51,7 +55,11 @@ function LogoMenu({ behavior = 'static' }: LogoMenuProps) {
         aria-controls="logo-menu-nav"
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <img src={burgerIcon} alt="" />
+        <span className="logo-menu__burger" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </span>
       </button>
 
       <nav className={`nav${isOpen ? ' nav--open' : ''}`} id="logo-menu-nav">

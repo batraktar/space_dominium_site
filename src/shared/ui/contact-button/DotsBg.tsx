@@ -3,8 +3,8 @@ import type { CSSProperties, PropsWithChildren } from 'react'
 import './dots-bg.scss'
 
 type Props = PropsWithChildren<{
-  bgColor?: string // фон під крапками
-  dotColor?: string // колір крапок
+  bgColor?: string 
+  dotColor?: string 
   className?: string
   style?: CSSProperties
 }>
@@ -16,7 +16,6 @@ const DotsBg: React.FC<Props> = ({
   style,
   children,
 }) => {
-  // не фіксуємо розміри тут — усе у SCSS через змінні
   const base =
     'radial-gradient(circle at var(--r) var(--r), var(--dot) 0 var(--r), transparent calc(var(--r) + 0.1px))'
 

@@ -151,6 +151,7 @@ const BouncingBallsPhysics: React.FC<Props> = ({
   const runnerRef = useRef<Runner | null>(null)
   const ballsRef = useRef<Body[]>([])
   const shelvesRef = useRef<Body[]>([])
+  const wallsRef = useRef<Body[]>([])
   const spawnTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -206,9 +207,6 @@ const BouncingBallsPhysics: React.FC<Props> = ({
       render.canvas.style.height = `${height}px`
       Render.setPixelRatio(render, pixelRatio)
 
-      Composite.clear(engine.world, false)
-      ballsRef.current = []
-
       const wallThickness = 80
       const walls = [
         Bodies.rectangle(width / 2, height + wallThickness / 2, width, wallThickness, {
@@ -226,8 +224,15 @@ const BouncingBallsPhysics: React.FC<Props> = ({
       ]
 
       const shelfBodies = getShelfBodies(wrapper, shelfIds, shelfThicknessPx, shelfOptions)
+      if (wallsRef.current.length) {
+        Composite.remove(engine.world, wallsRef.current)
+      }
+      if (shelvesRef.current.length) {
+        Composite.remove(engine.world, shelvesRef.current)
+      }
+      wallsRef.current = walls
       shelvesRef.current = shelfBodies
-      Composite.add(engine.world, [...walls, ...shelfBodies])
+      Composite.add(engine.world, [...wallsRef.current, ...shelvesRef.current])
     }
 
     const spawnBall = () => {
@@ -324,6 +329,9 @@ const BouncingBallsPhysics: React.FC<Props> = ({
       Runner.stop(runner)
       Engine.clear(engine)
       Composite.clear(engine.world, false)
+      wallsRef.current = []
+      shelvesRef.current = []
+      ballsRef.current = []
     }
   }, [
     wrapperRef,

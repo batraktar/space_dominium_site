@@ -2,12 +2,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  // спільні змінні
-  --bg: #0b0b0b; // підміняється з пропса, якщо треба
+  --bg: #0b0b0b; 
   --dot: rgba(255, 255, 255, 0.5);
 
-  // Флюїдне масштабування від 375 до 1920
-  // (18→3px, 56→10px, 116→22px, 24→4px, 22→4px)
   --dot-size: clamp(3px, 0.9vw, 18px);
   --r: calc(var(--dot-size) / 2);
   --step-x: clamp(10px, 2.9vw, 56px);
@@ -27,7 +24,7 @@
     position: relative;
     z-index: 1;
     flex-grow: 1;
-    display: flex; // To allow children to fill if needed, or just block
+    display: flex;
     flex-direction: column;
   }
 }

@@ -1,13 +1,14 @@
 @use '../../../styles/variables.scss' as *;
 
 .contact-section {
-  padding: 65px 0;
+  padding: 55px 0;
 }
 
 .contact-wrapper {
   --contact-form-bg: rgba(168, 138, 237, 0.15);
   --contact-input-border: #a88aed;
   --contact-button-bg: #a88aed;
+  --contact-text-color: #000;
   --contact-error-color: #ff6b8a;
   --contact-success-color: #2d8a5c;
 
@@ -24,15 +25,18 @@
     font-size: 36px;
     font-weight: 600;
     line-height: 100%;
+    color: var(--contact-text-color);
   }
 
   p {
     margin: 0;
     max-width: 560px;
-    color: #000000;
+    color: var(--contact-text-color);
     font-weight: 400;
     font-size: 24px;
     line-height: 100%;
+    text-align: justify;
+    line-height: 1.4;
   }
 }
 
@@ -42,6 +46,7 @@
     padding: 40px 30px;
     border-radius: 10px;
     width: 100%;
+    margin-top: 30px;
     margin-bottom: 30px;
     position: relative;
     overflow: hidden;
@@ -50,6 +55,7 @@
       margin: 0 0 16px;
       font-size: 24px;
       font-weight: 500;
+      color: var(--contact-text-color);
     }
   }
 }

@@ -9,6 +9,9 @@ type Props = React.PropsWithChildren<{
   bottomGapPx?: number
   fixedPosition?: 'top' | 'bottom'
   alwaysFixed?: boolean
+  burgerColor?: string
+  contactButtonBg?: string
+  contactButtonTextColor?: string
 }>
 
 const AffixedMenuShell: React.FC<Props> = ({
@@ -17,6 +20,9 @@ const AffixedMenuShell: React.FC<Props> = ({
   bottomGapPx = 20,
   fixedPosition = 'bottom',
   alwaysFixed = true,
+  burgerColor,
+  contactButtonBg,
+  contactButtonTextColor,
 }) => {
   const [triggerEl, setTriggerEl] = React.useState<HTMLElement | null>(null)
   const [barEl, setBarEl] = React.useState<HTMLDivElement | null>(null)
@@ -41,9 +47,14 @@ const AffixedMenuShell: React.FC<Props> = ({
     <section className={styles.shell} ref={setTriggerEl}>
       {children}
       <div ref={setBarEl} className={`${styles.bar} ${isFixed ? fixedClass : ''}`}>
-        <LogoMenu behavior="static" />
+        <LogoMenu behavior="static" burgerColor={burgerColor} />
         <div className={styles.barRight}>
-          <ContactButton href="#contact" text="Зв’язатись ♡" />
+          <ContactButton
+            href="#contact"
+            text="Зв’язатись ♡"
+            bgColor={contactButtonBg}
+            textColor={contactButtonTextColor}
+          />
         </div>
       </div>
     </section>

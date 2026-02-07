@@ -62,10 +62,20 @@
   cursor: pointer;
 }
 
-.logo-menu__toggle img {
+.logo-menu__burger {
   width: 24px;
   height: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo-menu__burger span {
   display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--burger-color, #ffffff);
 }
 
 /* меню */

@@ -6,7 +6,7 @@
   --node-size: clamp(48px, 4vw, 64px);
   --title-size: clamp(16px, 1.4vw, 18px);
   --content-gap: clamp(4px, 0.7vw, 6px);
-  padding: clamp(80px, 8vw, 120px) 0;
+  padding: clamp(80px, 6vw, 120px) 0;
   overflow: hidden;
 }
 
@@ -15,7 +15,7 @@
   margin: 0 auto;
   padding: 0 clamp(24px, 3vw, 40px);
   display: flex;
-  gap: clamp(48px, 8vw, 120px);
+  gap: clamp(48px, 8vw, 80px);
   align-items: flex-start;
 }
 
@@ -39,7 +39,7 @@
   align-items: center;
   gap: 10px;
   padding: clamp(12px, 1.6vw, 14px) clamp(18px, 2.2vw, 22px);
-  border: 1px solid #f5b86c;
+  border: 1px solid #d1da76;
   border-radius: 999px;
   background: transparent;
   color: #f7d9c5;
@@ -72,6 +72,7 @@
   flex: 1;
   position: relative;
   padding-left: 0;
+  --choose-plan-icon-color: #ffc2cb;
 }
 
 .line {
@@ -83,8 +84,8 @@
   border-left: none;
   background: repeating-linear-gradient(
     to bottom,
-    #ff8b20 0px,
-    #ff8b20 10px,   /* довжина штриха */
+    #d1da76 0px,
+    #d1da76 10px,   /* довжина штриха */
     transparent 12px,
     transparent 20px /*  */
   );
@@ -111,8 +112,8 @@
   width: var(--node-size);
   height: var(--node-size);
   border-radius: 50%;
-  border: 0.8px solid #ff8b20;
-  background: #ffffff;
+  border: 0.8px solid #ffc2cb;
+  background: #28301c;
   display: grid;
   place-items: center;
   padding: 0.8px;
@@ -121,7 +122,14 @@
 .nodeIcon {
   width: calc(var(--node-size) * 0.5);
   height: calc(var(--node-size) * 0.5);
-  display: block;
+  display: grid;
+  place-items: center;
+  color: var(--choose-plan-icon-color);
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .content {
@@ -156,8 +164,8 @@
 
   .container {
     flex-direction: column;
-    padding: 0 24px;
-    gap: 28px;
+    padding: 0 10px;
+    gap: 8px;
   }
 
   .left {
@@ -174,7 +182,7 @@
   }
 
   .timelineWrap {
-    margin-top: -6px; // pull timeline closer to header/button
+    margin-top: -6px;
   }
 
   .step {
@@ -188,6 +196,4 @@
   .stepDesc {
     font-size: 12.5px;
   }
-
-  // glow moved to page-level background
 }

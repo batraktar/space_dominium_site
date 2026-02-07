@@ -42,9 +42,15 @@ type Props = {
   sheetUrl: string
   plusColor?: string
   titleColor?: string
+  textColor?: string
 }
 
-const Faq: FC<Props> = ({ sheetUrl, plusColor = '#0A0A60', titleColor = '#0A0A60' }) => {
+const Faq: FC<Props> = ({
+  sheetUrl,
+  plusColor = '#0A0A60',
+  titleColor = '#0A0A60',
+  textColor = '#0A0A60',
+}) => {
   const [open, setOpen] = useState<Set<number>>(() => new Set())
   const [items, setItems] = useState<FaqItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -112,11 +118,13 @@ const Faq: FC<Props> = ({ sheetUrl, plusColor = '#0A0A60', titleColor = '#0A0A60
   type QuestionCssVars = CSSProperties & {
     '--faq-plus': string
     '--faq-title': string
+    '--faq-text': string
   }
 
   const rootStyle: QuestionCssVars = {
     '--faq-plus': plusColor,
     '--faq-title': titleColor,
+    '--faq-text': textColor,
   }
 
   return (

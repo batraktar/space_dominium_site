@@ -6,6 +6,7 @@ type ContactProps = {
   formBg?: string
   inputBorder?: string
   buttonBg?: string
+  textColor?: string
 }
 
 type FormValues = {
@@ -28,17 +29,19 @@ const initialValues: FormValues = {
   website: '',
 }
 
-const Contact: React.FC<ContactProps> = ({ formBg, inputBorder, buttonBg }) => {
+const Contact: React.FC<ContactProps> = ({ formBg, inputBorder, buttonBg, textColor }) => {
   type ContactUsCssVars = React.CSSProperties & {
     '--contact-form-bg'?: string
     '--contact-input-border'?: string
     '--contact-button-bg'?: string
+    '--contact-text-color'?: string
   }
 
   const cssVars: ContactUsCssVars = {
     ...(formBg ? { '--contact-form-bg': formBg } : {}),
     ...(inputBorder ? { '--contact-input-border': inputBorder } : {}),
     ...(buttonBg ? { '--contact-button-bg': buttonBg } : {}),
+    ...(textColor ? { '--contact-text-color': textColor } : {}),
   }
 
   const [values, setValues] = useState<FormValues>(initialValues)

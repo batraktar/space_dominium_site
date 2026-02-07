@@ -374,6 +374,9 @@ const LineNor: React.FC<LineNorProps> = ({
           }
 
           const iconColor = subIconColors?.[i] ?? null
+          const buttonStyle = iconColor
+            ? ({ '--active-ring-color': iconColor } as React.CSSProperties)
+            : undefined
 
           return (
             <div
@@ -392,6 +395,7 @@ const LineNor: React.FC<LineNorProps> = ({
                   if (e.key === 'Enter' || e.key === ' ') setActiveVarIdx(i)
                 }}
                 aria-label={`Вибрати варіант ${i + 1}`}
+                style={buttonStyle}
               >
                 {iconColor ? (
                   <span
