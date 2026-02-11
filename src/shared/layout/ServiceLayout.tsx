@@ -49,6 +49,7 @@ type Props = {
     burgerColor?: string
     contactButtonBg?: string
     contactButtonTextColor?: string
+    contactButtonLiftMobilePx?: number
   }
 }
 
@@ -80,6 +81,7 @@ export default function ServiceLayout({
         burgerColor={affix?.burgerColor}
         contactButtonBg={affix?.contactButtonBg}
         contactButtonTextColor={affix?.contactButtonTextColor}
+        contactButtonLiftMobilePx={affix?.contactButtonLiftMobilePx}
       >
         {hero}
       </AffixedMenuShell>
@@ -96,7 +98,7 @@ export default function ServiceLayout({
         formBg={contact?.formBg}
         inputBorder={contact?.inputBorder}
         buttonBg={contact?.buttonBg}
-        textColor={contact?.textColor}
+        textColor={contact?.textColor ?? footer?.menuTextColor ?? footer?.phoneColor}
       />
       <Footer
         title={footer?.title}

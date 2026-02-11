@@ -12,6 +12,7 @@ type Props = React.PropsWithChildren<{
   burgerColor?: string
   contactButtonBg?: string
   contactButtonTextColor?: string
+  contactButtonLiftMobilePx?: number
 }>
 
 const AffixedMenuShell: React.FC<Props> = ({
@@ -23,6 +24,7 @@ const AffixedMenuShell: React.FC<Props> = ({
   burgerColor,
   contactButtonBg,
   contactButtonTextColor,
+  contactButtonLiftMobilePx,
 }) => {
   const [triggerEl, setTriggerEl] = React.useState<HTMLElement | null>(null)
   const [barEl, setBarEl] = React.useState<HTMLDivElement | null>(null)
@@ -43,12 +45,22 @@ const AffixedMenuShell: React.FC<Props> = ({
   const fixedClass =
     fixedPosition === 'bottom' ? styles.barFixedBottom : styles.barFixed
 
+  type BarRightCssVars = React.CSSProperties & {
+    '--contact-btn-lift-mobile'?: string
+  }
+
+  const barRightStyle: BarRightCssVars = {
+    ...(typeof contactButtonLiftMobilePx === 'number'
+      ? { '--contact-btn-lift-mobile': `${contactButtonLiftMobilePx}px` }
+      : {}),
+  }
+
   return (
     <section className={styles.shell} ref={setTriggerEl}>
       {children}
       <div ref={setBarEl} className={`${styles.bar} ${isFixed ? fixedClass : ''}`}>
         <LogoMenu behavior="static" burgerColor={burgerColor} />
-        <div className={styles.barRight}>
+        <div className={styles.barRight} style={barRightStyle}>
           <ContactButton
             href="#contact"
             text="Зв’язатись ♡"

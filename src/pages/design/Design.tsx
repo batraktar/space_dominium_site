@@ -21,6 +21,7 @@ function Design() {
         burgerColor: 'var(--pearl)',
         fixedPosition: 'bottom',
         alwaysFixed: true,
+        contactButtonLiftMobilePx: 20,
       }}
       faq={{
         sheetUrl:

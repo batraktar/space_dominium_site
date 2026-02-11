@@ -7,7 +7,6 @@
   background-color: $indigo;
   overflow: visible;
   z-index: 2;
-  --hero-top-height: 320px;
   --hero-dots-height: 1200px;
   --v-sep-height: 300px;
 }
@@ -137,13 +136,17 @@
   }
 
   .heroTitle {
-    font-size: clamp(40px, 12vw, 64px);
+    font-size: clamp(40px, 25vw, 80px);
     line-height: 0.95;
   }
 
   .heroMark {
     width: clamp(220px, 70vw, 320px);
     height: clamp(120px, 38vw, 200px);
+  }
+  .heroCta {
+    font-size: clamp(16px, 5vw, 32px);
+    align-content: center;
   }
 
   .heroLogo {

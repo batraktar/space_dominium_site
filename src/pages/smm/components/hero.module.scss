@@ -146,6 +146,17 @@
   max-width: 100%;
 }
 
+@media (max-width: 1024px) {
+  .hero {
+    min-height: clamp(560px, 72vh, 700px);
+    padding-top: clamp(48px, 8vw, 80px);
+  }
+
+  .hero__inner {
+    align-items: flex-start;
+  }
+}
+
 @media (max-width: 768px) {
   .hero {
     min-height: auto;

@@ -12,6 +12,7 @@ function WebDevelopment() {
       contactButtonBg: 'var(--sky-blue)',
       burgerColor: 'var(--sky-blue)',
       contactButtonTextColor: 'var(--deep-anthracite)',
+      contactButtonLiftMobilePx: 20,
     }}
       className={styles.webDevelop}
       hero={<Hero />}

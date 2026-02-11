@@ -148,7 +148,13 @@
     }
   }
 
+  @media (max-width: 1024px) {
+    padding-top: 56px;
+  }
+
   @media (max-width: 768px) {
+    padding-top: 36px;
+
     &__container {
       padding: 0; // Full width on mobile
     }

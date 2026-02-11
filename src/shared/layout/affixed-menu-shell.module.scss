@@ -22,6 +22,7 @@
   top: 50%;
   transform: translateY(-50%);
   display: inline-flex;
+  --contact-btn-lift-mobile: 20px;
 }
 
 .barFixed {
@@ -48,6 +49,7 @@
 
   .barRight {
     right: 16px;
+    top: calc(50% - var(--contact-btn-lift-mobile));
   }
 
   .barFixed {

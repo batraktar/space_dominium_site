@@ -14,7 +14,7 @@
 
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 48px;
+  gap: 68px;
   align-items: start;
   font-family: $font-gilroy;
 }
@@ -157,6 +157,7 @@ textarea {
   font-weight: 400;
   background-color: #1c212133;
   outline: none;
+  color: var(--contact-text-color);
 }
 
 input[aria-invalid='true'],

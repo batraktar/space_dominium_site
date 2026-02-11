@@ -11,6 +11,7 @@ function Smm() {
       burgerColor: 'var(--blush-rose)',
       contactButtonBg: 'var(--blush-rose)',
       contactButtonTextColor: 'var(--deep-olive)',
+      contactButtonLiftMobilePx: 20,
     }}
       className={styles.smm}
       hero={<Hero />}
@@ -59,11 +60,12 @@ function Smm() {
           Door: '#ffc2cb',
           DoorHandle: '#fdeb9f',
         },
-        houseDebugMeshNames: true,
       }}
     >
       <Tools />
-      <ChoosePlan iconColor="#ffc2cb" />
+      <ChoosePlan 
+      iconColor="#ffc2cb"
+      />
     </ServiceLayout>
   )
 }
