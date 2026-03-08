@@ -20,16 +20,42 @@ type Props = {
   spawnMaxMs?: number
   gravityY?: number
   shelfThicknessPx?: number
+  ballRadiusPx?: number | { desktop: number; tablet: number; mobile: number }
 }
 
 const DEFAULT_SHELF_IDS = ['l1', 'l2', 'l3', 'l4']
 const BALL_TEXTURE_SIZE = 65
+const DESKTOP_BP = 1440
+const TABLET_BP = 768
+const MOBILE_BP = 375
 const LINE_SVG_WIDTH = 979
 const LINE_SVG_HEIGHT = 307
 const LINE_PATH_START = { x: 8.63452, y: 0 }
 const LINE_PATH_END = { x: 974.56, y: 258.819 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
+const lerp = (from: number, to: number, t: number) => from + (to - from) * t
+
+const adaptiveByViewport = (
+  value: number | { desktop: number; tablet: number; mobile: number },
+  viewportWidth: number,
+) => {
+  if (typeof value === 'number') return value
+  if (viewportWidth <= MOBILE_BP) return value.mobile
+
+  if (viewportWidth <= TABLET_BP) {
+    const t = (viewportWidth - MOBILE_BP) / (TABLET_BP - MOBILE_BP)
+    return lerp(value.mobile, value.tablet, clamp(t, 0, 1))
+  }
+
+  if (viewportWidth <= DESKTOP_BP) {
+    const t = (viewportWidth - TABLET_BP) / (DESKTOP_BP - TABLET_BP)
+    return lerp(value.tablet, value.desktop, clamp(t, 0, 1))
+  }
+
+  return value.desktop
+}
 
 const parseRotation = (transform: string) => {
   if (!transform || transform === 'none') return 0
@@ -64,10 +90,15 @@ const getShelfBodies = (
   return shelfIds
     .map((id) => wrapper.querySelector<HTMLElement>(`#${id}`))
     .filter((el): el is HTMLElement => Boolean(el))
+    .filter((el) => {
+      const rect = el.getBoundingClientRect()
+      return rect.width > 0 && rect.height > 0
+    })
     .map((el) => {
       const rect = el.getBoundingClientRect()
       const width = el.offsetWidth || rect.width
       const height = el.offsetHeight || rect.height
+      if (width <= 0 || height <= 0) return null
       const angle = parseRotation(getComputedStyle(el).transform)
       const bodyHeight = shelfThicknessPx ?? 14
 
@@ -97,6 +128,7 @@ const getShelfBodies = (
       const dx = topEdgeEnd.x - topEdgeStart.x
       const dy = topEdgeEnd.y - topEdgeStart.y
       const length = Math.hypot(dx, dy)
+      if (!Number.isFinite(length) || length < 1) return null
       const dirX = dx / length
       const dirY = dy / length
       const normalA = { x: -dirY, y: dirX }
@@ -122,6 +154,7 @@ const getShelfBodies = (
         topEdgeStart
       return body
     })
+    .filter((body): body is Body => Boolean(body))
 }
 
 const getSpawnPoint = (shelf?: Body & { shelfLength?: number }, yOffset = 80) => {
@@ -144,6 +177,7 @@ const BouncingBallsPhysics: React.FC<Props> = ({
   spawnMaxMs = 1200,
   gravityY = 1,
   shelfThicknessPx = 14,
+  ballRadiusPx = 18,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const engineRef = useRef<Engine | null>(null)
@@ -233,6 +267,19 @@ const BouncingBallsPhysics: React.FC<Props> = ({
       wallsRef.current = walls
       shelvesRef.current = shelfBodies
       Composite.add(engine.world, [...wallsRef.current, ...shelvesRef.current])
+
+      // Keep existing balls responsive when viewport changes.
+      const targetRadius = adaptiveByViewport(ballRadiusPx, window.innerWidth)
+      ballsRef.current.forEach((ball) => {
+        const currentRadius = ball.circleRadius ?? targetRadius
+        if (!currentRadius || Math.abs(currentRadius - targetRadius) < 0.25) return
+        const scale = targetRadius / currentRadius
+        Body.scale(ball, scale, scale)
+        if (ball.render.sprite) {
+          ball.render.sprite.xScale = (targetRadius * 2) / BALL_TEXTURE_SIZE
+          ball.render.sprite.yScale = (targetRadius * 2) / BALL_TEXTURE_SIZE
+        }
+      })
     }
 
     const spawnBall = () => {
@@ -252,7 +299,7 @@ const BouncingBallsPhysics: React.FC<Props> = ({
               y: shelf.shelfStart.y - 20,
             }
           : getSpawnPoint(shelf, 80)
-      const radius = 18
+      const radius = adaptiveByViewport(ballRadiusPx, window.innerWidth)
       // Physics tuning: ball restitution & friction
       const ball = Bodies.circle(
         clamp(spawn.x, radius, width - radius),
@@ -291,8 +338,49 @@ const BouncingBallsPhysics: React.FC<Props> = ({
       getShelfElements().forEach((el) => shelfObserver.observe(el))
     }
 
-    rebuildWorld()
-    observeShelves()
+    const syncShelves = () => {
+      rebuildWorld()
+      observeShelves()
+    }
+
+    const attachShelfLoadListeners = () => {
+      const cleanups: Array<() => void> = []
+      const onShelfLoad = () => syncShelves()
+
+      getShelfElements().forEach((el) => {
+        if (!(el instanceof HTMLImageElement)) return
+        el.addEventListener('load', onShelfLoad)
+        el.addEventListener('error', onShelfLoad)
+        cleanups.push(() => {
+          el.removeEventListener('load', onShelfLoad)
+          el.removeEventListener('error', onShelfLoad)
+        })
+      })
+
+      return () => cleanups.forEach((cleanup) => cleanup())
+    }
+
+    const refreshShelfListeners = () => {
+      detachShelfLoadListeners()
+      detachShelfLoadListeners = attachShelfLoadListeners()
+    }
+
+    let detachShelfLoadListeners = () => {}
+    const startupTimers: number[] = []
+    const startupRafs: number[] = []
+    const onWindowLoad = () => syncShelves()
+
+    syncShelves()
+    refreshShelfListeners()
+    startupRafs.push(
+      window.requestAnimationFrame(() => {
+        syncShelves()
+        startupRafs.push(window.requestAnimationFrame(() => syncShelves()))
+      }),
+    )
+    startupTimers.push(window.setTimeout(() => syncShelves(), 120))
+    startupTimers.push(window.setTimeout(() => syncShelves(), 420))
+    window.addEventListener('load', onWindowLoad)
     Render.run(render)
     Runner.run(runner, engine)
     scheduleSpawn()
@@ -311,8 +399,8 @@ const BouncingBallsPhysics: React.FC<Props> = ({
     Events.on(engine, 'afterUpdate', onUpdate)
 
     const resizeObserver = new ResizeObserver(() => {
-      rebuildWorld()
-      observeShelves()
+      syncShelves()
+      refreshShelfListeners()
     })
     resizeObserver.observe(wrapper)
     window.addEventListener('resize', rebuildWorld)
@@ -322,6 +410,10 @@ const BouncingBallsPhysics: React.FC<Props> = ({
       resizeObserver.disconnect()
       shelfObserver.disconnect()
       window.removeEventListener('resize', rebuildWorld)
+      window.removeEventListener('load', onWindowLoad)
+      detachShelfLoadListeners()
+      startupTimers.forEach((timerId) => window.clearTimeout(timerId))
+      startupRafs.forEach((rafId) => window.cancelAnimationFrame(rafId))
       if (spawnTimeoutRef.current) {
         window.clearTimeout(spawnTimeoutRef.current)
       }
@@ -341,6 +433,7 @@ const BouncingBallsPhysics: React.FC<Props> = ({
     spawnMaxMs,
     gravityY,
     shelfThicknessPx,
+    ballRadiusPx,
   ])
 
   return <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />

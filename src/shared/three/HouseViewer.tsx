@@ -12,6 +12,7 @@ type HouseViewerProps = {
   modelYOffset?: number
   color?: string
   partColors?: Record<string, string>
+  shadowLift?: number
   debugMeshNames?: boolean
   autoRotate?: boolean
   autoRotateSpeed?: number
@@ -35,6 +36,7 @@ const HouseModel: FC<{
   modelYOffset: number
   color?: string
   partColors?: Record<string, string>
+  shadowLift: number
   debugMeshNames?: boolean
   autoRotate: boolean
   autoRotateSpeed: number
@@ -50,6 +52,7 @@ const HouseModel: FC<{
   modelYOffset,
   color,
   partColors,
+  shadowLift,
   debugMeshNames,
   autoRotate,
   autoRotateSpeed,
@@ -111,7 +114,7 @@ const HouseModel: FC<{
         // Keep visible volume but compensate shadow darkening for brand tints.
         if (tint) {
           lambert.emissive = tint.clone()
-          lambert.emissiveIntensity = 0.34
+          lambert.emissiveIntensity = shadowLift
         } else {
           lambert.emissive = new THREE.Color('#000000')
           lambert.emissiveIntensity = 0
@@ -216,6 +219,7 @@ const HouseViewer: FC<HouseViewerProps> = ({
   modelYOffset = 0,
   color,
   partColors,
+  shadowLift = 0.3,
   debugMeshNames,
   autoRotate = false,
   autoRotateSpeed = 0.25,
@@ -271,6 +275,7 @@ const HouseViewer: FC<HouseViewerProps> = ({
             modelYOffset={modelYOffset}
             color={color}
             partColors={partColors}
+            shadowLift={shadowLift}
             debugMeshNames={debugMeshNames}
             autoRotate={autoRotate}
             autoRotateSpeed={autoRotateSpeed}

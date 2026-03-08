@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /thanks
+Sitemap: https://space.dominium.com.ua/sitemap.xml

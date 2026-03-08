@@ -1,13 +1,8 @@
 import React, { useLayoutEffect, useMemo, useRef } from 'react'
 import './LineNor.css'
+import type { SvgIconComponent, Variant } from './data'
 
 export type DottedSide = 'left' | 'right' | 'both'
-export interface Variant {
-  id: string
-  thumb: string
-  contentIcon: string
-  bullets: string[]
-}
 
 interface LineNorProps {
   dottedSide?: DottedSide
@@ -16,6 +11,9 @@ interface LineNorProps {
   setActiveVarIdx: React.Dispatch<React.SetStateAction<number | null>>
   drawDurationMs?: number
   subIconColors?: Array<string | null>
+  iconSize?: number
+  iconThickness?: number
+  iconThicknessById?: Partial<Record<string, number>>
 }
 
 const usePrefersReducedMotion = () => {
@@ -140,6 +138,9 @@ const LineNor: React.FC<LineNorProps> = ({
   setActiveVarIdx,
   drawDurationMs,
   subIconColors,
+  iconSize = 72,
+  iconThickness = 0,
+  iconThicknessById,
 }) => {
   const leftIsDotted = dottedSide === 'left' || dottedSide === 'both'
   const rightIsDotted = dottedSide === 'right' || dottedSide === 'both'
@@ -377,6 +378,8 @@ const LineNor: React.FC<LineNorProps> = ({
           const buttonStyle = iconColor
             ? ({ '--active-ring-color': iconColor } as React.CSSProperties)
             : undefined
+          const IconComponent = (typeof v.thumb !== 'string' ? v.thumb : null) as SvgIconComponent | null
+          const resolvedThickness = iconThicknessById?.[v.id] ?? iconThickness
 
           return (
             <div
@@ -397,19 +400,28 @@ const LineNor: React.FC<LineNorProps> = ({
                 aria-label={`Вибрати варіант ${i + 1}`}
                 style={buttonStyle}
               >
-                {iconColor ? (
+                {IconComponent ? (
+                  <IconComponent
+                    className="line-icon-svg"
+                    aria-hidden="true"
+                    width={iconSize}
+                    height={iconSize}
+                    thickness={resolvedThickness}
+                    style={iconColor ? ({ color: iconColor } as React.CSSProperties) : undefined}
+                  />
+                ) : iconColor ? (
                   <span
                     className="line-icon-img line-icon-img--mask"
                     aria-hidden="true"
                     style={
                       {
-                        '--icon-url': `url("${v.thumb}")`,
+                        '--icon-url': `url("${v.thumb as string}")`,
                         '--icon-color': iconColor,
                       } as React.CSSProperties
                     }
                   />
                 ) : (
-                  <img className="line-icon-img" src={v.thumb} alt="" />
+                  <img className="line-icon-img" src={v.thumb as string} alt="" />
                 )}
               </button>
             </div>

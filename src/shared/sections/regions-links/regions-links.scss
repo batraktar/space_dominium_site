@@ -1,0 +1,68 @@
+.regions-links {
+  margin: 0 auto;
+  width: min(1240px, calc(100% - 48px));
+  padding: clamp(24px, 3vw, 40px) 0;
+}
+
+.regions-links__inner {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 20px;
+}
+
+.regions-links h2 {
+  margin: 0 0 12px;
+  font-size: clamp(22px, 2.4vw, 30px);
+}
+
+.regions-links__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.regions-links__items a {
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  padding: 10px 16px;
+  text-decoration: none;
+  transition: opacity 200ms ease;
+}
+
+.regions-links__items a:hover {
+  opacity: 0.8;
+}
+
+.regions-links--dark {
+  color: #fff;
+}
+
+.regions-links--dark .regions-links__inner {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.regions-links--light {
+  color: #131313;
+}
+
+.regions-links--light .regions-links__inner {
+  border-color: rgba(10, 10, 96, 0.2);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 768px) {
+  .regions-links {
+    width: min(1240px, calc(100% - 28px));
+    padding: 18px 0 28px;
+  }
+
+  .regions-links__inner {
+    padding: 14px;
+  }
+
+  .regions-links__items a {
+    width: 100%;
+    text-align: center;
+  }
+}

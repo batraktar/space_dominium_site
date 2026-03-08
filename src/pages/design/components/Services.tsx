@@ -7,7 +7,10 @@ type LineDecor = {
   id: string
   top: { desktop: number; tablet: number; mobile: number }
   width: { desktop: number; tablet: number; mobile: number }
-  rotate: number
+  // Optional fine-tuning for per-breakpoint line scale/height.
+  scale?: { desktop: number; tablet: number; mobile: number }
+  height?: { desktop: number; tablet: number; mobile: number }
+  rotate: number | { desktop: number; tablet: number; mobile: number }
   left?: { desktop: number; tablet: number; mobile: number }
   right?: { desktop: number; tablet: number; mobile: number }
 }
@@ -16,78 +19,97 @@ const DESKTOP_BP = 1440
 const TABLET_BP = 768
 const MOBILE_BP = 375
 
-const fluidClamp3 = (desktop: number, tablet: number, mobile: number) => {
-  const desktopRange = DESKTOP_BP - TABLET_BP
-  const mobileRange = TABLET_BP - MOBILE_BP
+const lerp = (from: number, to: number, t: number) => from + (to - from) * t
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 
-  return `calc(
-    clamp(${tablet}px, calc(${tablet}px + (${desktop - tablet}) * ((100vw - ${TABLET_BP}px) / ${desktopRange})), ${desktop}px)
-    +
-    clamp(${mobile}px, calc(${mobile}px + (${tablet - mobile}) * ((100vw - ${MOBILE_BP}px) / ${mobileRange})), ${tablet}px)
-    -
-    ${tablet}px
-  )`
+const interpolateByViewport = (
+  value: { desktop: number; tablet: number; mobile: number },
+  viewportWidth: number,
+) => {
+  if (viewportWidth <= MOBILE_BP) return value.mobile
+
+  if (viewportWidth <= TABLET_BP) {
+    const t = clamp01((viewportWidth - MOBILE_BP) / (TABLET_BP - MOBILE_BP))
+    return lerp(value.mobile, value.tablet, t)
+  }
+
+  if (viewportWidth <= DESKTOP_BP) {
+    const t = clamp01((viewportWidth - TABLET_BP) / (DESKTOP_BP - TABLET_BP))
+    return lerp(value.tablet, value.desktop, t)
+  }
+
+  return value.desktop
 }
 
-const useIsMobile = (maxWidth = TABLET_BP) => {
-  const [isMobile, setIsMobile] = useState(false)
+const adaptiveValue = (
+  value: { desktop: number; tablet: number; mobile: number },
+  viewportWidth: number,
+  unit = 'px',
+) => `${interpolateByViewport(value, viewportWidth)}${unit}`
+
+const adaptiveRotate = (
+  value: number | { desktop: number; tablet: number; mobile: number },
+  viewportWidth: number,
+) => `${typeof value === 'number' ? value : interpolateByViewport(value, viewportWidth)}deg`
+
+const useViewportWidth = () => {
+  const [viewportWidth, setViewportWidth] = useState<number>(
+    typeof window === 'undefined' ? DESKTOP_BP : window.innerWidth,
+  )
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    const media = window.matchMedia(`(max-width: ${maxWidth}px)`)
-    const update = () => setIsMobile(media.matches)
+    const update = () => setViewportWidth(window.innerWidth)
     update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
 
-    if (media.addEventListener) {
-      media.addEventListener('change', update)
-      return () => media.removeEventListener('change', update)
-    }
-
-    media.addListener(update)
-    return () => media.removeListener(update)
-  }, [maxWidth])
-
-  return isMobile
+  return viewportWidth
 }
 
 const lines: LineDecor[] = [
   {
     id: 'l1',
-    top: { desktop: 60, tablet: 92, mobile: 70 },
+    top: { desktop: 60, tablet: 100, mobile: 90 },
     left: { desktop: 90, tablet: 48, mobile: 18 },
-    width: { desktop: 660, tablet: 352, mobile: 220 },
-    rotate: 5,
+    width: { desktop: 660, tablet: 352, mobile: 180 },
+    rotate: { desktop: 5, tablet: 5, mobile: 11 },
   },
   {
     id: 'l2',
-    top: { desktop: 650, tablet: 580, mobile: 400 },
+    top: { desktop: 650, tablet: 750, mobile: 450 },
     right: { desktop: 120, tablet: 64, mobile: 10 },
-    width: { desktop: 660, tablet: 300, mobile: 220 },
-    rotate: -30,
+    width: { desktop: 660, tablet: 300, mobile: 180 },
+    rotate: { desktop: -30, tablet: -30, mobile: -35 },
   },
   {
     id: 'l3',
-    top: { desktop: 690, tablet: 880, mobile: 440 },
+    top: { desktop: 690, tablet: 700, mobile: 500 },
     left: { desktop: 90, tablet: 48, mobile: 14 },
     width: { desktop: 660, tablet: 320, mobile: 220 },
-    rotate: 5,
+    rotate: { desktop: 10, tablet: 10, mobile: 10 },
   },
   {
     id: 'l4',
-    top: { desktop: 1250, tablet: 1307, mobile: 815 },
+    top: { desktop: 1350, tablet: 1250, mobile: 980 },
     right: { desktop: 130, tablet: 69, mobile: 16 },
     width: { desktop: 560, tablet: 299, mobile: 220 },
-    rotate: -40,
+    rotate: { desktop: -40, tablet: -40, mobile: -40 },
   },
 ]
 
+const ballsConfig = {
+  radius: { desktop: 18, tablet: 14, mobile: 11 },
+}
+
 const Services: React.FC = () => {
   const wrapperRef = useRef<HTMLElement | null>(null)
-  const isMobile = useIsMobile(TABLET_BP)
+  const viewportWidth = useViewportWidth()
 
   return (
     <section className={styles.services} ref={wrapperRef}>
-      <BouncingBallsPhysics wrapperRef={wrapperRef} />
+      <BouncingBallsPhysics wrapperRef={wrapperRef} ballRadiusPx={ballsConfig.radius} />
 
       <div className={styles.services__container}>
         <div className={styles.services__decor} aria-hidden>
@@ -99,27 +121,20 @@ const Services: React.FC = () => {
               alt=""
               className={styles.services__line}
               style={{
-                top: isMobile
-                  ? `${line.top.mobile}px`
-                  : fluidClamp3(line.top.desktop, line.top.tablet, line.top.mobile),
-                width: isMobile
-                  ? `${line.width.mobile}px`
-                  : fluidClamp3(line.width.desktop, line.width.tablet, line.width.mobile),
+                top: adaptiveValue(line.top, viewportWidth),
+                width: adaptiveValue(line.width, viewportWidth),
+                ...(line.height ? { height: adaptiveValue(line.height, viewportWidth) } : {}),
                 ...(line.left
                   ? {
-                      left: isMobile
-                        ? `${line.left.mobile}px`
-                        : fluidClamp3(line.left.desktop, line.left.tablet, line.left.mobile),
+                      left: adaptiveValue(line.left, viewportWidth),
                     }
                   : {}),
                 ...(line.right
                   ? {
-                      right: isMobile
-                        ? `${line.right.mobile}px`
-                        : fluidClamp3(line.right.desktop, line.right.tablet, line.right.mobile),
+                      right: adaptiveValue(line.right, viewportWidth),
                     }
                   : {}),
-                transform: `rotate(${line.rotate}deg)`,
+                transform: `rotate(${adaptiveRotate(line.rotate, viewportWidth)}) scale(${line.scale ? interpolateByViewport(line.scale, viewportWidth) : 1})`,
               }}
             />
           ))}

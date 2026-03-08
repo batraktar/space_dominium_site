@@ -6,15 +6,16 @@ import imgSaas from '../../../assets/img/smm-tools/saas.png'
 import imgAmazon from '../../../assets/img/smm-tools/amazon.png'
 import imgStartup from '../../../assets/img/smm-tools/startup.png'
 import imgSoftware from '../../../assets/img/smm-tools/software.png'
-import imgGraphic from '../../../assets/img/smm-tools/graphic.png'
+// import imgGraphic from '../../../assets/img/smm-tools/graphic.png'
 
 const tools = [
-  { id: 1, title: 'Saas Product Design', img: imgSaas, variant: 'default' },
-  { id: 2, title: 'Amazon Design', img: imgAmazon, variant: 'dark' },
-  { id: 3, title: 'Startup Design', img: imgStartup, variant: 'yellow' },
-  { id: 4, title: 'Software Design', img: imgSoftware, variant: 'default' },
-  { id: 5, title: 'Graphic Design', img: imgGraphic, variant: 'dark' },
+  { id: 1, title: 'Креативний дизайн', img: imgSaas, variant: 'dark' },
+  { id: 2, title: 'Аналітика даних', img: imgAmazon, variant: 'default' },
+  { id: 3, title: 'Таргетована реклама', img: imgStartup, variant: 'dark' },
+  { id: 4, title: 'ШI-рішення', img: imgSoftware, variant: 'white' },
+  // { id: 5, title: 'Graphic Design', img: imgGraphic, variant: 'dark' },
 ]
+const TRACK_SETS = 3
 
 const Tools: React.FC = () => {
   const scrollRef = React.useRef<HTMLDivElement>(null)
@@ -25,22 +26,57 @@ const Tools: React.FC = () => {
     if (!scrollContainer) return
 
     let animationFrameId: number
-    const speed = 1 // Pixels per frame
+    const speed = 0.8
+
+    const getSetWidth = () => scrollContainer.scrollWidth / TRACK_SETS
+
+    const normalizeLoopPosition = () => {
+      const setWidth = getSetWidth()
+      if (!setWidth) return
+
+      if (scrollContainer.scrollLeft >= setWidth * 2) {
+        scrollContainer.scrollLeft -= setWidth
+      } else if (scrollContainer.scrollLeft <= 0) {
+        scrollContainer.scrollLeft += setWidth
+      }
+    }
+
+    const initMiddleSet = () => {
+      const setWidth = getSetWidth()
+      if (!setWidth) return
+      if (scrollContainer.scrollLeft === 0) {
+        scrollContainer.scrollLeft = setWidth
+      }
+    }
 
     const scroll = () => {
       if (!isPaused && scrollContainer) {
-        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
-          scrollContainer.scrollLeft = 0
-        } else {
-          scrollContainer.scrollLeft += speed
-        }
+        scrollContainer.scrollLeft += speed
+        normalizeLoopPosition()
       }
       animationFrameId = requestAnimationFrame(scroll)
     }
 
+    const handleScroll = () => normalizeLoopPosition()
+    const handleResize = () => {
+      const setWidth = getSetWidth()
+      if (!setWidth) return
+      const localOffset = scrollContainer.scrollLeft % setWidth
+      requestAnimationFrame(() => {
+        scrollContainer.scrollLeft = setWidth + localOffset
+      })
+    }
+
+    initMiddleSet()
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleResize)
     animationFrameId = requestAnimationFrame(scroll)
 
-    return () => cancelAnimationFrame(animationFrameId)
+    return () => {
+      cancelAnimationFrame(animationFrameId)
+      scrollContainer.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [isPaused])
 
   return (
@@ -57,13 +93,11 @@ const Tools: React.FC = () => {
           onTouchEnd={() => setIsPaused(false)}
         >
           <div className={styles.tools__track}>
-            {[...tools, ...tools, ...tools].map(
-              (
-                tool,
-                index, // Tripled for smoother infinite loop
-              ) => (
+            {Array.from({ length: TRACK_SETS })
+              .flatMap((_, setIndex) => tools.map((tool) => ({ ...tool, setIndex })))
+              .map((tool, index) => (
                 <div
-                  key={`${tool.id}-${index}`}
+                  key={`${tool.id}-${tool.setIndex}-${index}`}
                   className={`${styles.card} ${styles[`card--${tool.variant}`]}`}
                 >
                   <div className={styles.card__image_wrapper}>
@@ -79,8 +113,7 @@ const Tools: React.FC = () => {
                   </div>
                   <div className={styles.card__overlay}></div>
                 </div>
-              ),
-            )}
+              ))}
           </div>
         </div>
 

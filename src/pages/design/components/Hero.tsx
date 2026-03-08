@@ -8,10 +8,18 @@ type HeroProps = {
 }
 
 const Hero: React.FC<HeroProps> = ({ ctaArrowColor }) => {
+  type HeroCssVars = React.CSSProperties & {
+    '--hero-cta-arrow-color'?: string
+  }
+
+  const heroStyle: HeroCssVars = {
+    ...(ctaArrowColor ? { '--hero-cta-arrow-color': ctaArrowColor } : {}),
+  }
+
   return (
     <div
       className={styles.heroTop}
-      style={ctaArrowColor ? { '--hero-cta-arrow-color': ctaArrowColor } : undefined}
+      style={heroStyle}
     >
       <div className={styles.heroTopInner}>
         <div className={styles.heroCopy}>

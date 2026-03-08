@@ -1,0 +1,5 @@
+{
+  "name": "InstaAuto Demo",
+  "description": "An interactive demonstration of instant business automation, visualizing the flow of data from a customer action to backend systems.",
+  "requestFramePermissions": []
+}

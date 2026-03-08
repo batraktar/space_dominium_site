@@ -1,6 +1,6 @@
 .shell {
   position: relative;
-  padding-bottom: var(--menu-bar-h, 0px);
+  padding-bottom: var(--shell-menu-reserve, var(--menu-bar-h, 0px));
 }
 
 .bar {

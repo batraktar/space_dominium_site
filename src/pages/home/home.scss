@@ -27,3 +27,21 @@
   position: relative;
   z-index: 2;
 }
+
+.home__slider-trigger {
+  height: 1px;
+  width: 100%;
+}
+
+.home__slider-placeholder {
+  min-height: clamp(260px, 42vw, 540px);
+}
+
+.home__footer-trigger {
+  height: 1px;
+  width: 100%;
+}
+
+.home__footer-placeholder {
+  min-height: 160px;
+}

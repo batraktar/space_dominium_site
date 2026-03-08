@@ -7,6 +7,7 @@ type CachePayload = { ts: number; items: FaqItem[] }
 
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000
 const GID_REGEX = /[?&]gid=(\d+)/
+const FAQ_SCHEMA_SCRIPT_ID = 'sd-faq-schema'
 
 const resolveSheetUrl = (sheetUrl: string) => {
   if (!import.meta.env.PROD) return sheetUrl
@@ -114,6 +115,39 @@ const Faq: FC<Props> = ({
     })()
     return () => controller.abort()
   }, [sheetUrl])
+
+  useEffect(() => {
+    const existing = document.getElementById(FAQ_SCHEMA_SCRIPT_ID)
+    if (!items.length || err) {
+      existing?.remove()
+      return
+    }
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: items.slice(0, 20).map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    }
+
+    const script = existing ?? document.createElement('script')
+    script.id = FAQ_SCHEMA_SCRIPT_ID
+    script.setAttribute('type', 'application/ld+json')
+    script.textContent = JSON.stringify(schema)
+    if (!existing) {
+      document.head.appendChild(script)
+    }
+
+    return () => {
+      script.remove()
+    }
+  }, [items, err])
 
   type QuestionCssVars = CSSProperties & {
     '--faq-plus': string

@@ -2,6 +2,11 @@
   RewriteEngine On
   RewriteBase /
 
+  # Canonical domain + HTTPS
+  RewriteCond %{HTTP_HOST} !^space\.dominium\.com\.ua$ [NC,OR]
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://space.dominium.com.ua%{REQUEST_URI} [R=301,L,NE]
+
   # Serve existing files and directories directly
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d

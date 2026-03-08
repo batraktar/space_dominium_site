@@ -9,14 +9,14 @@
   }
 
   &__header {
-    margin-bottom: 90px;
+    margin-bottom: 40px;
   }
 
   &__title {
     font-family: 'Gilroy', sans-serif;
     font-weight: 700;
     font-size: 72px;
-    line-height: 83px;
+    line-height: 58px;
     color: #ffffff;
     margin: 0;
   }
@@ -100,6 +100,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    color: #ffffff;
 
     img,
     svg {
@@ -111,7 +112,7 @@
 }
 
 .cardWithRobot {
-  padding-top: 80px;
+  padding-top: 56px;
 }
 
 .cardHighlighted {
@@ -121,12 +122,12 @@
 
 .card__robot {
   position: absolute;
-  top: 0;
+  top: -16px;
   right: 24px;
   left: auto;
-  transform: translateY(-50%);
-  width: 180px;
-  height: 180px;
+  transform: translateY(-58%);
+  width: 480px;
+  height: 480px;
   pointer-events: none;
   z-index: 2;
 }
@@ -137,12 +138,12 @@
     padding: 60px 60px 80px;
 
     &__title {
-      font-size: 60px;
+      font-size: 57px;
       line-height: 72px;
     }
 
     &__header {
-      margin-bottom: 70px;
+      margin-bottom: 35px;
     }
 
     .card {
@@ -172,9 +173,9 @@
     }
 
     .card__robot {
-      width: 150px;
-      height: 150px;
-      top: 0;
+      width: 350px;
+      height: 350px;
+      top: -8px;
       right: 18px;
     }
   }
@@ -185,12 +186,13 @@
     padding: 50px 40px 60px;
 
     &__title {
-      font-size: 48px;
-      line-height: 56px;
+      font-size: 34px;
+      line-height: 44px;
+      word-spacing: -0.03em;
     }
 
     &__header {
-      margin-bottom: 50px;
+      margin-bottom: 18px;
     }
 
     &__grid {
@@ -222,9 +224,9 @@
     }
 
     .card__robot {
-      width: 130px;
-      height: 130px;
-      top: 0;
+      width: 255px;
+      height: 255px;
+      top: -6px;
       right: 16px;
     }
   }
@@ -235,12 +237,13 @@
     padding: 40px 20px 50px;
 
     &__title {
-      font-size: 36px;
-      line-height: 42px;
+      font-size: 30px;
+      line-height: 30px;
+      word-spacing: -0.04em;
     }
 
     &__header {
-      margin-bottom: 40px;
+      margin-bottom: 12px;
     }
 
     .card {
@@ -274,15 +277,15 @@
     }
 
     .cardWithRobot {
-      padding-top: 68px;
+      padding-top: 50px;
     }
 
     .card__robot {
-      width: 120px;
-      height: 120px;
-      top: 0;
-      right: auto;
-      left: 16px;
+      width: 200px;
+      height: 200px;
+      top: -6px;
+      right: -40px;
+      left: auto;
     }
   }
 }
@@ -307,7 +310,13 @@
     }
 
     .cardWithRobot {
-      padding-top: 60px;
+      padding-top: 46px;
+    }
+
+    .card__robot {
+      width: 138px;
+      height: 138px;
+      right: 8px;
     }
   }
 }

@@ -2,7 +2,8 @@ import React from 'react'
 import AffixedMenuShell from '../../shared/layout/AffixedMenuShell'
 import { usePrefersReducedMotion } from '../../shared/hooks/usePrefersReducedMotion'
 import videoMp4 from '../../assets/video/laptop_people_crop.mp4'
-import videoWebm from '../../assets/video/laptop_people_crop.mp4'
+import videoMp4Mobile from '../../assets/video/laptop_people_mobile_1080p_hq.mp4'
+import videoPoster from '../../assets/video/laptop_people_poster.webp'
 import styles from './about.module.scss'
 
 const About: React.FC = () => {
@@ -18,9 +19,10 @@ const About: React.FC = () => {
           loop={!prefersReducedMotion}
           playsInline
           preload="metadata"
+          poster={videoPoster}
           aria-hidden
         >
-          {videoWebm && <source src={videoWebm} type="video/webm" />}
+          <source src={videoMp4Mobile} type="video/mp4" media="(max-width: 425px)" />
           <source src={videoMp4} type="video/mp4" />
         </video>
         <div className={styles.about__overlay} aria-hidden />

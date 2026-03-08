@@ -1,0 +1,37 @@
+import { useId } from 'react'
+import type { SVGProps } from 'react'
+
+interface IconProps extends SVGProps<SVGSVGElement> {
+  thickness?: number
+}
+
+const IconRetailUserAdminCabinet: React.FC<IconProps> = ({ thickness = 0, ...props }) => {
+  const filterId = `filter-${useId().replace(/:/g, '')}`
+
+  return (
+    <svg
+      width="54"
+      height="54"
+      viewBox="0 0 54 54"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      {thickness > 0 && (
+        <defs>
+          <filter id={filterId}>
+            <feMorphology operator="erode" radius={thickness} in="SourceGraphic" />
+          </filter>
+        </defs>
+      )}
+      <g filter={thickness > 0 ? `url(#${filterId})` : undefined}>
+        <path
+          d="M26.5625 31.875C41.225 31.875 53.125 37.4354 53.125 44.2708V53.125H0V44.2708C0 37.4354 11.9 31.875 26.5625 31.875ZM49.5833 44.2708C49.5833 39.3833 39.2771 35.4167 26.5625 35.4167C13.8479 35.4167 3.54167 39.3833 3.54167 44.2708V49.5833H49.5833V44.2708ZM26.5625 0C29.8501 0 33.003 1.30599 35.3277 3.63066C37.6523 5.95533 38.9583 9.10825 38.9583 12.3958C38.9583 15.6834 37.6523 18.8363 35.3277 21.161C33.003 23.4857 29.8501 24.7917 26.5625 24.7917C23.2749 24.7917 20.122 23.4857 17.7973 21.161C15.4727 18.8363 14.1667 15.6834 14.1667 12.3958C14.1667 9.10825 15.4727 5.95533 17.7973 3.63066C20.122 1.30599 23.2749 0 26.5625 0ZM26.5625 3.54167C24.2142 3.54167 21.9621 4.47451 20.3017 6.13499C18.6412 7.79547 17.7083 10.0476 17.7083 12.3958C17.7083 14.7441 18.6412 16.9962 20.3017 18.6567C21.9621 20.3172 24.2142 21.25 26.5625 21.25C28.9108 21.25 31.1629 20.3172 32.8233 18.6567C34.4838 16.9962 35.4167 14.7441 35.4167 12.3958C35.4167 10.0476 34.4838 7.79547 32.8233 6.13499C31.1629 4.47451 28.9108 3.54167 26.5625 3.54167Z"
+          fill="currentColor"
+        />
+      </g>
+    </svg>
+  )
+}
+
+export default IconRetailUserAdminCabinet

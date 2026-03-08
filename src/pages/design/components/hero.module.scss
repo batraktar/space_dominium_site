@@ -46,6 +46,7 @@
   letter-spacing: 0.03em;
   line-height: 0.8;
   color: $ivory;
+  margin-left: -9px;
 }
 
 .heroCta {
@@ -122,6 +123,15 @@
   .hero {
     --hero-dots-height: 940px;
   }
+    .heroTitle {
+      margin-left: -9px;
+  }
+}
+
+@media (max-width: 1024px) {
+    .heroTitle {
+      margin-left: -9px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -138,6 +148,7 @@
   .heroTitle {
     font-size: clamp(40px, 25vw, 80px);
     line-height: 0.95;
+    margin-left: -4px;
   }
 
   .heroMark {

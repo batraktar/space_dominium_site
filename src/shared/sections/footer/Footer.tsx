@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import './footer.scss'
 import { useInView } from '../../hooks/useInView'
-import HouseViewer from '../../three/HouseViewer'
+
+const LazyHouseViewer = lazy(() => import('../../three/HouseViewer'))
 
 type FooterProps = {
   title?: React.ReactNode
@@ -16,6 +17,7 @@ type FooterProps = {
   menuTextColor?: string
   houseColor?: string
   housePartColors?: Record<string, string>
+  houseShadowLift?: number
   houseDebugMeshNames?: boolean
 }
 
@@ -37,6 +39,7 @@ const Footer: React.FC<FooterProps> = ({
   menuTextColor,
   houseColor,
   housePartColors,
+  houseShadowLift,
   houseDebugMeshNames,
 }) => {
   const previewRef = useRef<HTMLDivElement>(null)
@@ -104,9 +107,9 @@ const Footer: React.FC<FooterProps> = ({
             </div>
 
             <div className="footer_button">
-              <button type="button" aria-label="Contact us">
+              <a className="footer_button_link" href="tel:0773213232" aria-label="Зателефонувати">
                 {buttonLabel}
-              </button>
+              </a>
 
               <svg
                 className="footer_arrow"
@@ -141,9 +144,15 @@ const Footer: React.FC<FooterProps> = ({
               >
                 <summary>Послуги</summary>
                 <div className="footer_menu_body">
-                  <p>IT-рішення / Веб-розробка</p>
-                  <p>Графічний Дизайн</p>
-                  <p>SMM</p>
+                  <p>
+                    <Link to="/web-develop">IT-рішення / Веб-розробка</Link>
+                  </p>
+                  <p>
+                    <Link to="/design">Графічний Дизайн</Link>
+                  </p>
+                  <p>
+                    <Link to="/smm">SMM</Link>
+                  </p>
                 </div>
               </details>
 
@@ -154,13 +163,35 @@ const Footer: React.FC<FooterProps> = ({
               >
                 <summary>Компанія</summary>
                 <div className="footer_menu_body">
-                  <p>Про нас</p>
-                  <p>Наша місія</p>
+                  {/* <p>Про нас</p> */}
                   <p>Команда</p>
-                  <p>Досягнення</p>
                   <p>Вакансії</p>
                 </div>
               </details>
+
+              {/* Тимчасово вимкнено блок "Регіони роботи"
+              <details
+                className="footer_menu_item"
+                open={isDesktop}
+                onToggle={handleDesktopToggle}
+              >
+                <summary>Регіони роботи</summary>
+                <div className="footer_menu_body">
+                  <p>
+                    <Link to="/ua/kyiv">Київ</Link>
+                  </p>
+                  <p>
+                    <Link to="/ua/lviv">Львів</Link>
+                  </p>
+                  <p>
+                    <Link to="/ua/zakarpattia">Закарпаття</Link>
+                  </p>
+                  <p>
+                    <Link to="/ua/ukraine">Вся Україна</Link>
+                  </p>
+                </div>
+              </details>
+              */}
 
               <details
                 className="footer_menu_item"
@@ -170,11 +201,11 @@ const Footer: React.FC<FooterProps> = ({
                 <summary>Контакти</summary>
                 <div className="footer_menu_body">
                   <p>
-                    <a href="mailto:hello@space.dominium">Email: hello@space.dominium.com.ua</a>
+                    <a href="mailto:hello@space.dominium.com.ua">Email: hello@space.dominium.com.ua</a>
                   </p>
                   <p>
-                    <a href="tel:+380XXXXXXXXX">Телефон: +380XXXXXXXXX</a>
-                  </p>
+                    <a href="tel:0773213232">Телефон: 0773213232</a>
+                  </p>  
                   <p>
                     <a
                       href="https://maps.google.com/?q=м.+Хуст,+Україна"
@@ -191,22 +222,25 @@ const Footer: React.FC<FooterProps> = ({
 
           <div className="footer_right" ref={previewRef}>
             {isPreviewVisible && (
-              <HouseViewer
-                url="/models/house.glb"
-                width={520}
-                height={400}
-                modelScale={1.65}
-                modelYOffset={0}
-                color={modelColor}
-                partColors={housePartColors}
-                debugMeshNames={houseDebugMeshNames}
-                autoRotate={false}
-                enableMouseYaw={true}
-                enableMouseFloat={true}
-                baseYaw={0}
-                basePitch={0}
-                environmentPreset="none"
-              />
+              <Suspense fallback={<div className="footer_house_skeleton" aria-hidden="true" />}>
+                <LazyHouseViewer
+                  url="/models/house.glb"
+                  width={520}
+                  height={400}
+                  modelScale={1.65}
+                  modelYOffset={0}
+                  color={modelColor}
+                  partColors={housePartColors}
+                  shadowLift={houseShadowLift}
+                  debugMeshNames={houseDebugMeshNames}
+                  autoRotate={false}
+                  enableMouseYaw={true}
+                  enableMouseFloat={true}
+                  baseYaw={0}
+                  basePitch={0}
+                  environmentPreset="none"
+                />
+              </Suspense>
             )}
           </div>
         </div>

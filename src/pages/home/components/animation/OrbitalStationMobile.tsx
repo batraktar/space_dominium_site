@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { Variant } from './data'
+import type { SvgIconComponent, Variant } from './data'
 import './OrbitalStationMobile.css'
 
 type OrbitalStationMobileProps = {
@@ -249,6 +249,7 @@ const OrbitalStationMobile: React.FC<OrbitalStationMobileProps> = ({
             const isActive = idx === visualActiveIndex
             const iconColor = itemColors?.[idx] ?? null
             const ringColor = iconColor ?? '#b57aff'
+            const IconComponent = (typeof item.thumb !== 'string' ? item.thumb : null) as SvgIconComponent | null
 
             return (
               <button
@@ -268,19 +269,28 @@ const OrbitalStationMobile: React.FC<OrbitalStationMobileProps> = ({
                 }}
                 aria-label={item.bullets[0]}
               >
-                {iconColor ? (
+                {IconComponent ? (
+                  <IconComponent
+                    className="orbital-mobile__item-icon"
+                    aria-hidden="true"
+                    width={46}
+                    height={46}
+                    thickness={0}
+                    style={iconColor ? ({ color: iconColor } as React.CSSProperties) : undefined}
+                  />
+                ) : iconColor ? (
                   <span
                     className="orbital-mobile__item-icon orbital-mobile__item-icon--mask"
                     aria-hidden="true"
                     style={
                       {
-                        '--icon-url': `url("${item.thumb}")`,
+                        '--icon-url': `url("${item.thumb as string}")`,
                         '--icon-color': iconColor,
                       } as React.CSSProperties
                     }
                   />
                 ) : (
-                  <img className="orbital-mobile__item-icon" src={item.thumb} alt="" />
+                  <img className="orbital-mobile__item-icon" src={item.thumb as string} alt="" />
                 )}
               </button>
             )

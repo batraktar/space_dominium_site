@@ -1,9 +1,9 @@
-import { useEffect, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react'
 
 import AffixedMenuShell from './AffixedMenuShell'
-import Contact from '../sections/contact/Contact'
-import Footer from '../sections/footer/Footer'
-import Faq from '../sections/faq/Faq'
+const Contact = lazy(() => import('../sections/contact/Contact'))
+const Footer = lazy(() => import('../sections/footer/Footer'))
+const Faq = lazy(() => import('../sections/faq/Faq'))
 
 type FaqConfig = {
   sheetUrl: string
@@ -31,6 +31,7 @@ type FooterConfig = {
   menuTextColor?: string
   houseColor?: string
   housePartColors?: Record<string, string>
+  houseShadowLift?: number
   houseDebugMeshNames?: boolean
 }
 
@@ -62,6 +63,13 @@ export default function ServiceLayout({
   footer,
   affix,
 }: Props) {
+  const faqTriggerRef = useRef<HTMLDivElement | null>(null)
+  const contactTriggerRef = useRef<HTMLDivElement | null>(null)
+  const footerTriggerRef = useRef<HTMLDivElement | null>(null)
+  const [shouldRenderFaq, setShouldRenderFaq] = useState(false)
+  const [shouldRenderContact, setShouldRenderContact] = useState(false)
+  const [shouldRenderFooter, setShouldRenderFooter] = useState(false)
+
   useEffect(() => {
     const root = document.documentElement
     const prev = root.style.scrollBehavior
@@ -70,6 +78,91 @@ export default function ServiceLayout({
       root.style.scrollBehavior = prev
     }
   }, [])
+
+  useEffect(() => {
+    if (shouldRenderFaq) return
+    const target = faqTriggerRef.current
+    if (!target || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      setShouldRenderFaq(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldRenderFaq(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '800px 0px', threshold: 0.01 },
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [shouldRenderFaq])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleHash = () => {
+      if (window.location.hash !== '#contact') return
+      setShouldRenderContact(true)
+      setShouldRenderFooter(true)
+      window.requestAnimationFrame(() => {
+        window.setTimeout(() => {
+          document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 0)
+      })
+    }
+
+    handleHash()
+    window.addEventListener('hashchange', handleHash)
+    return () => window.removeEventListener('hashchange', handleHash)
+  }, [])
+
+  useEffect(() => {
+    if (shouldRenderContact) return
+    const target = contactTriggerRef.current
+    if (!target || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      setShouldRenderContact(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldRenderContact(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '900px 0px', threshold: 0.01 },
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [shouldRenderContact])
+
+  useEffect(() => {
+    if (shouldRenderFooter) return
+    const target = footerTriggerRef.current
+    if (!target || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      setShouldRenderFooter(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldRenderFooter(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '900px 0px', threshold: 0.01 },
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [shouldRenderFooter])
 
   return (
     <div className={className}>
@@ -88,32 +181,54 @@ export default function ServiceLayout({
 
       {children}
 
-      <Faq
-        sheetUrl={faq.sheetUrl}
-        plusColor={faq.plusColor}
-        titleColor={faq.titleColor}
-        textColor={faq.textColor}
+      <div ref={faqTriggerRef} aria-hidden />
+      {shouldRenderFaq && (
+        <Suspense fallback={null}>
+          <Faq
+            sheetUrl={faq.sheetUrl}
+            plusColor={faq.plusColor}
+            titleColor={faq.titleColor}
+            textColor={faq.textColor}
+          />
+        </Suspense>
+      )}
+      <div
+        ref={contactTriggerRef}
+        id={shouldRenderContact ? undefined : 'contact'}
+        aria-hidden
+        style={{ height: shouldRenderContact ? 0 : 1 }}
       />
-      <Contact
-        formBg={contact?.formBg}
-        inputBorder={contact?.inputBorder}
-        buttonBg={contact?.buttonBg}
-        textColor={contact?.textColor ?? footer?.menuTextColor ?? footer?.phoneColor}
-      />
-      <Footer
-        title={footer?.title}
-        buttonLabel={footer?.buttonLabel}
-        titleColor={footer?.titleColor}
-        btnTextColor={footer?.btnTextColor}
-        underlineColor={footer?.underlineColor}
-        arrowColor={footer?.arrowColor}
-        arrowCircleColor={footer?.arrowCircleColor}
-        phoneColor={footer?.phoneColor}
-        menuTextColor={footer?.menuTextColor}
-        houseColor={footer?.houseColor}
-        housePartColors={footer?.housePartColors}
-        houseDebugMeshNames={footer?.houseDebugMeshNames}
-      />
+      {shouldRenderContact && (
+        <Suspense fallback={null}>
+          <Contact
+            formBg={contact?.formBg}
+            inputBorder={contact?.inputBorder}
+            buttonBg={contact?.buttonBg}
+            textColor={contact?.textColor ?? footer?.menuTextColor ?? footer?.phoneColor}
+          />
+        </Suspense>
+      )}
+
+      <div ref={footerTriggerRef} aria-hidden />
+      {shouldRenderFooter && (
+        <Suspense fallback={null}>
+          <Footer
+            title={footer?.title}
+            buttonLabel={footer?.buttonLabel}
+            titleColor={footer?.titleColor}
+            btnTextColor={footer?.btnTextColor}
+            underlineColor={footer?.underlineColor}
+            arrowColor={footer?.arrowColor}
+            arrowCircleColor={footer?.arrowCircleColor}
+            phoneColor={footer?.phoneColor}
+            menuTextColor={footer?.menuTextColor}
+            houseColor={footer?.houseColor}
+            housePartColors={footer?.housePartColors}
+            houseShadowLift={footer?.houseShadowLift}
+            houseDebugMeshNames={footer?.houseDebugMeshNames}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }

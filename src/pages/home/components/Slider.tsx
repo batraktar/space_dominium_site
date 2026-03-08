@@ -2,9 +2,9 @@ import { useState, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import './Slider.scss'
-import cardWeb from '../../../assets/img/cards-main/WD.svg'
-import cardBrand from '../../../assets/img/cards-main/BD_pearl.svg'
-import cardContent from '../../../assets/img/cards-main/CS.svg'
+import cardWeb from '../../../assets/img/cards-main/WD.png'
+import cardBrand from '../../../assets/img/cards-main/BD_pearl.png'
+import cardContent from '../../../assets/img/cards-main/CS.png'
 
 interface Slide {
   id: number

@@ -122,6 +122,13 @@
   object-fit: contain;
 }
 
+.line-icon-svg {
+  width: 60%;
+  height: 60%;
+  display: block;
+  color: #fff;
+}
+
 .line-icon-img--mask {
   background-color: var(--icon-color, currentColor);
   -webkit-mask-image: var(--icon-url);

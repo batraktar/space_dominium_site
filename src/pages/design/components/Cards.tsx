@@ -1,4 +1,6 @@
 import React from 'react'
+import Papa from 'papaparse'
+import { appEnv } from '../../../shared/config/app-env'
 import styles from './cards.module.scss'
 
 export type CardItem = {
@@ -9,15 +11,25 @@ export type CardItem = {
 
 type Props = {
   items?: CardItem[]
+  sheetUrl?: string
   initialIndex?: number
 }
+
+type CachePayload = {
+  ts: number
+  items: CardItem[]
+}
+
+const MAX_ACTIVE_CARDS = 6
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000
+const DEFAULT_SHEET_URL = appEnv.designCardsSheetUrl
 
 const defaultItems: CardItem[] = [
   {
     text:
-      'DesignFlow Studio is a passionate creative team that helps businesses of all sizes communicate their ideas through modern and memorable design services. We focus on delivering unique brand experiences, strong branding concepts, and visual identities that explore innovation. Our work includes everything from logo and identity design to full website and mobile app interfaces, marketing campaigns, product presentations, and custom illustrations. We approach every project with deep research, strategic thinking, and a commitment to detail.',
-    name: 'ANTON PLYUPIUK',
-    role: 'SENIOR CREATIVE PRODUCER',
+      "Вибач, Canva, нам треба розійтись. Ти була зручною на старті, але мій бізнес переріс рівень 'картинок з інтернету'. Мені потрібен стиль, який належить тільки мені.",
+    name: 'ВАШ ПРОЩАЛЬНИЙ ЛИСТ',
+    role: 'До шаблонних рішень',
   },
   {
     text:
@@ -37,10 +49,177 @@ const defaultItems: CardItem[] = [
     name: 'MARIA D.',
     role: 'SENIOR UX/UI DESIGNER',
   },
+  {
+    text:
+      'Коли в бренді є система, команда перестає вигадувати кожен макет з нуля. Ви економите час і отримуєте стабільну якість у всіх каналах.',
+    name: 'ANNA S.',
+    role: 'BRAND STRATEGIST',
+  },
 ]
 
-const Cards: React.FC<Props> = ({ items = defaultItems, initialIndex = 0 }) => {
-  const safeItems = items.length ? items : defaultItems
+const normalizeKey = (value: string) =>
+  value.toLowerCase().replace(/[\s\-_\(\)\[\]\{\}"'`’.,:;!?/\\]+/g, '')
+
+const resolveSheetUrl = (input: string) => {
+  try {
+    const url = new URL(input)
+    if (url.pathname.endsWith('/pubhtml')) {
+      url.pathname = url.pathname.replace('/pubhtml', '/pub')
+    }
+    if (url.pathname.endsWith('/pub')) {
+      url.searchParams.set('output', 'csv')
+      url.searchParams.set('single', 'true')
+    }
+    return url.toString()
+  } catch {
+    return input
+  }
+}
+
+const shuffle = <T,>(array: T[]) => {
+  const result = [...array]
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
+}
+
+const loadCache = (key: string): CachePayload | null => {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(key)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as CachePayload
+    if (!parsed || !Array.isArray(parsed.items)) return null
+    return parsed
+  } catch {
+    return null
+  }
+}
+
+const saveCache = (key: string, items: CardItem[]) => {
+  if (typeof window === 'undefined') return
+  try {
+    const payload: CachePayload = { ts: Date.now(), items }
+    window.localStorage.setItem(key, JSON.stringify(payload))
+  } catch {
+    // ignore cache write errors
+  }
+}
+
+const dedupeAndFill = (incoming: CardItem[], fallback: CardItem[], limit: number) => {
+  const map = new Map<string, CardItem>()
+  ;[...incoming, ...fallback].forEach((item) => {
+    const key = `${item.text}|${item.name}|${item.role}`
+    if (!map.has(key)) map.set(key, item)
+  })
+  const merged = Array.from(map.values())
+  if (merged.length === 0) return []
+  const initialLength = merged.length
+  while (merged.length < limit) {
+    merged.push(merged[(merged.length - initialLength) % initialLength])
+  }
+  return merged
+}
+
+const pickRowValue = (row: Record<string, unknown>, candidates: string[]) => {
+  const values = new Map<string, string>()
+  Object.entries(row).forEach(([key, value]) => {
+    const text = typeof value === 'string' ? value.trim() : ''
+    if (text) values.set(normalizeKey(key), text)
+  })
+
+  for (const candidate of candidates) {
+    const value = values.get(normalizeKey(candidate))
+    if (value) return value
+  }
+  return ''
+}
+
+type ParsedCompareText = {
+  client: string
+  translation: string
+}
+
+const parseCompareText = (text: string): ParsedCompareText | null => {
+  const match = text.match(
+    /клієнт\s*[:\--]\s*([\s\S]+?)\s*переклад\s*[:\--]\s*([\s\S]+)/i,
+  )
+  if (!match) return null
+
+  const client = match[1]?.trim()
+  const translation = match[2]?.trim()
+  if (!client || !translation) return null
+
+  return { client, translation }
+}
+
+const Cards: React.FC<Props> = ({ items, sheetUrl = DEFAULT_SHEET_URL, initialIndex = 0 }) => {
+  const [sheetItems, setSheetItems] = React.useState<CardItem[] | null>(null)
+  const useSheet = !items?.length
+  const hasSheetUrl = Boolean(sheetUrl?.trim())
+
+  React.useEffect(() => {
+    if (!useSheet || !hasSheetUrl) return
+    const controller = new AbortController()
+    const resolvedSheetUrl = resolveSheetUrl(sheetUrl)
+    const cacheKey = `cards-cache:${sheetUrl}`
+    const cached = loadCache(cacheKey)
+    const hasCache = Boolean(cached?.items?.length)
+    if (hasCache && cached) {
+      setSheetItems(cached.items)
+    }
+
+    const isFresh = cached ? Date.now() - cached.ts < CACHE_TTL_MS : false
+    if (isFresh) {
+      return () => controller.abort()
+    }
+
+    ;(async () => {
+      try {
+        const response = await fetch(resolvedSheetUrl, { signal: controller.signal })
+        if (!response.ok) throw new Error(`Failed to load cards sheet (${response.status})`)
+        const csv = await response.text()
+        const parsed = Papa.parse<Record<string, string>>(csv, {
+          header: true,
+          skipEmptyLines: true,
+        })
+
+        const mapped = parsed.data
+          .map((row) => ({
+            text: pickRowValue(row, [
+              'Текст для картки (Цитата)',
+              'Текст для картки',
+              'Цитата',
+              'text',
+            ]),
+            name: pickRowValue(row, ['Заголовок (Bold)', 'Заголовок', 'name', 'title']),
+            role: pickRowValue(row, ['Підзаголовок (Small)', 'Підзаголовок', 'role', 'subtitle']),
+          }))
+          .filter((item) => item.text && item.name && item.role)
+
+        const pool = dedupeAndFill(mapped, defaultItems, MAX_ACTIVE_CARDS)
+        const selected = shuffle(pool).slice(0, MAX_ACTIVE_CARDS)
+        setSheetItems(selected)
+        saveCache(cacheKey, selected)
+      } catch (error: unknown) {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        if (!hasCache) setSheetItems(null)
+      }
+    })()
+
+    return () => controller.abort()
+  }, [sheetUrl, useSheet, hasSheetUrl])
+
+  const baseItems = React.useMemo(
+    () => (items?.length ? items : sheetItems?.length ? sheetItems : defaultItems),
+    [items, sheetItems],
+  )
+  const safeItems = React.useMemo(
+    () => dedupeAndFill(baseItems, defaultItems, MAX_ACTIVE_CARDS).slice(0, MAX_ACTIVE_CARDS),
+    [baseItems],
+  )
   const [activeIndex, setActiveIndex] = React.useState(() =>
     Math.min(Math.max(initialIndex, 0), safeItems.length - 1),
   )
@@ -82,18 +261,39 @@ const Cards: React.FC<Props> = ({ items = defaultItems, initialIndex = 0 }) => {
               className={styles.cards__track}
               style={{ transform: `translateX(-${activeIndex * 100}%)` }}
             >
-              {safeItems.map((item, idx) => (
-                <article className={styles.card} key={`${item.name}-${idx}`}>
-                  <p className={styles.card__text}>{item.text}</p>
+              {safeItems.map((item, idx) => {
+                const parsed = parseCompareText(item.text)
+                return (
+                  <article className={styles.card} key={`${item.name}-${idx}`}>
+                    {!parsed ? (
+                      <p className={styles.card__text}>{item.text}</p>
+                    ) : (
+                      <div className={styles.card__compare}>
+                        <div className={styles.card__compareBlock}>
+                          <span className={styles.card__compareLabel}>Клієнт</span>
+                          <p className={styles.card__compareText}>{parsed.client}</p>
+                        </div>
 
-                  <div className={styles.card__footer}>
-                    <div className={styles.card__author}>
-                      <span className={styles.card__name}>{item.name}</span>
-                      <span className={styles.card__role}>{item.role}</span>
+                        <div className={styles.card__compareDivider} aria-hidden>
+                          ↓
+                        </div>
+
+                        <div className={styles.card__compareBlock}>
+                          <span className={styles.card__compareLabel}>Переклад</span>
+                          <p className={styles.card__compareText}>{parsed.translation}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className={styles.card__footer}>
+                      <div className={styles.card__author}>
+                        <span className={styles.card__name}>{item.name}</span>
+                        <span className={styles.card__role}>{item.role}</span>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                )
+              })}
             </div>
           </div>
 

@@ -70,6 +70,55 @@
   -webkit-box-orient: vertical;
 }
 
+.card__compare {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 clamp(22px, 4vw, 36px);
+}
+
+.card__compareBlock {
+  border: 1px solid rgba(10, 10, 96, 0.18);
+  background: rgba(10, 10, 96, 0.04);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.card__compareLabel {
+  display: inline-block;
+  font-family: $font-gilroy;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(10, 10, 96, 0.72);
+  margin-bottom: 6px;
+}
+
+.card__compareText {
+  margin: 0;
+  font-family: $font-gilroy;
+  font-size: clamp(13px, 1.8vw, 16px);
+  line-height: 1.45;
+  color: #222;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.card__compareDivider {
+  justify-self: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(10, 10, 96, 0.08);
+  color: rgba(10, 10, 96, 0.8);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
 .card__footer {
   display: flex;
   align-items: flex-end;
@@ -170,6 +219,10 @@
 }
 
 @media (max-width: 768px) {
+  .cards__stack {
+    --card-height: clamp(250px, 64vw, 320px);
+  }
+
   .cards__stack::before {
     transform: translate(8px, 8px);
   }
@@ -187,11 +240,60 @@
     justify-content: center;
   }
 
+  .card {
+    padding: 14px 14px 16px;
+  }
+
+  .card__compare {
+    gap: 6px;
+    margin: 0 0 12px;
+  }
+
+  .card__compareBlock {
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+
+  .card__compareLabel {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .card__compareText {
+    font-size: 12px;
+    line-height: 1.35;
+    -webkit-line-clamp: 2;
+  }
+
+  .card__compareDivider {
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+  }
+
+  .card__name {
+    font-size: 12px;
+  }
+
+  .card__role {
+    font-size: 10px;
+  }
+
   .cards__arrowLeft {
     left: -12px;
   }
 
   .cards__arrowRight {
     right: -12px;
+  }
+
+  .cards__arrow {
+    width: 35px;
+    height: 35px;
+  }
+
+  .cards__arrow svg {
+    width: 15px;
+    height: 15px;
   }
 }

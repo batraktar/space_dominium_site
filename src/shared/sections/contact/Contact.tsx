@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
-import { AsYouType, parsePhoneNumberFromString } from 'libphonenumber-js'
+import React, { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { AsYouType, parsePhoneNumberFromString } from 'libphonenumber-js/min'
+import { trackFormSubmitSuccess } from '../../analytics/analytics'
+import { appEnv } from '../../config/app-env'
 import './contact.scss'
 
 type ContactProps = {
@@ -29,7 +32,88 @@ const initialValues: FormValues = {
   website: '',
 }
 
+const sourceByPath: Record<string, string> = {
+  '/': 'Головна',
+  '/smm': 'SMM',
+  '/design': 'Design',
+  '/web-develop': 'Web Development',
+  '/contacts': 'Contacts',
+}
+
+const resolveFormSource = () => {
+  if (typeof window === 'undefined') return 'Unknown'
+  const pathname = window.location.pathname
+  return sourceByPath[pathname] ?? pathname
+}
+
+const buildTelegramText = (payload: {
+  source: string
+  pageUrl: string
+  values: FormValues
+}) => {
+  const { source, pageUrl, values } = payload
+  const now = new Date().toLocaleString('uk-UA')
+
+  return [
+    '🆕 Нова заявка з форми',
+    `Розділ: ${source}`,
+    `Сторінка: ${pageUrl}`,
+    `Час: ${now}`,
+    '',
+    `Імʼя: ${values.firstName.trim() || '—'}`,
+    `Компанія: ${values.company.trim() || '—'}`,
+    `Email: ${values.email.trim() || '—'}`,
+    `Телефон: ${values.phone.trim() || '—'}`,
+    '',
+    'Повідомлення:',
+    values.message.trim() || '—',
+  ].join('\n')
+}
+
+const sendViaTelegramDirect = async (text: string) => {
+  if (!appEnv.telegramBotToken || !appEnv.telegramChatId) {
+    throw new Error('Telegram env is not configured')
+  }
+
+  const response = await fetch(
+    `https://api.telegram.org/bot${appEnv.telegramBotToken}/sendMessage`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: appEnv.telegramChatId,
+        text,
+        disable_web_page_preview: true,
+      }),
+    },
+  )
+
+  const body = (await response.json().catch(() => null)) as { ok?: boolean; description?: string } | null
+  if (!response.ok || !body?.ok) {
+    throw new Error(body?.description || `Telegram API error (${response.status})`)
+  }
+}
+
+const sendViaServerProxy = async (payload: {
+  source: string
+  pageUrl: string
+  values: FormValues
+}) => {
+  const response = await fetch('/contact-submit.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  const body = (await response.json().catch(() => null)) as { ok?: boolean; error?: string } | null
+  if (!response.ok || !body?.ok) {
+    throw new Error(body?.error || `Contact endpoint error (${response.status})`)
+  }
+}
+
 const Contact: React.FC<ContactProps> = ({ formBg, inputBorder, buttonBg, textColor }) => {
+  const navigate = useNavigate()
+
   type ContactUsCssVars = React.CSSProperties & {
     '--contact-form-bg'?: string
     '--contact-input-border'?: string
@@ -46,8 +130,10 @@ const Contact: React.FC<ContactProps> = ({ formBg, inputBorder, buttonBg, textCo
 
   const [values, setValues] = useState<FormValues>(initialValues)
   const [errors, setErrors] = useState<FormErrors>({})
-  const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle')
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'error' | 'success'>('idle')
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const firstError = Object.values(errors).find(Boolean)
+  const formSource = useMemo(resolveFormSource, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -68,9 +154,10 @@ const Contact: React.FC<ContactProps> = ({ formBg, inputBorder, buttonBg, textCo
     }
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setStatus('idle')
+    setSubmitError(null)
 
     if (values.website.trim()) {
       return
@@ -110,16 +197,41 @@ const Contact: React.FC<ContactProps> = ({ formBg, inputBorder, buttonBg, textCo
     }
 
     setErrors({})
-    setStatus('success')
-    setValues(initialValues)
+    setStatus('submitting')
+
+    const payload = {
+      source: formSource,
+      pageUrl: typeof window !== 'undefined' ? window.location.href : '',
+      values,
+    }
+
+    try {
+      const message = buildTelegramText(payload)
+      if (import.meta.env.DEV && appEnv.telegramBotToken && appEnv.telegramChatId) {
+        await sendViaTelegramDirect(message)
+      } else {
+        await sendViaServerProxy(payload)
+      }
+
+      setStatus('success')
+      setValues(initialValues)
+      if (typeof window !== 'undefined') {
+        trackFormSubmitSuccess(window.location.pathname || '/')
+        window.sessionStorage.setItem('sd_thanks_access_ts', String(Date.now()))
+      }
+      navigate('/thanks')
+    } catch (error: unknown) {
+      setStatus('error')
+      setSubmitError(error instanceof Error ? error.message : 'Не вдалося надіслати форму')
+    }
   }
 
   return (
     <div className="contact-section" id="contact">
-      {status === 'error' && firstError && (
+      {status === 'error' && (firstError || submitError) && (
         <div className="form_toast form_toast--error" role="alert" aria-live="assertive">
-          <strong>Перевірте форму</strong>
-          <span>{firstError}</span>
+          <strong>{firstError ? 'Перевірте форму' : 'Помилка відправки'}</strong>
+          <span>{firstError || submitError}</span>
         </div>
       )}
       <div className="contact__container">
@@ -127,7 +239,7 @@ const Contact: React.FC<ContactProps> = ({ formBg, inputBorder, buttonBg, textCo
           <div className="contact_block-first">
             <h1>Є проєкт? Пишіть!</h1>
             <p>
-              Не любимо порожні обіцянки. Любимо конкретику. Є ідея чи проєкт? Розкажіть нам — дамо
+              Не любимо порожні обіцянки. Любимо конкретику. Є ідея чи проєкт? Розкажіть нам - дамо
               чесну оцінку, запропонуємо рішення та почнемо працювати над вашим успіхом.
             </p>
           </div>
@@ -231,7 +343,9 @@ const Contact: React.FC<ContactProps> = ({ formBg, inputBorder, buttonBg, textCo
                     {errors.message}
                   </span>
                 )}
-                <button type="submit">Надіслати</button>
+                <button type="submit" disabled={status === 'submitting'}>
+                  {status === 'submitting' ? 'Надсилаємо…' : 'Надіслати'}
+                </button>
                 {status === 'success' && (
                   <p className="form_success">Дякуємо! Ми звʼяжемось з вами найближчим часом.</p>
                 )}

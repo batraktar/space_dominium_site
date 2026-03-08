@@ -45,7 +45,14 @@ const Hero: React.FC = () => {
       </div>
 
       <div className={styles.hero__logoWrap} aria-hidden>
-        <img src={heroLogo} alt="" className={styles.hero__logo} />
+        <img
+          src={heroLogo}
+          alt=""
+          className={styles.hero__logo}
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+        />
       </div>
     </section>
   )

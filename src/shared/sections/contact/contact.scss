@@ -202,6 +202,11 @@ textarea[aria-invalid='true'] {
     border-radius: 10px;
     font-weight: 600;
     cursor: pointer;
+
+    &:disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
   }
 }
 

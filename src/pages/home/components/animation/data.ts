@@ -1,43 +1,47 @@
+import type { ComponentType, SVGProps } from 'react'
+
 import appsIcon from './assets/icons/apps.svg'
 import brandStyleIcon from './assets/icons/brand-style.svg'
 import retailIcon from './assets/icons/retail.svg'
 import sitesIcon from './assets/icons/sites.svg'
 import socialIcon from './assets/icons/social.svg'
 
-import appsAdsSetup from './assets/items/apps/apps-ads-setup.svg'
-import appsCreativeConcepts from './assets/items/apps/apps-creative-concepts.svg'
-import appsLandingAds from './assets/items/apps/apps-landing-ads.svg'
-import appsReportAnalysis from './assets/items/apps/apps-report-analysis.svg'
+import IconAppsAdsSetup from './assets/items/apps/IconAppsAdsSetup'
+import IconAppsCreativeConcepts from './assets/items/apps/IconAppsCreativeConcepts'
+import IconAppsLandingAds from './assets/items/apps/IconAppsLandingAds'
+import IconAppsReportAnalysis from './assets/items/apps/IconAppsReportAnalysis'
 
-import brandGuidelines from './assets/items/brand-style/brand-guidelines.svg'
-import brandIdentity from './assets/items/brand-style/brand-identity.svg'
-import brandLogo from './assets/items/brand-style/brand-logo.svg'
-import brandPrintDesign from './assets/items/brand-style/brand-print-design.svg'
+import IconBrandGuidelines from './assets/items/brand-style/IconBrandGuidelines'
+import IconBrandIdentity from './assets/items/brand-style/IconBrandIdentity'
+import IconBrandLogo from './assets/items/brand-style/IconBrandLogo'
+import IconBrandPrintDesign from './assets/items/brand-style/IconBrandPrintDesign'
 
-import retailAutomation from './assets/items/retail/retail-automation.svg'
-import retailCrmBots from './assets/items/retail/retail-crm-bots.svg'
-import retailSimpleFeatures from './assets/items/retail/retail-simple-features.svg'
-import retailTesting from './assets/items/retail/retail-testing.svg'
-import retailUserAdminCabinet from './assets/items/retail/retail-user-admin-cabinet.svg'
+import IconRetailAutomation from './assets/items/retail/IconRetailAutomation'
+import IconRetailCrmBots from './assets/items/retail/IconRetailCrmBots'
+import IconRetailSimpleFeatures from './assets/items/retail/IconRetailSimpleFeatures'
+import IconRetailTesting from './assets/items/retail/IconRetailTesting'
+import IconRetailUserAdminCabinet from './assets/items/retail/IconRetailUserAdminCabinet'
 
-import sitesBasicSeo from './assets/items/sites/sites-basic-seo.svg'
-import sitesDatabase from './assets/items/sites/sites-database.svg'
-import sitesFrontendLayout from './assets/items/sites/sites-frontend-layout.svg'
-import sitesResponsive from './assets/items/sites/sites-responsive.svg'
-import sitesUiDesign from './assets/items/sites/sites-ui-design.svg'
+import IconSitesBasicSeo from './assets/items/sites/IconSitesBasicSeo'
+import IconSitesDatabase from './assets/items/sites/IconSitesDatabase'
+import IconSitesFrontendLayout from './assets/items/sites/IconSitesFrontendLayout'
+import IconSitesResponsive from './assets/items/sites/IconSitesResponsive'
+import IconSitesUiDesign from './assets/items/sites/IconSitesUiDesign'
 
-import socialContentPlan from './assets/items/social/social-content-plan.svg'
-import socialCopywriting from './assets/items/social/social-copywriting.svg'
-import socialPostsStoriesTemplates from './assets/items/social/social-posts-stories-templates.svg'
-import socialProfileVisual from './assets/items/social/social-profile-visual.svg'
-import socialTargetedAds from './assets/items/social/social-targeted-ads.svg'
+import IconSocialContentPlan from './assets/items/social/IconSocialContentPlan'
+import IconSocialCopywriting from './assets/items/social/IconSocialCopywriting'
+import IconSocialPostsStoriesTemplates from './assets/items/social/IconSocialPostsStoriesTemplates'
+import IconSocialProfileVisual from './assets/items/social/IconSocialProfileVisual'
+import IconSocialTargetedAds from './assets/items/social/IconSocialTargetedAds'
 
 export type TabId = 'social' | 'brandStyle' | 'sites' | 'retail' | 'apps'
+export type SvgIconComponent = ComponentType<SVGProps<SVGSVGElement> & { thickness?: number }>
+export type VariantIcon = string | SvgIconComponent
 
 export interface Variant {
   id: string
-  thumb: string
-  contentIcon: string
+  thumb: VariantIcon
+  contentIcon: VariantIcon
   bullets: string[]
 }
 
@@ -49,7 +53,7 @@ export interface Tab {
   variants: Variant[]
 }
 
-const makeVariant = (id: string, icon: string, label: string): Variant => ({
+const makeVariant = (id: string, icon: VariantIcon, label: string): Variant => ({
   id,
   thumb: icon,
   contentIcon: icon,
@@ -63,11 +67,11 @@ export const TABS: Tab[] = [
     navIcon: socialIcon,
     contentIcon: socialIcon,
     variants: [
-      makeVariant('social-01', socialContentPlan, 'Контент-план'),
-      makeVariant('social-02', socialProfileVisual, 'Візуальне оформлення профілю'),
-      makeVariant('social-03', socialPostsStoriesTemplates, 'Шаблони постів і сторіз'),
-      makeVariant('social-04', socialTargetedAds, 'Таргетована реклама'),
-      makeVariant('social-05', socialCopywriting, 'Тексти для постів'),
+      makeVariant('social-01', IconSocialContentPlan, 'Контент-план'),
+      makeVariant('social-02', IconSocialProfileVisual, 'Візуальне оформлення профілю'),
+      makeVariant('social-03', IconSocialPostsStoriesTemplates, 'Шаблони постів і сторіз'),
+      makeVariant('social-04', IconSocialTargetedAds, 'Таргетована реклама'),
+      makeVariant('social-05', IconSocialCopywriting, 'Тексти для постів'),
     ],
   },
   {
@@ -76,10 +80,10 @@ export const TABS: Tab[] = [
     navIcon: brandStyleIcon,
     contentIcon: brandStyleIcon,
     variants: [
-      makeVariant('brandStyle-01', brandLogo, 'Логотип'),
-      makeVariant('brandStyle-02', brandIdentity, 'Айдентика (кольори, шрифти, стиль)'),
-      makeVariant('brandStyle-03', brandGuidelines, 'Брендбук'),
-      makeVariant('brandStyle-04', brandPrintDesign, 'Дизайн для друку (плакати, вивіски)'),
+      makeVariant('brandStyle-01', IconBrandLogo, 'Логотип'),
+      makeVariant('brandStyle-02', IconBrandIdentity, 'Айдентика (кольори, шрифти, стиль)'),
+      makeVariant('brandStyle-03', IconBrandGuidelines, 'Брендбук'),
+      makeVariant('brandStyle-04', IconBrandPrintDesign, 'Дизайн для друку (плакати, вивіски)'),
     ],
   },
   {
@@ -88,11 +92,11 @@ export const TABS: Tab[] = [
     navIcon: sitesIcon,
     contentIcon: sitesIcon,
     variants: [
-      makeVariant('sites-01', sitesUiDesign, 'Дизайн сайту (макет)'),
-      makeVariant('sites-02', sitesFrontendLayout, 'Верстка сайту'),
-      makeVariant('sites-03', sitesResponsive, 'Мобільна адаптація'),
-      makeVariant('sites-04', sitesBasicSeo, 'Базова SEO-оптимізація'),
-      makeVariant('sites-05', sitesDatabase, 'Бази даних'),
+      makeVariant('sites-01', IconSitesUiDesign, 'Дизайн сайту (макет)'),
+      makeVariant('sites-02', IconSitesFrontendLayout, 'Верстка сайту'),
+      makeVariant('sites-03', IconSitesResponsive, 'Мобільна адаптація'),
+      makeVariant('sites-04', IconSitesBasicSeo, 'Базова SEO-оптимізація'),
+      makeVariant('sites-05', IconSitesDatabase, 'Бази даних'),
     ],
   },
   {
@@ -101,11 +105,11 @@ export const TABS: Tab[] = [
     navIcon: retailIcon,
     contentIcon: retailIcon,
     variants: [
-      makeVariant('retail-01', retailAutomation, 'Автоматизація'),
-      makeVariant('retail-02', retailSimpleFeatures, 'Розробка простого функціоналу'),
-      makeVariant('retail-03', retailCrmBots, 'Підключення до CRM / ботів'),
-      makeVariant('retail-04', retailUserAdminCabinet, 'Кабінет користувача або адміністратора'),
-      makeVariant('retail-05', retailTesting, 'Перевірка та тестування'),
+      makeVariant('retail-01', IconRetailAutomation, 'Автоматизація'),
+      makeVariant('retail-02', IconRetailSimpleFeatures, 'Розробка простого функціоналу'),
+      makeVariant('retail-03', IconRetailCrmBots, 'Підключення до CRM / ботів'),
+      makeVariant('retail-04', IconRetailUserAdminCabinet, 'Кабінет користувача або адміністратора'),
+      makeVariant('retail-05', IconRetailTesting, 'Перевірка та тестування'),
     ],
   },
   {
@@ -114,10 +118,10 @@ export const TABS: Tab[] = [
     navIcon: appsIcon,
     contentIcon: appsIcon,
     variants: [
-      makeVariant('apps-01', appsAdsSetup, 'Налаштування реклами'),
-      makeVariant('apps-02', appsCreativeConcepts, 'Креативні концепти'),
-      makeVariant('apps-03', appsLandingAds, 'Реклама з лендингом'),
-      makeVariant('apps-04', appsReportAnalysis, 'Звіт і аналіз результату'),
+      makeVariant('apps-01', IconAppsAdsSetup, 'Налаштування реклами'),
+      makeVariant('apps-02', IconAppsCreativeConcepts, 'Креативні концепти'),
+      makeVariant('apps-03', IconAppsLandingAds, 'Реклама з лендингом'),
+      makeVariant('apps-04', IconAppsReportAnalysis, 'Звіт і аналіз результату'),
     ],
   },
 ]

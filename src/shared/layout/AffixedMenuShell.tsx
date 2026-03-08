@@ -9,6 +9,7 @@ type Props = React.PropsWithChildren<{
   bottomGapPx?: number
   fixedPosition?: 'top' | 'bottom'
   alwaysFixed?: boolean
+  reserveBarSpace?: boolean
   burgerColor?: string
   contactButtonBg?: string
   contactButtonTextColor?: string
@@ -21,6 +22,7 @@ const AffixedMenuShell: React.FC<Props> = ({
   bottomGapPx = 20,
   fixedPosition = 'bottom',
   alwaysFixed = true,
+  reserveBarSpace = true,
   burgerColor,
   contactButtonBg,
   contactButtonTextColor,
@@ -48,15 +50,21 @@ const AffixedMenuShell: React.FC<Props> = ({
   type BarRightCssVars = React.CSSProperties & {
     '--contact-btn-lift-mobile'?: string
   }
+  type ShellCssVars = React.CSSProperties & {
+    '--shell-menu-reserve'?: string
+  }
 
   const barRightStyle: BarRightCssVars = {
     ...(typeof contactButtonLiftMobilePx === 'number'
       ? { '--contact-btn-lift-mobile': `${contactButtonLiftMobilePx}px` }
       : {}),
   }
+  const shellStyle: ShellCssVars = {
+    '--shell-menu-reserve': reserveBarSpace ? 'var(--menu-bar-h, 0px)' : '0px',
+  }
 
   return (
-    <section className={styles.shell} ref={setTriggerEl}>
+    <section className={styles.shell} ref={setTriggerEl} style={shellStyle}>
       {children}
       <div ref={setBarEl} className={`${styles.bar} ${isFixed ? fixedClass : ''}`}>
         <LogoMenu behavior="static" burgerColor={burgerColor} />

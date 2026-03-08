@@ -5,10 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/seo/generate-sitemap.mjs && tsc -b && vite build",
+    "build:showcase": "cd .tmp_instaauto_demo_src_v2 && npm run build && cp dist/index.html ../public/showcase/instaauto-demo/index.html && rm -rf ../public/showcase/instaauto-demo/assets && cp -R dist/assets ../public/showcase/instaauto-demo/assets && rm -rf ../public/showcase/instaauto-demo/images && cp -R dist/images ../public/showcase/instaauto-demo/images",
+    "build:seo:check": "node scripts/seo/check-seo-build.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
+    "lh:mobile": "node scripts/lighthouse/run-lighthouse.mjs mobile",
+    "lh:desktop": "node scripts/lighthouse/run-lighthouse.mjs desktop",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "storybook": "storybook dev -p 6006",
@@ -54,6 +58,7 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2",
+    "vite-plugin-prerender": "^1.0.8",
     "vitest": "^4.0.6"
   }
 }

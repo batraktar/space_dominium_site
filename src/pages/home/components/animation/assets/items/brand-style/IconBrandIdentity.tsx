@@ -1,0 +1,40 @@
+import { useId } from 'react'
+import type { SVGProps } from 'react'
+
+interface IconProps extends SVGProps<SVGSVGElement> {
+  thickness?: number
+}
+
+const IconBrandIdentity: React.FC<IconProps> = ({ thickness = 0, ...props }) => {
+  const filterId = `filter-${useId().replace(/:/g, '')}`
+
+  return (
+    <svg
+      width="56"
+      height="56"
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      {thickness > 0 && (
+        <defs>
+          <filter id={filterId}>
+            <feMorphology operator="erode" radius={thickness} in="SourceGraphic" />
+          </filter>
+        </defs>
+      )}
+      <g filter={thickness > 0 ? `url(#${filterId})` : undefined}>
+        <path
+          d="M37.8769 1.00024L36.4185 54.9586M37.2308 24.9009L54.9583 25.4346M15.9392 1.00024L36.5337 50.6915M22.3967 16.5782L9.53271 54.9586M16.435 34.3655L29.9625 34.835M49.125 1.00024H6.83333C5.28624 1.00024 3.80251 1.61483 2.70854 2.70879C1.61458 3.80275 1 5.28648 1 6.83358V49.1252C1 50.6723 1.61458 52.1561 2.70854 53.25C3.80251 54.344 5.28624 54.9586 6.83333 54.9586H49.125C50.6721 54.9586 52.1558 54.344 53.2498 53.25C54.3437 52.1561 54.9583 50.6723 54.9583 49.1252V6.83358C54.9583 5.28648 54.3437 3.80275 53.2498 2.70879C52.1558 1.61483 50.6721 1.00024 49.125 1.00024Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+    </svg>
+  )
+}
+
+export default IconBrandIdentity

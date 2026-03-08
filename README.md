@@ -1,69 +1,139 @@
-# React + TypeScript + Vite
+# Space Dominium (Vite + React + TS)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 1) Local start
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 2) ENV config
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Use `.env.local` for local development (file is ignored by git).
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Base site URL:
+
+```env
+VITE_SITE_URL=https://space.dominium.com.ua
+```
+
+Required sheet variables:
+
+```env
+VITE_FAQ_HOME_SHEET_URL=
+VITE_FAQ_SMM_SHEET_URL=
+VITE_FAQ_DESIGN_SHEET_URL=
+VITE_FAQ_WEB_SHEET_URL=
+VITE_DESIGN_CARDS_SHEET_URL=
+```
+
+Analytics / SEO variables:
+
+```env
+VITE_GA4_MEASUREMENT_ID=
+VITE_GOOGLE_ADS_ID=
+VITE_GOOGLE_ADS_CONVERSION_LABEL=
+VITE_GTM_ID=
+VITE_GSC_VERIFICATION=
+```
+
+Optional local Telegram direct-send (DEV only):
+
+```env
+VITE_TELEGRAM_BOT_TOKEN=
+VITE_TELEGRAM_CHAT_ID=
+```
+
+## 3) Contact form -> Telegram
+
+### Production (recommended)
+- Endpoint: `public/contact-submit.php`
+- Set **server env vars** in cPanel (not VITE):
+
+```env
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_CHAT_ID=...
+THANKS_GATE_SECRET=...
+```
+
+If cPanel env UI is unavailable, you can set them in `public/.htaccess`:
+
+```apache
+SetEnv TELEGRAM_BOT_TOKEN "..."
+SetEnv TELEGRAM_CHAT_ID "..."
+SetEnv THANKS_GATE_SECRET "your-long-random-secret"
+```
+
+Shared hosting fallback:
+- `contact-submit.php` and `thanks-access.php` can also read from `.env` / `.env.local` near the PHP files.
+- They accept both key styles:
+  - `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` / `THANKS_GATE_SECRET`
+  - `VITE_TELEGRAM_BOT_TOKEN` / `VITE_TELEGRAM_CHAT_ID` / `VITE_THANKS_GATE_SECRET` (fallback only)
+
+How it works:
+- Frontend sends form data to `/contact-submit.php`.
+- PHP sends message to Telegram bot.
+- Message includes section source (`/`, `/smm`, `/design`, `/web-develop`, etc).
+- After successful submit, PHP sets a short-lived signed cookie for `/thanks` access.
+- Frontend redirects user to `/thanks`.
+
+### Local DEV fallback
+- If `VITE_TELEGRAM_BOT_TOKEN` + `VITE_TELEGRAM_CHAT_ID` are set, form can send directly to Telegram API in dev mode.
+- In dev fallback mode, `/thanks` access is controlled by sessionStorage flag after successful submit.
+
+## 4) Thanks Redirect Gate
+
+Use server env variable:
+
+```env
+THANKS_GATE_SECRET=your-long-random-secret
+```
+
+How it works:
+- `contact-submit.php` signs and sets `sd_thanks_gate` cookie for 30 seconds.
+- `/thanks` page checks `/thanks-access.php`.
+- Direct opens without valid cookie are redirected to `/`.
+- `/thanks` page injects `meta[name="robots"] = noindex, nofollow, noarchive`.
+- `public/robots.txt` also blocks `/thanks` from indexing.
+
+## 5) SEO setup
+
+- Route-level SEO is managed in:
+  - `src/shared/seo/seo-config.ts`
+  - `src/shared/seo/SeoHead.tsx`
+- Regional landing pages:
+  - `/ua`
+  - `/ua/kyiv`
+  - `/ua/lviv`
+  - `/ua/zakarpattia`
+  - `/ua/ukraine`
+- Sitemap generation script:
+  - `scripts/seo/generate-sitemap.mjs`
+- Build-time SEO validation:
+  - `scripts/seo/check-seo-build.mjs`
+- Canonical + HTTPS redirect rules:
+  - `public/.htaccess`
+
+## 6) Google Sheets visibility
+
+- FAQ URLs are taken from ENV.
+- In production, FAQ can also be served through `public/faq-cache.php` (`/faq-cache.php?gid=...`) to avoid direct client calls to Google.
+
+## 7) Build
+
+```bash
+npm run build
+```
+
+SEO validation after build:
+
+```bash
+npm run build:seo:check
+```
+
+Showcase build + sync:
+
+```bash
+npm run build:showcase
 ```

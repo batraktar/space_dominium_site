@@ -4,9 +4,10 @@
   position: relative;
   color: #fff;
   --node-size: clamp(48px, 4vw, 64px);
+  --choose-plan-icon-size: calc(var(--node-size) * 0.5);
   --title-size: clamp(16px, 1.4vw, 18px);
   --content-gap: clamp(4px, 0.7vw, 6px);
-  padding: clamp(80px, 6vw, 120px) 0;
+  padding: clamp(60px, 6vw, 100px) 0;
   overflow: hidden;
 }
 
@@ -20,7 +21,7 @@
 }
 
 .left {
-  flex: 0 0 clamp(260px, 24vw, 320px);
+  flex: 0 0 clamp(160px, 10vw, 220px);
   display: flex;
   flex-direction: column;
   gap: clamp(20px, 3vw, 32px);
@@ -29,7 +30,7 @@
 .title {
   margin: 0;
   font-family: $font-gilroy;
-  font-size: clamp(26px, 3vw, 36px);
+  font-size: clamp(30px, 3vw, 40px);
   line-height: 1.2;
   letter-spacing: 0.2px;
 }
@@ -38,7 +39,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: clamp(12px, 1.6vw, 14px) clamp(18px, 2.2vw, 22px);
+  padding: clamp(15px, 1.6vw, 18px) clamp(18px, 2.2vw, 22px);
   border: 1px solid #d1da76;
   border-radius: 999px;
   background: transparent;
@@ -120,8 +121,8 @@
 }
 
 .nodeIcon {
-  width: calc(var(--node-size) * 0.5);
-  height: calc(var(--node-size) * 0.5);
+  width: var(--choose-plan-icon-size);
+  height: var(--choose-plan-icon-size);
   display: grid;
   place-items: center;
   color: var(--choose-plan-icon-color);
@@ -164,8 +165,8 @@
 
   .container {
     flex-direction: column;
-    padding: 0 10px;
-    gap: 8px;
+    padding: 0 30px;
+    gap: 5px;
   }
 
   .left {
@@ -182,7 +183,7 @@
   }
 
   .timelineWrap {
-    margin-top: -6px;
+    margin-top: -65px;
   }
 
   .step {

@@ -4,7 +4,7 @@ import LineNor from './LineNor'
 // import OrbitalStationMobile from './OrbitalStationMobile'
 import emptyDotIcon from './assets/icons/empty-dot.svg'
 import { TABS } from './data'
-import type { Tab, TabId, Variant } from './data'
+import type { SvgIconComponent, Tab, TabId, Variant, VariantIcon } from './data'
 
 type DottedSide = 'left' | 'right' | 'both'
 
@@ -20,6 +20,11 @@ type CategoryOverride = {
 
 type AnimationProps = {
   categoryOverrides?: Partial<Record<TabId, CategoryOverride>>
+  variantIconSize?: number
+  variantIconThickness?: number
+  variantIconThicknessById?: Partial<Record<string, number>>
+  centerVariantIconSize?: number
+  centerVariantIconThickness?: number
 }
 
 const LINE_ANIM_MS = 1500
@@ -34,14 +39,14 @@ const dottedByTab: Record<TabId, DottedSide> = {
 
 const EMPTY_ICON = emptyDotIcon
 
-const makePlaceholder = (id: string, contentIcon: string): Variant => ({
+const makePlaceholder = (id: string, contentIcon: VariantIcon): Variant => ({
   id,
   thumb: EMPTY_ICON,
   contentIcon,
   bullets: [],
 })
 
-const buildVariants = (tab: Tab, dottedSide: DottedSide, placeholderIcon: string): Variant[] => {
+const buildVariants = (tab: Tab, dottedSide: DottedSide, placeholderIcon: VariantIcon): Variant[] => {
   const leftEmpty = dottedSide === 'left' || dottedSide === 'both'
   const rightEmpty = dottedSide === 'right' || dottedSide === 'both'
   const result = [...tab.variants]
@@ -61,10 +66,17 @@ const buildVariants = (tab: Tab, dottedSide: DottedSide, placeholderIcon: string
   return result
 }
 
-const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false,
-  )
+const isSvgComponent = (icon: VariantIcon): icon is SvgIconComponent =>
+  typeof icon !== 'string'
+
+const Animation: React.FC<AnimationProps> = ({
+  categoryOverrides,
+  variantIconSize = 72,
+  variantIconThickness = 0,
+  variantIconThicknessById,
+  centerVariantIconSize = 72,
+  centerVariantIconThickness = 0,
+}) => {
   const [activeId, setActiveId] = useState<TabId>(TABS[0].id)
   const [activeVarIdx, setActiveVarIdx] = useState<number | null>(null)
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
@@ -89,11 +101,12 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
   const currentVariant: Variant | null =
     activeVarIdx !== null ? (activeVariants?.[activeVarIdx] ?? null) : null
 
-  const centerIcon = currentVariant?.contentIcon ?? activeContentIcon
+  const centerIcon: VariantIcon = currentVariant?.contentIcon ?? activeContentIcon
+  const CenterIconComponent = isSvgComponent(centerIcon) ? centerIcon : null
   const centerBullets: string[] = []
   const hasText = false
   const contentKey = `${activeId}-${activeVarIdx ?? 'none'}`
-  const showCategoryIconColor = Boolean(activeContentIconColor)
+  const showCategoryIconColor = Boolean(activeContentIconColor) && !CenterIconComponent
   const contentStyle = useMemo<React.CSSProperties>(() => {
     const style: React.CSSProperties = {}
     if (activeOverride?.contentBg) {
@@ -104,19 +117,6 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
     }
     return style
   }, [activeOverride?.contentBg, activeOverride?.contentBorder])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const media = window.matchMedia('(max-width: 768px)')
-    const update = () => setIsMobile(media.matches)
-    update()
-    if (media.addEventListener) {
-      media.addEventListener('change', update)
-      return () => media.removeEventListener('change', update)
-    }
-    media.addListener(update)
-    return () => media.removeListener(update)
-  }, [])
 
   const subIconColorMap = useMemo(() => {
     const palette = activeOverride?.subIconColors ?? []
@@ -142,11 +142,6 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
         variant.bullets.length > 0 ? (subIconColorMap?.[variant.id] ?? null) : null,
       ),
     [activeVariants, subIconColorMap],
-  )
-
-  const mobileSubIconColors = useMemo(
-    () => activeTab.variants.map((variant) => subIconColorMap?.[variant.id] ?? null),
-    [activeTab.variants, subIconColorMap],
   )
 
   const focusTab = useCallback((index: number) => {
@@ -306,19 +301,32 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
                 key={contentKey}
                 className={`content-inner-fade ${hasText ? 'has-text' : 'no-text'}`}
               >
-                {showCategoryIconColor ? (
+                {CenterIconComponent ? (
+                  <CenterIconComponent
+                    className="content-icon"
+                    aria-hidden="true"
+                    width={centerVariantIconSize}
+                    height={centerVariantIconSize}
+                    thickness={centerVariantIconThickness}
+                    style={
+                      activeContentIconColor
+                        ? ({ color: activeContentIconColor } as React.CSSProperties)
+                        : undefined
+                    }
+                  />
+                ) : showCategoryIconColor ? (
                   <span
                     className="content-icon content-icon--mask"
                     aria-hidden="true"
                     style={
                       {
-                        '--icon-url': `url("${centerIcon}")`,
+                        '--icon-url': `url("${centerIcon as string}")`,
                         '--icon-color': activeContentIconColor,
                       } as React.CSSProperties
                     }
                   />
                 ) : (
-                  <img className="content-icon" src={centerIcon} alt="" />
+                  <img className="content-icon" src={centerIcon as string} alt="" />
                 )}
                 {hasText && (
                   <div className="content-text">
@@ -349,6 +357,9 @@ const Animation: React.FC<AnimationProps> = ({ categoryOverrides }) => {
               setActiveVarIdx={setActiveVarIdx}
               drawDurationMs={LINE_ANIM_MS}
               subIconColors={subIconColors ?? undefined}
+              iconSize={variantIconSize}
+              iconThickness={variantIconThickness}
+              iconThicknessById={variantIconThicknessById}
             />
           </div>
         </div>

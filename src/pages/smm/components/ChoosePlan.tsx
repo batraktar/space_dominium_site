@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react'
+import { useId } from 'react'
 import styles from './choose-plan.module.scss'
 import analysisIcon from '../../../assets/img/smm/analysis-strategy.svg?raw'
 import contentPlanIcon from '../../../assets/img/smm/content-plan.svg?raw'
@@ -10,49 +12,62 @@ import supportIcon from '../../../assets/img/smm/support.svg?raw'
 
 const steps = [
   {
+    id: 'analysis',
     title: 'Аналіз і стратегія',
     desc: 'Вивчаємо ваш бізнес, аудиторію та конкурентів. Створюємо стратегію, яка працює на ваші цілі.',
     icon: analysisIcon,
   },
   {
+    id: 'content-plan',
     title: 'Контент-план',
     desc: 'Розробляємо контент-план із цікавими ідеями, що резонують з вашою аудиторією.',
     icon: contentPlanIcon,
   },
   {
+    id: 'create-content',
     title: 'Створення контенту',
-    desc: 'Дизайн постів, тексти, сторіс і рілс — усе, що потрібно для активної присутності в соцмережах.',
+    desc: 'Дизайн постів, тексти, сторіс і рілс - усе, що потрібно для активної присутності в соцмережах.',
     icon: createContentIcon,
   },
   {
+    id: 'publishing',
     title: 'Публікація та взаємодія',
     desc: 'Розміщуємо контент у оптимальний час і активно спілкуємось із вашою аудиторією.',
     icon: publishingIcon,
   },
   {
+    id: 'target-ads',
     title: 'Таргетована реклама',
     desc: 'Запускаємо рекламні кампанії, які приводять цільових клієнтів.',
     icon: targetAdsIcon,
   },
   {
+    id: 'optimization',
     title: 'Аналітика та оптимізація',
     desc: 'Відстежуємо результати, аналізуємо ефективність і покращуємо стратегію.',
     icon: optimizationIcon,
   },
   {
+    id: 'scaling',
     title: 'Звіти та масштабування',
     desc: 'Надаємо детальні звіти та плануємо подальше зростання.',
     icon: scalingIcon,
   },
   {
+    id: 'support',
     title: 'Постійна підтримка',
-    desc: 'Завжди на звʼязку — коригуємо стратегію відповідно до змін у бізнесі.',
+    desc: 'Завжди на звʼязку - коригуємо стратегію відповідно до змін у бізнесі.',
     icon: supportIcon,
   },
 ]
 
 type ChoosePlanProps = {
   iconColor?: string
+  iconSize?: number | string
+  iconThickness?: number
+  iconThicknessById?: Record<string, number>
+  iconThicknessByIndex?: Partial<Record<number, number>>
+  iconThicknessScale?: number
 }
 
 const normalizeIcon = (svg: string) =>
@@ -60,17 +75,63 @@ const normalizeIcon = (svg: string) =>
     .replace(/stroke="(?!none)[^"]*"/g, 'stroke="currentColor"')
     .replace(/fill="(?!none)[^"]*"/g, 'fill="currentColor"')
 
-function ChoosePlan({ iconColor }: ChoosePlanProps) {
+const resolveThickness = (thickness?: number, scale = 30, max = 6) => {
+  if (!thickness || thickness <= 0) return 0
+  const resolved = thickness <= 1 ? thickness * scale : thickness
+  return Math.min(resolved, max)
+}
+
+const applyThickness = (
+  svg: string,
+  filterId: string,
+  thickness?: number,
+  scale?: number,
+  max?: number
+) => {
+  const resolved = resolveThickness(thickness, scale, max)
+  if (!resolved || resolved <= 0) return svg
+
+  const svgOpenMatch = svg.match(/<svg[^>]*>/)
+  const innerMatch = svg.match(/<svg[^>]*>([\s\S]*?)<\/svg>/)
+
+  if (!svgOpenMatch || !innerMatch) return svg
+
+  const svgOpen = svgOpenMatch[0]
+  const inner = innerMatch[1]
+  const defs = `<defs><filter id="${filterId}" x="-50%" y="-50%" width="200%" height="200%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feMorphology operator="erode" radius="${resolved}" in="SourceGraphic" /></filter></defs>`
+  const wrapped = `<g filter="url(#${filterId})">${inner}</g>`
+
+  return `${svgOpen}${defs}${wrapped}</svg>`
+}
+
+function ChoosePlan({
+  iconColor,
+  iconSize,
+  iconThickness,
+  iconThicknessById,
+  iconThicknessByIndex,
+  iconThicknessScale,
+}: ChoosePlanProps) {
+  const filterIdBase = useId().replace(/:/g, '')
+  const timelineStyle = {
+    ...(iconColor ? { '--choose-plan-icon-color': iconColor } : {}),
+    ...(iconSize !== undefined
+      ? {
+          '--choose-plan-icon-size': typeof iconSize === 'number' ? `${iconSize}px` : iconSize,
+        }
+      : {}),
+  } as CSSProperties
+
   return (
     <section className={styles.section} id="choose-plan">
       <div className={styles.container}>
         <div className={styles.left}>
           <h2 className={styles.title}>
-            Here’s how to
+            Шлях вашого проєкту
             <br />
-            get started:
+            
           </h2>
-          <button className={styles.cta} type="button">
+          {/* <button className={styles.cta} type="button">
             <span>See all our plans</span>
             <svg
               width="20"
@@ -88,30 +149,42 @@ function ChoosePlan({ iconColor }: ChoosePlanProps) {
                 strokeLinejoin="round"
               />
             </svg>
-          </button>
+          </button> */}
         </div>
 
-        <div
-          className={styles.timelineWrap}
-          style={iconColor ? { '--choose-plan-icon-color': iconColor } : undefined}
-        >
+        <div className={styles.timelineWrap} style={timelineStyle}>
           <div className={styles.line} />
           <div className={styles.timeline}>
-            {steps.map((step) => (
-              <div key={step.title} className={styles.step}>
-                <div className={styles.node} aria-hidden>
-                  <span
-                    className={styles.nodeIcon}
-                    aria-hidden
-                    dangerouslySetInnerHTML={{ __html: normalizeIcon(step.icon) }}
+            {steps.map((step, index) => {
+              const resolvedThickness =
+                iconThicknessById?.[step.id] ??
+                iconThicknessById?.[String(index + 1)] ??
+                iconThicknessByIndex?.[index + 1] ??
+                iconThickness
+
+              return (
+                <div key={step.id} className={styles.step}>
+                  <div className={styles.node} aria-hidden>
+                    <span
+                      className={styles.nodeIcon}
+                      aria-hidden
+                      dangerouslySetInnerHTML={{
+                      __html: applyThickness(
+                        normalizeIcon(step.icon),
+                        `${filterIdBase}-${step.id}`,
+                        resolvedThickness,
+                        iconThicknessScale
+                      ),
+                    }}
                   />
+                  </div>
+                  <div className={styles.content}>
+                    <p className={styles.stepTitle}>{step.title}</p>
+                    <p className={styles.stepDesc}>{step.desc}</p>
+                  </div>
                 </div>
-                <div className={styles.content}>
-                  <p className={styles.stepTitle}>{step.title}</p>
-                  <p className={styles.stepDesc}>{step.desc}</p>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </div>

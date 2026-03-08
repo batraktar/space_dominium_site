@@ -28,3 +28,7 @@ storybook-static
 
 # Codex local notes
 codex-change-notes.md
+
+# Lighthouse local reports
+.tmp_lh*.json
+reports/lighthouse/**/*.json

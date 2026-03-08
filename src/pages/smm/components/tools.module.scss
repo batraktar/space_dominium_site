@@ -153,10 +153,10 @@
   }
 
   @media (max-width: 768px) {
-    padding-top: 36px;
+    padding-top: 26px;
 
     &__container {
-      padding: 0; // Full width on mobile
+      padding: 10px; // Full width on mobile
     }
 
     &__title {

@@ -1,0 +1,27 @@
+@use '../../styles/variables' as *;
+
+.page {
+  min-height: 100vh;
+  background: $ivory;
+  color: $deep-anthracite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3vw, 28px);
+  padding: clamp(24px, 6vw, 64px) 16px;
+  padding-bottom: calc(var(--menu-bar-h, 0px) + 32px);
+  text-align: center;
+}
+
+.robot {
+  width: min(520px, 90vw);
+  height: min(520px, 90vw);
+}
+
+.text {
+  font-family: $font-gilroy;
+  font-size: clamp(16px, 2.4vw, 22px);
+  line-height: 1.5;
+  max-width: 520px;
+}

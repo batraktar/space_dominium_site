@@ -1,10 +1,57 @@
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import ServiceLayout from '../../shared/layout/ServiceLayout'
+import { appEnv } from '../../shared/config/app-env'
 import Hero from './components/Hero'
-import ChoosePlan from './components/ChoosePlan'
-import Tools from './components/Tools'
 import styles from './smm.module.scss'
 
+const Tools = lazy(() => import('./components/Tools'))
+const ChoosePlan = lazy(() => import('./components/ChoosePlan'))
+
 function Smm() {
+  const toolsTriggerRef = useRef<HTMLDivElement | null>(null)
+  const choosePlanTriggerRef = useRef<HTMLDivElement | null>(null)
+  const [renderTools, setRenderTools] = useState(false)
+  const [renderChoosePlan, setRenderChoosePlan] = useState(false)
+
+  useEffect(() => {
+    const target = toolsTriggerRef.current
+    if (!target || !('IntersectionObserver' in window)) {
+      setRenderTools(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setRenderTools(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '500px 0px', threshold: 0.01 },
+    )
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!renderTools) return
+    const target = choosePlanTriggerRef.current
+    if (!target || !('IntersectionObserver' in window)) {
+      setRenderChoosePlan(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setRenderChoosePlan(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '500px 0px', threshold: 0.01 },
+    )
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [renderTools])
+
   return (
     <ServiceLayout
     affix={{
@@ -16,8 +63,7 @@ function Smm() {
       className={styles.smm}
       hero={<Hero />}
       faq={{
-        sheetUrl:
-          'https://docs.google.com/spreadsheets/d/e/2PACX-1vQe_2b7SqCf4At0pw-SvLPavigCx3XqY2Ht1ikJjFvlxni3jV0PynxifiiABhhjK-t3Nn205SQMXXzM/pub?gid=1942219183&single=true&output=csv',
+        sheetUrl: appEnv.faqSmmSheetUrl,
         plusColor: '#FFCDC3',
         titleColor: '#FFCDC3',
         textColor: '#FFF',
@@ -42,7 +88,8 @@ function Smm() {
         underlineColor: '#FFF',
         arrowCircleColor: '#FFF',
         arrowColor: '#ffc2cb',
-        menuTextColor: '#fff',
+        menuTextColor: '#fff', 
+        houseShadowLift: 0.45,
         phoneColor: '#FFFFFF',
         housePartColors: {
           Floor: '#fdeb9f',
@@ -62,10 +109,29 @@ function Smm() {
         },
       }}
     >
-      <Tools />
-      <ChoosePlan 
-      iconColor="#ffc2cb"
-      />
+      <div ref={toolsTriggerRef} aria-hidden />
+      {renderTools && (
+        <Suspense fallback={null}>
+          <Tools />
+        </Suspense>
+      )}
+
+      <div ref={choosePlanTriggerRef} aria-hidden />
+      {renderChoosePlan && (
+        <Suspense fallback={null}>
+          <ChoosePlan
+            iconColor="#ffc2cb"
+            iconThickness={0.001}
+            iconThicknessById={{
+              3: 0.025,
+              4: 0.025,
+              5: 0.025,
+            }}
+          />
+        </Suspense>
+      )}
+
+      {/* <RegionsLinks tone="dark" /> */}
     </ServiceLayout>
   )
 }
