@@ -70,27 +70,48 @@ const buildTelegramText = (payload: {
   ].join('\n')
 }
 
+const parseTelegramChatIds = (raw: string) => {
+  return raw
+    .split(/[\s,;]+/)
+    .map((value) => value.trim())
+    .filter(Boolean)
+}
+
 const sendViaTelegramDirect = async (text: string) => {
-  if (!appEnv.telegramBotToken || !appEnv.telegramChatId) {
+  const chatIds = parseTelegramChatIds(appEnv.telegramChatId)
+  if (!appEnv.telegramBotToken || chatIds.length === 0) {
     throw new Error('Telegram env is not configured')
   }
 
-  const response = await fetch(
-    `https://api.telegram.org/bot${appEnv.telegramBotToken}/sendMessage`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: appEnv.telegramChatId,
-        text,
-        disable_web_page_preview: true,
-      }),
-    },
-  )
+  let successCount = 0
+  let lastError = ''
 
-  const body = (await response.json().catch(() => null)) as { ok?: boolean; description?: string } | null
-  if (!response.ok || !body?.ok) {
-    throw new Error(body?.description || `Telegram API error (${response.status})`)
+  for (const chatId of chatIds) {
+    const response = await fetch(
+      `https://api.telegram.org/bot${appEnv.telegramBotToken}/sendMessage`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text,
+          disable_web_page_preview: true,
+        }),
+      },
+    )
+
+    const body = (await response.json().catch(() => null)) as
+      | { ok?: boolean; description?: string }
+      | null
+    if (response.ok && body?.ok) {
+      successCount += 1
+    } else {
+      lastError = body?.description || `Telegram API error (${response.status})`
+    }
+  }
+
+  if (successCount === 0) {
+    throw new Error(lastError || 'Telegram API error')
   }
 }
 

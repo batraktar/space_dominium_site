@@ -45,6 +45,8 @@ VITE_TELEGRAM_BOT_TOKEN=
 VITE_TELEGRAM_CHAT_ID=
 ```
 
+`VITE_TELEGRAM_CHAT_ID` supports a single ID or multiple IDs separated by commas.
+
 ## 3) Contact form -> Telegram
 
 ### Production (recommended)
@@ -56,6 +58,8 @@ TELEGRAM_BOT_TOKEN=...
 TELEGRAM_CHAT_ID=...
 THANKS_GATE_SECRET=...
 ```
+
+`TELEGRAM_CHAT_ID` supports a single ID or multiple IDs separated by commas.
 
 If cPanel env UI is unavailable, you can set them in `public/.htaccess`:
 

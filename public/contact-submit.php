@@ -92,6 +92,56 @@ function sd_read_env_file_value(string $key): string
   return $envMap[$key] ?? '';
 }
 
+function sd_parse_chat_ids(string $raw): array
+{
+  $parts = preg_split('/[\s,;]+/', trim($raw));
+  if (!is_array($parts)) return [];
+
+  $ids = [];
+  foreach ($parts as $part) {
+    $value = trim((string) $part);
+    if ($value === '') continue;
+    if (!in_array($value, $ids, true)) {
+      $ids[] = $value;
+    }
+  }
+
+  return $ids;
+}
+
+function sd_send_telegram_request(string $url, string $payload, int &$statusCode): ?array
+{
+  $responseBody = null;
+  $statusCode = 0;
+
+  if (function_exists('curl_init')) {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    $responseBody = curl_exec($ch);
+    $statusCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+  }
+
+  if (!is_string($responseBody) || $responseBody === '') {
+    $context = stream_context_create([
+      'http' => [
+        'method' => 'POST',
+        'timeout' => 10,
+        'header' => "Content-Type: application/json\r\n",
+        'content' => $payload,
+      ],
+    ]);
+    $responseBody = @file_get_contents($url, false, $context);
+    $statusCode = $responseBody === false ? 0 : 200;
+  }
+
+  return is_string($responseBody) ? json_decode($responseBody, true) : null;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   http_response_code(405);
   echo json_encode(['ok' => false, 'error' => 'Method not allowed']);
@@ -129,8 +179,9 @@ if ($firstName === '' || $message === '' || ($email === '' && $phone === '')) {
 }
 
 $token = sd_read_env('TELEGRAM_BOT_TOKEN', ['VITE_TELEGRAM_BOT_TOKEN']);
-$chatId = sd_read_env('TELEGRAM_CHAT_ID', ['VITE_TELEGRAM_CHAT_ID']);
-if (trim($token) === '' || trim($chatId) === '') {
+$chatIdRaw = sd_read_env('TELEGRAM_CHAT_ID', ['VITE_TELEGRAM_CHAT_ID']);
+$chatIds = sd_parse_chat_ids($chatIdRaw);
+if (trim($token) === '' || count($chatIds) === 0) {
   http_response_code(500);
   echo json_encode(['ok' => false, 'error' => 'Telegram env is not configured']);
   exit;
@@ -151,57 +202,44 @@ $lines = [
   ($message !== '' ? $message : '—'),
 ];
 
-$telegramPayload = json_encode([
-  'chat_id' => trim($chatId),
-  'text' => implode("\n", $lines),
-  'disable_web_page_preview' => true,
-], JSON_UNESCAPED_UNICODE);
-
-if ($telegramPayload === false) {
-  http_response_code(500);
-  echo json_encode(['ok' => false, 'error' => 'Unable to encode telegram payload']);
-  exit;
-}
-
 $telegramUrl = 'https://api.telegram.org/bot' . trim($token) . '/sendMessage';
+$successfulSends = 0;
+$failedSends = [];
 
-$responseBody = null;
-$statusCode = 0;
+foreach ($chatIds as $chatId) {
+  $telegramPayload = json_encode([
+    'chat_id' => $chatId,
+    'text' => implode("\n", $lines),
+    'disable_web_page_preview' => true,
+  ], JSON_UNESCAPED_UNICODE);
 
-if (function_exists('curl_init')) {
-  $ch = curl_init($telegramUrl);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_POST, true);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, $telegramPayload);
-  curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-  $responseBody = curl_exec($ch);
-  $statusCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-  curl_close($ch);
-}
+  if ($telegramPayload === false) {
+    continue;
+  }
 
-if (!is_string($responseBody) || $responseBody === '') {
-  $context = stream_context_create([
-    'http' => [
-      'method' => 'POST',
-      'timeout' => 10,
-      'header' => "Content-Type: application/json\r\n",
-      'content' => $telegramPayload,
-    ],
-  ]);
-  $responseBody = @file_get_contents($telegramUrl, false, $context);
-  $statusCode = $responseBody === false ? 0 : 200;
-}
+  $statusCode = 0;
+  $telegramResponse = sd_send_telegram_request($telegramUrl, $telegramPayload, $statusCode);
+  $ok = is_array($telegramResponse) && ($telegramResponse['ok'] ?? false) === true;
+  $statusOk = $statusCode === 0 || ($statusCode >= 200 && $statusCode < 300);
 
-$telegramResponse = is_string($responseBody) ? json_decode($responseBody, true) : null;
-$ok = is_array($telegramResponse) && ($telegramResponse['ok'] ?? false) === true;
+  if ($ok && $statusOk) {
+    $successfulSends += 1;
+    continue;
+  }
 
-if (!$ok || ($statusCode !== 0 && ($statusCode < 200 || $statusCode >= 300))) {
-  http_response_code(502);
   $description = is_array($telegramResponse) ? (string) ($telegramResponse['description'] ?? '') : '';
+  $failedSends[] = [
+    'chatId' => $chatId,
+    'error' => $description !== '' ? $description : 'Telegram send failed',
+  ];
+}
+
+if ($successfulSends === 0) {
+  http_response_code(502);
+  $firstFailure = $failedSends[0]['error'] ?? 'Telegram send failed';
   echo json_encode([
     'ok' => false,
-    'error' => $description !== '' ? $description : 'Telegram send failed',
+    'error' => $firstFailure,
   ]);
   exit;
 }
@@ -223,4 +261,7 @@ if (trim($thanksSecret) !== '') {
   ]);
 }
 
-echo json_encode(['ok' => true]);
+echo json_encode([
+  'ok' => true,
+  'partial' => count($failedSends) > 0,
+]);
