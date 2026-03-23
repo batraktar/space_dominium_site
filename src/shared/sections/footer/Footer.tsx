@@ -107,7 +107,7 @@ const Footer: React.FC<FooterProps> = ({
             </div>
 
             <div className="footer_button">
-              <a className="footer_button_link" href="tel:0773213232" aria-label="Зателефонувати">
+              <a className="footer_button_link" href="tel:0973213232" aria-label="Зателефонувати">
                 {buttonLabel}
               </a>
 
@@ -204,7 +204,7 @@ const Footer: React.FC<FooterProps> = ({
                     <a href="mailto:hello@space.dominium.com.ua">Email: hello@space.dominium.com.ua</a>
                   </p>
                   <p>
-                    <a href="tel:0773213232">Телефон: 0773213232</a>
+                    <a href="tel:0973213232">Телефон: 0973213232</a>
                   </p>  
                   <p>
                     <a

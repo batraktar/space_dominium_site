@@ -5,12 +5,20 @@ import { usePrefersReducedMotion } from '../../../shared/hooks/usePrefersReduced
 import videoMp4 from '../../../assets/video/laptop_people_crop.mp4'
 import videoMp4Mobile from '../../../assets/video/laptop_people_mobile_1080p_hq.mp4'
 import videoPoster from '../../../assets/video/laptop_people_poster.webp'
+import videoPosterMobile from '../../../assets/video/laptop_people_poster_mobile_q86.jpg'
 import styles from './header.module.scss'
 
 type HeaderProps = {
   burgerColor?: string
   contactButtonBg?: string
   contactButtonTextColor?: string
+}
+
+type NetworkInfo = {
+  effectiveType?: string
+  saveData?: boolean
+  addEventListener?: (event: 'change', listener: () => void) => void
+  removeEventListener?: (event: 'change', listener: () => void) => void
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -40,6 +48,7 @@ const Header: React.FC<HeaderProps> = ({
     return window.matchMedia('(max-width: 425px)').matches
   })
   const [mobileVideoEnabled, setMobileVideoEnabled] = useState(() => !isMobileViewport)
+  const [isLowDataMode, setIsLowDataMode] = useState(false)
 
   useEffect(() => {
     if (!('matchMedia' in window)) return
@@ -83,14 +92,33 @@ const Header: React.FC<HeaderProps> = ({
     }
   }, [isMobileViewport, mobileVideoEnabled, prefersReducedMotion])
 
+  useEffect(() => {
+    if (typeof navigator === 'undefined') return
+
+    const nav = navigator as Navigator & { connection?: NetworkInfo }
+    const connection = nav.connection
+
+    const syncConnectionState = () => {
+      const type = (connection?.effectiveType ?? '').toLowerCase()
+      const isSlow = type === 'slow-2g' || type === '2g' || type === '3g'
+      setIsLowDataMode(Boolean(connection?.saveData || isSlow))
+    }
+
+    syncConnectionState()
+    connection?.addEventListener?.('change', syncConnectionState)
+    return () => connection?.removeEventListener?.('change', syncConnectionState)
+  }, [])
+
   const shouldPlayVideo = !prefersReducedMotion && (!isMobileViewport || mobileVideoEnabled)
+  const posterSrc =
+    isMobileViewport && !isLowDataMode ? videoPosterMobile : videoPoster
 
   return (
     <>
       <header className={styles.header}>
         <img
           className={styles.header__poster}
-          src={videoPoster}
+          src={posterSrc}
           alt=""
           aria-hidden
           fetchPriority="high"
@@ -104,7 +132,7 @@ const Header: React.FC<HeaderProps> = ({
           loop={shouldPlayVideo}
           playsInline
           preload={isMobileViewport ? 'none' : 'metadata'}
-          poster={videoPoster}
+          poster={posterSrc}
           aria-hidden
         >
           {mobileVideoEnabled && (
@@ -122,7 +150,7 @@ const Header: React.FC<HeaderProps> = ({
             <ContactButton
               show={true}
               text="Зв’язатись ♡"
-              href="tel:0773213232"
+              href="tel:0973213232"
               bgColor={contactButtonBg ?? '#A88AED'}
               textColor={contactButtonTextColor ?? '#000000'}
             />

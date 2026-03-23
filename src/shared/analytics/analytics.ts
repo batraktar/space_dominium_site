@@ -94,10 +94,12 @@ export const trackFormSubmitSuccess = (sourcePath: string) => {
   })
 }
 
-export const trackAdsConversion = () => {
+export const trackAdsConversion = (eventId?: string) => {
   if (!appEnv.googleAdsId || !appEnv.googleAdsConversionLabel) return
   const sendTo = `${appEnv.googleAdsId}/${appEnv.googleAdsConversionLabel}`
-  window.gtag?.('event', 'conversion', {
+  const payload: EventParams = {
     send_to: sendTo,
-  })
+    ...(eventId ? { event_id: eventId } : {}),
+  }
+  window.gtag?.('event', 'conversion', payload)
 }

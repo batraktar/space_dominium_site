@@ -58,7 +58,7 @@ const defaultItems: CardItem[] = [
 ]
 
 const normalizeKey = (value: string) =>
-  value.toLowerCase().replace(/[\s\-_\(\)\[\]\{\}"'`’.,:;!?/\\]+/g, '')
+  value.toLowerCase().replace(/[\s\-_[\]{}()"',.:;!?/\\`’]+/g, '')
 
 const resolveSheetUrl = (input: string) => {
   try {

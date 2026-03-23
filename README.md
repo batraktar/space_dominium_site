@@ -8,6 +8,18 @@ cp .env.example .env.local
 npm run dev
 ```
 
+## 1.1) Tests
+
+```bash
+npm run test
+```
+
+PHP endpoints smoke tests (requires `php` binary):
+
+```bash
+npm run test:php
+```
+
 ## 2) ENV config
 
 Use `.env.local` for local development (file is ignored by git).
@@ -69,6 +81,12 @@ SetEnv TELEGRAM_CHAT_ID "..."
 SetEnv THANKS_GATE_SECRET "your-long-random-secret"
 ```
 
+Optional hardening:
+
+```env
+CONTACT_ALLOWED_ORIGINS=https://space.dominium.com.ua,https://www.space.dominium.com.ua
+```
+
 Shared hosting fallback:
 - `contact-submit.php` and `thanks-access.php` can also read from `.env` / `.env.local` near the PHP files.
 - They accept both key styles:
@@ -77,6 +95,9 @@ Shared hosting fallback:
 
 How it works:
 - Frontend sends form data to `/contact-submit.php`.
+- Frontend sends CSRF header (`X-SD-CSRF`) and backend validates cookie+header pair.
+- Backend checks request origin against allowlist/current domain.
+- Backend applies per-IP rate limit on submit endpoint.
 - PHP sends message to Telegram bot.
 - Message includes section source (`/`, `/smm`, `/design`, `/web-develop`, etc).
 - After successful submit, PHP sets a short-lived signed cookie for `/thanks` access.

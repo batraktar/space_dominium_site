@@ -1,8 +1,10 @@
-import { Canvas, invalidate, useFrame } from '@react-three/fiber'
-import { Environment, useGLTF, Center, Resize } from '@react-three/drei'
+import { Canvas, invalidate, useFrame, useLoader } from '@react-three/fiber'
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import type { FC } from 'react'
-import * as THREE from 'three'
+import { Color, Mesh, MeshLambertMaterial, NoToneMapping, SRGBColorSpace } from 'three'
+import type { Euler, Group, Material, Object3D, Texture } from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { cloneAndCenterScene } from './utils/center-model'
 
 type EnvironmentPreset =
   | 'city' | 'sunset' | 'night' | 'dawn' | 'studio' | 'apartment' | 'forest' | 'park' | 'none'
@@ -28,6 +30,28 @@ type RobotSceneProps = {
 const HOVER_EASE = 0.15
 const HOVER_MAG = (6 * Math.PI) / 180
 
+const resolveEnvironmentLighting = (preset: Exclude<EnvironmentPreset, 'none'>) => {
+  switch (preset) {
+    case 'night':
+      return { ambient: '#dbe7ff', ambientBoost: 0.12, key: '#d0dfff', keyBoost: 0.25, rim: '#9cb8ff' }
+    case 'sunset':
+      return { ambient: '#fff2db', ambientBoost: 0.1, key: '#ffd7ad', keyBoost: 0.2, rim: '#ffc38f' }
+    case 'dawn':
+      return { ambient: '#f4edff', ambientBoost: 0.1, key: '#dac9ff', keyBoost: 0.2, rim: '#c5abff' }
+    case 'forest':
+      return { ambient: '#e8f6ea', ambientBoost: 0.1, key: '#d3f0d8', keyBoost: 0.2, rim: '#b8e3bf' }
+    case 'park':
+      return { ambient: '#eef7e9', ambientBoost: 0.1, key: '#deefcb', keyBoost: 0.2, rim: '#c7dfae' }
+    case 'apartment':
+      return { ambient: '#f6f3ef', ambientBoost: 0.08, key: '#ebe4da', keyBoost: 0.15, rim: '#ddd2c5' }
+    case 'studio':
+      return { ambient: '#f7f7f8', ambientBoost: 0.06, key: '#ffffff', keyBoost: 0.15, rim: '#ececf2' }
+    case 'city':
+    default:
+      return { ambient: '#eef3ff', ambientBoost: 0.1, key: '#dbe7ff', keyBoost: 0.2, rim: '#c2d5ff' }
+  }
+}
+
 const RobotModel: FC<{
   url: string
   modelScale: number
@@ -51,19 +75,19 @@ const RobotModel: FC<{
   walkOnCard,
   hiddenNodeNames,
 }) => {
-  const { scene } = useGLTF(url) as unknown as { scene: THREE.Group }
-  // Клонуємо сцену для уникнення конфліктів референсів (як у HouseViewer)
-  const content = useMemo(() => scene.clone(), [scene])
+  const loaded = useLoader(GLTFLoader, url) as { scene: Group }
+  // Клонуємо і центруємо сцену для стабільного позиціонування моделі.
+  const content = useMemo(() => cloneAndCenterScene(loaded.scene), [loaded.scene])
   
-  const group = useRef<THREE.Group>(null!)
+  const group = useRef<Group>(null!)
   const targetYaw = useRef(0)
   const currentYaw = useRef(0)
-  const partsRef = useRef<Record<string, THREE.Object3D | null>>({})
-  const baseRotRef = useRef<Record<string, THREE.Euler>>({})
+  const partsRef = useRef<Record<string, Object3D | null>>({})
+  const baseRotRef = useRef<Record<string, Euler>>({})
 
   useEffect(() => {
     const palette = partColors ?? {}
-    const fallback = baseColor ? new THREE.Color(baseColor) : null
+    const fallback = baseColor ? new Color(baseColor) : null
     const canonicalizeName = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, '')
     const stripNumericSuffix = (name: string) => name.replace(/\d+$/, '')
     const normalizedPalette = new Map<string, string>()
@@ -93,7 +117,7 @@ const RobotModel: FC<{
     }
 
     content.traverse((obj) => {
-      if (!(obj instanceof THREE.Mesh)) return
+      if (!(obj instanceof Mesh)) return
 
       const meshMaterial = Array.isArray(obj.material) ? obj.material[0] : obj.material
       const materialName = meshMaterial?.name
@@ -116,19 +140,19 @@ const RobotModel: FC<{
         }
       }
 
-      const tint = override ? new THREE.Color(override) : fallback
+      const tint = override ? new Color(override) : fallback
 
       if (!tint) return
 
       const materials = Array.isArray(obj.material) ? obj.material : [obj.material]
       const nextMaterials = materials.map((m) => {
-        const src = m as THREE.Material & {
-          map?: THREE.Texture | null
-          alphaMap?: THREE.Texture | null
+        const src = m as Material & {
+          map?: Texture | null
+          alphaMap?: Texture | null
           transparent?: boolean
           opacity?: number
         }
-        const lambert = new THREE.MeshLambertMaterial({
+        const lambert = new MeshLambertMaterial({
           color: tint,
           map: null,
           alphaMap: src.alphaMap ?? null,
@@ -175,7 +199,7 @@ const RobotModel: FC<{
         parent.attach(child)
       }
     }
-    const attachToObject = (childName: string, parent: THREE.Object3D | null) => {
+    const attachToObject = (childName: string, parent: Object3D | null) => {
       const child = find(childName)
       if (!child || !parent || child.parent === parent) return
       parent.attach(child)
@@ -341,12 +365,11 @@ const RobotModel: FC<{
 
   return (
     <group ref={group}>
-      {/* Логіка завантаження та позиціонування з HouseViewer */}
-      <Center position={[0, modelYOffset, 0]}>
-        <Resize scale={modelScale}>
+      <group position={[0, modelYOffset, 0]}>
+        <group scale={modelScale}>
           <primitive object={content} />
-        </Resize>
-      </Center>
+        </group>
+      </group>
     </group>
   )
 }
@@ -375,6 +398,8 @@ const RobotScene: FC<RobotSceneProps> = ({
     setReady(false)
   }, [modelUrl])
 
+  const envLighting = environmentPreset === 'none' ? null : resolveEnvironmentLighting(environmentPreset)
+
   return (
     <div style={{ width, height, position: 'relative' }}>
       <Canvas
@@ -389,16 +414,21 @@ const RobotScene: FC<RobotSceneProps> = ({
           transition: 'opacity 200ms ease' 
         }}
         onCreated={({ gl }) => {
-          gl.toneMapping = THREE.NoToneMapping
-          gl.outputColorSpace = THREE.SRGBColorSpace
+          gl.toneMapping = NoToneMapping
+          gl.outputColorSpace = SRGBColorSpace
           setReady(true)
         }}
       >
-        {environmentPreset !== 'none' && (
-          <Environment preset={environmentPreset} background={false} />
-        )}
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[4, 4, 6]} intensity={1} />
+        <ambientLight
+          intensity={0.6 + (envLighting?.ambientBoost ?? 0)}
+          color={envLighting?.ambient ?? '#ffffff'}
+        />
+        <directionalLight
+          position={[4, 4, 6]}
+          intensity={1 + (envLighting?.keyBoost ?? 0)}
+          color={envLighting?.key ?? '#ffffff'}
+        />
+        {envLighting && <directionalLight position={[-3, 3.5, 2]} intensity={0.2} color={envLighting.rim} />}
         
         <Suspense fallback={null}>
           <RobotModel

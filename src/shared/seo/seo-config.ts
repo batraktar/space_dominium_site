@@ -1,11 +1,12 @@
 import type { SeoRouteConfig } from './types'
+import { DEFAULT_SITE_URL, SITE_NAME } from '../config/site-constants'
 
-const SITE_URL = 'https://space.dominium.com.ua'
+const SITE_URL = DEFAULT_SITE_URL
 
 const orgSchema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
-  name: 'Space Dominium',
+  name: SITE_NAME,
   url: SITE_URL,
   image: `${SITE_URL}/card-template.png`,
   description:
@@ -16,7 +17,7 @@ const orgSchema = {
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Space Dominium',
+  name: SITE_NAME,
   url: SITE_URL,
   inLanguage: ['uk-UA', 'en'],
 }
@@ -31,7 +32,7 @@ const serviceSchema = (name: string, path: string, description: string, areaServ
   areaServed,
   provider: {
     '@type': 'Organization',
-    name: 'Space Dominium',
+    name: SITE_NAME,
     url: SITE_URL,
   },
 })
@@ -39,7 +40,7 @@ const serviceSchema = (name: string, path: string, description: string, areaServ
 const contactPageSchema = {
   '@context': 'https://schema.org',
   '@type': 'ContactPage',
-  name: 'Контакти Space Dominium',
+  name: `Контакти ${SITE_NAME}`,
   url: `${SITE_URL}/contacts`,
   isPartOf: SITE_URL,
 }

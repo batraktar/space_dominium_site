@@ -12,6 +12,9 @@ type GateResponse = {
 }
 
 const SESSION_TTL_MS = 30 * 1000
+const PENDING_CONVERSION_ID_KEY = 'sd_pending_ads_conversion_id'
+const PENDING_CONVERSION_TS_KEY = 'sd_pending_ads_conversion_ts'
+const PENDING_CONVERSION_TTL_MS = 10 * 60 * 1000
 
 function Thanks() {
   const navigate = useNavigate()
@@ -121,7 +124,24 @@ function Thanks() {
   useEffect(() => {
     if (gateStatus !== 'allowed') return
     trackEvent('thanks_page_view', { page_path: '/thanks' })
-    trackAdsConversion()
+
+    if (typeof window === 'undefined') return
+
+    const conversionId = window.sessionStorage.getItem(PENDING_CONVERSION_ID_KEY)?.trim() ?? ''
+    const rawTs = window.sessionStorage.getItem(PENDING_CONVERSION_TS_KEY)
+    const conversionTs = rawTs ? Number(rawTs) : NaN
+    const isFresh =
+      conversionId !== '' && Number.isFinite(conversionTs) && Date.now() - conversionTs <= PENDING_CONVERSION_TTL_MS
+
+    if (!isFresh) {
+      window.sessionStorage.removeItem(PENDING_CONVERSION_ID_KEY)
+      window.sessionStorage.removeItem(PENDING_CONVERSION_TS_KEY)
+      return
+    }
+
+    trackAdsConversion(conversionId)
+    window.sessionStorage.removeItem(PENDING_CONVERSION_ID_KEY)
+    window.sessionStorage.removeItem(PENDING_CONVERSION_TS_KEY)
   }, [gateStatus])
 
   if (gateStatus === 'checking') {

@@ -1,7 +1,9 @@
+import { DEFAULT_SITE_URL } from './site-constants'
+
 const readEnv = (value: string | undefined) => (typeof value === 'string' ? value.trim() : '')
 
 export const appEnv = {
-  siteUrl: readEnv(import.meta.env.VITE_SITE_URL) || 'https://space.dominium.com.ua',
+  siteUrl: readEnv(import.meta.env.VITE_SITE_URL) || DEFAULT_SITE_URL,
   faqHomeSheetUrl: readEnv(import.meta.env.VITE_FAQ_HOME_SHEET_URL) || '/faq-cache.php?gid=0',
   faqSmmSheetUrl: readEnv(import.meta.env.VITE_FAQ_SMM_SHEET_URL) || '/faq-cache.php?gid=1942219183',
   faqDesignSheetUrl:

@@ -1,8 +1,21 @@
-import { Canvas, useFrame, invalidate } from '@react-three/fiber'
-import { Environment, useGLTF, Center, Resize } from '@react-three/drei'
+import { Canvas, useFrame, invalidate, useLoader } from '@react-three/fiber'
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { FC } from 'react'
-import * as THREE from 'three'
+import { Color, Group, Mesh, MeshLambertMaterial, NoToneMapping, SRGBColorSpace } from 'three'
+import type { Material, Texture } from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { cloneAndCenterScene } from './utils/center-model'
+
+type EnvironmentPreset =
+  | 'city'
+  | 'sunset'
+  | 'night'
+  | 'dawn'
+  | 'studio'
+  | 'apartment'
+  | 'forest'
+  | 'park'
+  | 'none'
 
 type HouseViewerProps = {
   url?: string
@@ -22,13 +35,35 @@ type HouseViewerProps = {
   mouseFloatY?: number
   baseYaw?: number
   basePitch?: number
-  environmentPreset?: 'city' | 'sunset' | 'night' | 'dawn' | 'studio' | 'apartment' | 'forest' | 'park' | 'none'
+  environmentPreset?: EnvironmentPreset
 }
 
 const DEFAULT_URL = '/models/house.glb'
 const HOVER_EASE = 0.15
 const HOVER_MAG = (6 * Math.PI) / 180
 const MOUSE_FLOAT_EASE = 0.14
+
+const resolveEnvironmentLighting = (preset: Exclude<EnvironmentPreset, 'none'>) => {
+  switch (preset) {
+    case 'night':
+      return { ambient: '#dbe7ff', ambientBoost: 0.1, key: '#d0dfff', keyBoost: 0.06, rim: '#9cb8ff' }
+    case 'sunset':
+      return { ambient: '#fff2db', ambientBoost: 0.08, key: '#ffd7ad', keyBoost: 0.05, rim: '#ffc38f' }
+    case 'dawn':
+      return { ambient: '#f4edff', ambientBoost: 0.07, key: '#dac9ff', keyBoost: 0.04, rim: '#c5abff' }
+    case 'forest':
+      return { ambient: '#e8f6ea', ambientBoost: 0.08, key: '#d3f0d8', keyBoost: 0.05, rim: '#b8e3bf' }
+    case 'park':
+      return { ambient: '#eef7e9', ambientBoost: 0.08, key: '#deefcb', keyBoost: 0.05, rim: '#c7dfae' }
+    case 'apartment':
+      return { ambient: '#f6f3ef', ambientBoost: 0.06, key: '#ebe4da', keyBoost: 0.04, rim: '#ddd2c5' }
+    case 'studio':
+      return { ambient: '#f7f7f8', ambientBoost: 0.04, key: '#ffffff', keyBoost: 0.03, rim: '#ececf2' }
+    case 'city':
+    default:
+      return { ambient: '#eef3ff', ambientBoost: 0.07, key: '#dbe7ff', keyBoost: 0.05, rim: '#c2d5ff' }
+  }
+}
 
 const HouseModel: FC<{
   url: string
@@ -63,10 +98,10 @@ const HouseModel: FC<{
   baseYaw,
   basePitch,
 }) => {
-  const { scene } = useGLTF(url) as unknown as { scene: THREE.Group }
-  const content = useMemo(() => scene.clone(), [scene])
+  const loaded = useLoader(GLTFLoader, url) as { scene: Group }
+  const content = useMemo(() => cloneAndCenterScene(loaded.scene), [loaded.scene])
 
-  const group = useRef<THREE.Group>(null!)
+  const group = useRef<Group>(null!)
   const targetYaw = useRef(0)
   const currentYaw = useRef(0)
   const targetOffsetX = useRef(0)
@@ -76,34 +111,34 @@ const HouseModel: FC<{
 
   useLayoutEffect(() => {
     const palette = partColors ?? {}
-    const fallback = color ? new THREE.Color(color) : null
+    const fallback = color ? new Color(color) : null
     const normalizedPalette = new Map(
       Object.entries(palette).map(([name, value]) => [name.toLowerCase(), value]),
     )
 
     content.traverse((obj) => {
-      if (!(obj instanceof THREE.Mesh)) return
+      if (!(obj instanceof Mesh)) return
 
       const override =
         palette[obj.name] ??
         normalizedPalette.get(obj.name.toLowerCase()) ??
         (obj.userData?.name ? normalizedPalette.get(String(obj.userData.name).toLowerCase()) : undefined)
-      const tint = override ? new THREE.Color(override) : fallback
+      const tint = override ? new Color(override) : fallback
 
       const materials = Array.isArray(obj.material) ? obj.material : [obj.material]
       const nextMaterials = materials.map((m) => {
-        const src = m as THREE.Material & {
-          map?: THREE.Texture | null
-          alphaMap?: THREE.Texture | null
+        const src = m as Material & {
+          map?: Texture | null
+          alphaMap?: Texture | null
           transparent?: boolean
           opacity?: number
-          color?: THREE.Color
+          color?: Color
         }
 
         // Lambert returns depth/volume without harsh specular highlights.
         // If a tint is provided, we drop texture map to keep brand color clean.
-        const lambert = new THREE.MeshLambertMaterial({
-          color: tint ?? src.color ?? new THREE.Color('#ffffff'),
+        const lambert = new MeshLambertMaterial({
+          color: tint ?? src.color ?? new Color('#ffffff'),
           map: tint ? null : (src.map ?? null),
           alphaMap: src.alphaMap ?? null,
           transparent: src.transparent ?? false,
@@ -116,7 +151,7 @@ const HouseModel: FC<{
           lambert.emissive = tint.clone()
           lambert.emissiveIntensity = shadowLift
         } else {
-          lambert.emissive = new THREE.Color('#000000')
+          lambert.emissive = new Color('#000000')
           lambert.emissiveIntensity = 0
         }
         lambert.toneMapped = false
@@ -126,17 +161,16 @@ const HouseModel: FC<{
       obj.material = Array.isArray(obj.material) ? nextMaterials : nextMaterials[0]
     })
 
-  }, [content, color, partColors])
+  }, [content, color, partColors, shadowLift])
 
   useEffect(() => {
     if (!debugMeshNames) return
     const names = new Set<string>()
     content.traverse((obj) => {
-      if (obj instanceof THREE.Mesh) {
+      if (obj instanceof Mesh) {
         names.add(obj.name || '(no-name)')
       }
     })
-    // eslint-disable-next-line no-console
     console.log('HouseViewer meshes:', Array.from(names))
   }, [content, debugMeshNames])
 
@@ -202,11 +236,11 @@ const HouseModel: FC<{
 
   return (
     <group ref={group}>
-      <Center position={[0, modelYOffset, 0]}>
-        <Resize scale={modelScale}>
+      <group position={[0, modelYOffset, 0]}>
+        <group scale={modelScale}>
           <primitive object={content} />
-        </Resize>
-      </Center>
+        </group>
+      </group>
     </group>
   )
 }
@@ -237,6 +271,8 @@ const HouseViewer: FC<HouseViewerProps> = ({
     setReady(false)
   }, [url])
 
+  const envLighting = environmentPreset === 'none' ? null : resolveEnvironmentLighting(environmentPreset)
+
   return (
     <div style={{ width, height, position: 'relative' }}>
       <Canvas
@@ -255,18 +291,25 @@ const HouseViewer: FC<HouseViewerProps> = ({
             transition: 'opacity 200ms ease' 
         }}
         onCreated={({ gl }) => {
-          gl.toneMapping = THREE.NoToneMapping
-          gl.outputColorSpace = THREE.SRGBColorSpace
+          gl.toneMapping = NoToneMapping
+          gl.outputColorSpace = SRGBColorSpace
           setReady(true)
         }}
       >
-        {environmentPreset !== 'none' && (
-          <Environment preset={environmentPreset} background={false} />
-        )}
-        <ambientLight intensity={0.95} color="#ffffff" />
+        <ambientLight
+          intensity={0.95 + (envLighting?.ambientBoost ?? 0)}
+          color={envLighting?.ambient ?? '#ffffff'}
+        />
         <hemisphereLight args={['#ffffff', '#f6f6f6', 0.2]} />
-        <directionalLight position={[3.8, 4.2, 5.5]} intensity={0.38} color="#ffffff" />
+        <directionalLight
+          position={[3.8, 4.2, 5.5]}
+          intensity={0.38 + (envLighting?.keyBoost ?? 0)}
+          color={envLighting?.key ?? '#ffffff'}
+        />
         <directionalLight position={[-2.2, 1.4, 2.8]} intensity={0.12} color="#ffffff" />
+        {envLighting && (
+          <directionalLight position={[-3.2, 3.8, 1.6]} intensity={0.06} color={envLighting.rim} />
+        )}
         
         <Suspense fallback={null}>
           <HouseModel
