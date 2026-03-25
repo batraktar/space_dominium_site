@@ -6,6 +6,14 @@
   pointer-events: none;
   z-index: 1;
   --bubble-size: clamp(40px, 9.8vw, 180px);
+  --bubble-text-size: clamp(10px, 1vw, 26px);
+}
+
+@media (min-width: 769px) {
+  .fg-bubbles {
+    --bubble-size: clamp(62px, 12.2vw, 250px);
+    --bubble-text-size: clamp(12px, 1.55vw, 32px);
+  }
 }
 
 .fg-bubbles .bubble {
@@ -32,7 +40,7 @@
   z-index: 1;
   color: #0b0b0b;
   font-weight: 600;
-  font-size: clamp(10px, 1vw, 26px);
+  font-size: var(--bubble-text-size);
   line-height: 1.12;
   max-width: 85%;
   overflow-wrap: anywhere;
@@ -41,23 +49,23 @@
 
 /* Percent-based anchors so all 5 stay visible on any width */
 .bubble.b1 {
-  --bubble-left: 57.35%;
-  --bubble-top: 14%;
+  --bubble-left: 77.35%;
+  --bubble-top: 24%;
 }
 
 .bubble.b2 {
   --bubble-left: 23.75%;
-  --bubble-top: 10%;
+  --bubble-top: 12%;
 }
 
 .bubble.b3 {
-  --bubble-left: 30.6%;
+  --bubble-left: 45.6%;
   --bubble-top: 49%;
 }
 
 .bubble.b4 {
-  --bubble-left: 56.3%;
-  --bubble-top: 72%;
+  --bubble-left: 70.3%;
+  --bubble-top: 82%;
 }
 
 .bubble.b5 {

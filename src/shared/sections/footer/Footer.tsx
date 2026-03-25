@@ -1,7 +1,6 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import './footer.scss'
-import { useInView } from '../../hooks/useInView'
 
 const LazyHouseViewer = lazy(() => import('../../three/HouseViewer'))
 
@@ -42,8 +41,6 @@ const Footer: React.FC<FooterProps> = ({
   houseShadowLift,
   houseDebugMeshNames,
 }) => {
-  const previewRef = useRef<HTMLDivElement>(null)
-  const isPreviewVisible = useInView(previewRef, { rootMargin: '200px' })
   const location = useLocation()
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window === 'undefined' || !('matchMedia' in window)) return true
@@ -220,28 +217,26 @@ const Footer: React.FC<FooterProps> = ({
             </div>
           </div>
 
-          <div className="footer_right" ref={previewRef}>
-            {isPreviewVisible && (
-              <Suspense fallback={<div className="footer_house_skeleton" aria-hidden="true" />}>
-                <LazyHouseViewer
-                  url="/models/house.glb"
-                  width={520}
-                  height={400}
-                  modelScale={1.65}
-                  modelYOffset={0}
-                  color={modelColor}
-                  partColors={housePartColors}
-                  shadowLift={houseShadowLift}
-                  debugMeshNames={houseDebugMeshNames}
-                  autoRotate={false}
-                  enableMouseYaw={true}
-                  enableMouseFloat={true}
-                  baseYaw={0}
-                  basePitch={0}
-                  environmentPreset="none"
-                />
-              </Suspense>
-            )}
+          <div className="footer_right">
+            <Suspense fallback={<div className="footer_house_skeleton" aria-hidden="true" />}>
+              <LazyHouseViewer
+                url="/models/house.glb"
+                width={520}
+                height={400}
+                modelScale={1.65}
+                modelYOffset={0}
+                color={modelColor}
+                partColors={housePartColors}
+                shadowLift={houseShadowLift}
+                debugMeshNames={houseDebugMeshNames}
+                autoRotate={false}
+                enableMouseYaw={true}
+                enableMouseFloat={true}
+                baseYaw={0}
+                basePitch={0}
+                environmentPreset="none"
+              />
+            </Suspense>
           </div>
         </div>
 {/* 

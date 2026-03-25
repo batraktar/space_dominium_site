@@ -1,10 +1,11 @@
-import { Canvas, useFrame, invalidate, useLoader } from '@react-three/fiber'
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Canvas, useFrame, invalidate } from '@react-three/fiber'
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import type { FC } from 'react'
 import { Color, Group, Mesh, MeshLambertMaterial, NoToneMapping, SRGBColorSpace } from 'three'
 import type { Material, Texture } from 'three'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { cloneAndCenterScene } from './utils/center-model'
+import { useGLTF } from '@react-three/drei/core/Gltf'
+import { Center } from '@react-three/drei/core/Center'
+import { Resize } from '@react-three/drei/core/Resize'
 
 type EnvironmentPreset =
   | 'city'
@@ -42,6 +43,11 @@ const DEFAULT_URL = '/models/house.glb'
 const HOVER_EASE = 0.15
 const HOVER_MAG = (6 * Math.PI) / 180
 const MOUSE_FLOAT_EASE = 0.14
+
+const forceCanvasResize = () => {
+  window.dispatchEvent(new Event('resize'))
+  invalidate()
+}
 
 const resolveEnvironmentLighting = (preset: Exclude<EnvironmentPreset, 'none'>) => {
   switch (preset) {
@@ -98,8 +104,8 @@ const HouseModel: FC<{
   baseYaw,
   basePitch,
 }) => {
-  const loaded = useLoader(GLTFLoader, url) as { scene: Group }
-  const content = useMemo(() => cloneAndCenterScene(loaded.scene), [loaded.scene])
+  const { scene } = useGLTF(url) as unknown as { scene: Group }
+  const content = useMemo(() => scene.clone(), [scene])
 
   const group = useRef<Group>(null!)
   const targetYaw = useRef(0)
@@ -161,6 +167,8 @@ const HouseModel: FC<{
       obj.material = Array.isArray(obj.material) ? nextMaterials : nextMaterials[0]
     })
 
+    // With frameloop="demand" we must request a frame after async model/material updates.
+    invalidate()
   }, [content, color, partColors, shadowLift])
 
   useEffect(() => {
@@ -173,6 +181,10 @@ const HouseModel: FC<{
     })
     console.log('HouseViewer meshes:', Array.from(names))
   }, [content, debugMeshNames])
+
+  useEffect(() => {
+    invalidate()
+  }, [content])
 
   useEffect(() => {
     if (!enableMouseYaw && !enableMouseFloat) return
@@ -236,11 +248,11 @@ const HouseModel: FC<{
 
   return (
     <group ref={group}>
-      <group position={[0, modelYOffset, 0]}>
-        <group scale={modelScale}>
+      <Center position={[0, modelYOffset, 0]}>
+        <Resize scale={modelScale}>
           <primitive object={content} />
-        </group>
-      </group>
+        </Resize>
+      </Center>
     </group>
   )
 }
@@ -265,35 +277,72 @@ const HouseViewer: FC<HouseViewerProps> = ({
   basePitch = -0.05,
   environmentPreset = 'none',
 }) => {
-  const [ready, setReady] = useState(false)
-
-  useEffect(() => {
-    setReady(false)
-  }, [url])
-
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
   const envLighting = environmentPreset === 'none' ? null : resolveEnvironmentLighting(environmentPreset)
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    let frame = 0
+    let rafId = 0
+    const hasDefaultCanvasSize = () => {
+      const canvas = wrapperRef.current?.querySelector('canvas')
+      if (!(canvas instanceof HTMLCanvasElement)) return true
+      return canvas.width === 300 && canvas.height === 150
+    }
+    const runSyncLoop = () => {
+      if (!hasDefaultCanvasSize()) return
+      forceCanvasResize()
+      frame += 1
+      if (frame < 12) {
+        rafId = window.requestAnimationFrame(runSyncLoop)
+      }
+    }
+    rafId = window.requestAnimationFrame(runSyncLoop)
+
+    const container = wrapperRef.current
+    if (!container || !('ResizeObserver' in window)) {
+      return () => window.cancelAnimationFrame(rafId)
+    }
+
+    const observer = new ResizeObserver(() => {
+      forceCanvasResize()
+    })
+    observer.observe(container)
+
+    return () => {
+      window.cancelAnimationFrame(rafId)
+      observer.disconnect()
+    }
+  }, [url, width, height])
+
   return (
-    <div style={{ width, height, position: 'relative' }}>
+    <div ref={wrapperRef} style={{ width, height, position: 'relative' }}>
       <Canvas
-        frameloop="demand"
+        key={url}
+        frameloop="always"
         flat
         dpr={[1, 2]}
-        gl={{ 
-            antialias: true, 
+        resize={{ offsetSize: true }}
+        gl={{
+            antialias: true,
             powerPreference: 'high-performance',
-            preserveDrawingBuffer: true
+            preserveDrawingBuffer: true,
         }}
         camera={{ fov: 50, position: [0, 0, 2.2], near: 0.01, far: 100 }}
-        style={{ 
-            touchAction: 'pan-y pinch-zoom', 
-            opacity: ready ? 1 : 0, 
-            transition: 'opacity 200ms ease' 
+        style={{
+            width: '100%',
+            height: '100%',
+            display: 'block',
+            touchAction: 'pan-y pinch-zoom',
+            opacity: 1,
         }}
         onCreated={({ gl }) => {
           gl.toneMapping = NoToneMapping
           gl.outputColorSpace = SRGBColorSpace
-          setReady(true)
+          // Route-entry can leave R3F at default 300x150 until a resize event.
+          forceCanvasResize()
+          requestAnimationFrame(forceCanvasResize)
         }}
       >
         <ambientLight
@@ -336,3 +385,5 @@ const HouseViewer: FC<HouseViewerProps> = ({
 }
 
 export default HouseViewer
+
+useGLTF.preload(DEFAULT_URL)
